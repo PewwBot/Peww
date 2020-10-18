@@ -1,0 +1,11 @@
+{
+  "extends": ["tslint:recommended", "tslint-eslint-rules"],
+  "rules": {
+    "ordered-imports": false,
+    "align": false,
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+    "no-empty": false,
+    "no-trailing-whitespace": false,
+    "no-console": false
+  }
+}

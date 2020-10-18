@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types"],
+    "module": "commonjs",
+    "target": "es2020",
+    "outDir": "dist",
+    "lib": ["ESNext", "ESNext.Array", "ESNext.AsyncIterable", "ESNext.Intl", "ESNext.Symbol", "DOM"],
+    "rootDir": "./src",
+    "sourceMap": false,
+    "removeComments": true,
+    "declaration": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false
+  },
+  "exclude": ["./dist/*", "./node_modules/*"],
+  "include": ["./src/**/*", "../"]
+}
