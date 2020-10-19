@@ -68,6 +68,7 @@
     "request": "^2.88.2",
     "sqlite3": "^5.0.0",
     "strftime": "^0.10.0",
+    "tslog": "^2.9.1",
     "ytdl-core": "^3.4.1"
   },
   "prettier": {

@@ -6,6 +6,9 @@
     "quotemark": [true, "single", "avoid-escape", "avoid-template"],
     "no-empty": false,
     "no-trailing-whitespace": false,
-    "no-console": false
+    "no-console": false,
+    "no-unused-expression": false,
+    "no-shadowed-variable": false,
+    "max-classes-per-file": false
   }
 }
