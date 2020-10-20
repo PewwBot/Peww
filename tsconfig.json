@@ -15,7 +15,9 @@
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "strictPropertyInitialization": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "exclude": ["./dist/*", "./node_modules/*"],
   "include": ["./src/**/*", "../"]
