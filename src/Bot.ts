@@ -10,7 +10,7 @@ export class Bot {
 
   private client: Discord.Client;
   private config: Config;
-  private logger: Logger = new Logger({ prefix: ['PewwBot'], displayDateTime: false, displayFilePath: 'hidden' });
+  private logger: Logger = new Logger({ prefix: ['[PewwBot]'], displayDateTime: false, displayFilePath: 'hidden' });
 
   private commandManager: CommandManager;
 
