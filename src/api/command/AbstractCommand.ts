@@ -1,5 +1,3 @@
-import { DiscordAPIError } from 'discord.js';
-import * as Discord from 'discord.js';
 import { Command } from './Command';
 import { CommandCategory } from './CommandCategory';
 import { Bot } from '../../Bot';
