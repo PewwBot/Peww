@@ -2,7 +2,7 @@ import { AbstractCommand } from '../AbstractCommand';
 import { CommandCategory } from '../CommandCategory';
 import { CommandContext } from '../context/CommandContext';
 import { FunctionalCommandHandler } from './FunctionalCommandHandler';
-import { Predicate } from './Predicate';
+import { Predicate } from '../../../utils/Predicate';
 
 export class FunctionalCommand extends AbstractCommand {
   private readonly predicates: Predicate<CommandContext>[];
@@ -27,7 +27,7 @@ export class FunctionalCommand extends AbstractCommand {
 
   public call(context: CommandContext): void {
     for (const predicate of this.predicates) {
-      if (!predicate.test(context)) return;
+      if (!predicate.apply(context)) return;
     }
 
     this.handler.handle(context);

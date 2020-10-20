@@ -1,11 +1,11 @@
+import { CommandEvent } from '../../events/CommandEvent';
 import { Command } from './Command';
-import { CommandEvent } from './CommandEvent';
 
 export class CommandManager {
   private commands: Command[] = [];
 
   constructor() {
-    CommandEvent.load();
+    new CommandEvent().load();
   }
 
   public getCommand(command: string): Command {

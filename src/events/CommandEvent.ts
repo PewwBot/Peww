@@ -1,13 +1,16 @@
-import * as Discord from 'discord.js';
-import { Bot } from '../../Bot';
-import { Command } from './Command';
-import { ImmutableCommandContext } from './context/ImmutableCommandContext';
+import { SubscriptionLoader } from '../api/event/SubscriptionLoader';
+import { Subscriptions } from '../api/event/Subscriptions';
 
-export class CommandEvent {
-  public static load() {
-    Bot.getInstance()
-      .getClient()
-      .on('message', (message: Discord.Message) => {
+import * as Discord from 'discord.js';
+import { Bot } from '../Bot';
+import { Command } from '../api/command/Command';
+import { ImmutableCommandContext } from '../api/command/context/ImmutableCommandContext';
+
+export class CommandEvent implements SubscriptionLoader {
+  load(): void {
+    Subscriptions.create('message')
+      .filter((sub, message) => message.channel instanceof Discord.TextChannel)
+      .handler((sub, message) => {
         if (!(message.channel instanceof Discord.TextChannel)) return;
         let prefix = null;
         for (const thisPrefix of Bot.getInstance().getConfig().getData().prefix) {
@@ -20,6 +23,7 @@ export class CommandEvent {
         const commandObject: Command = Bot.getInstance().getCommandManager().getCommand(command);
         if (commandObject == null) return;
         commandObject.call(new ImmutableCommandContext(message, command, prefix, args));
-      });
+      })
+      .register();
   }
 }

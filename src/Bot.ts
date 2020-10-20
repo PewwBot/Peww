@@ -3,6 +3,8 @@ import { Logger } from 'tslog';
 import { CommandCategory } from './api/command/CommandCategory';
 import { CommandManager } from './api/command/CommandManager';
 import { Commands } from './api/command/Commands';
+import { Database } from './api/database/Database';
+import { Subscriptions } from './api/event/Subscriptions';
 import { Config } from './Config';
 
 export class Bot {
@@ -12,6 +14,7 @@ export class Bot {
   private config: Config;
   private logger: Logger = new Logger({ prefix: ['[PewwBot]'], displayDateTime: false, displayFilePath: 'hidden' });
 
+  private database: Database;
   private commandManager: CommandManager;
 
   public start(callback: (error: Error) => void) {
@@ -22,16 +25,23 @@ export class Bot {
         callback(error);
         return;
       }
-      this.client = new Discord.Client({});
-      this.client
-        .login(this.config.getData().token)
-        .then((_value) => {
-          this.commandManager = new CommandManager();
-          callback(null);
-        })
-        .catch((error: Error) => {
+      this.database = new Database();
+      this.database.load('test', (error: Error) => {
+        if (error) {
           callback(error);
-        });
+          return;
+        }
+        this.client = new Discord.Client({});
+        this.client
+          .login(this.config.getData().token)
+          .then((_value) => {
+            this.commandManager = new CommandManager();
+            callback(null);
+          })
+          .catch((error: Error) => {
+            callback(error);
+          });
+      });
     });
   }
 

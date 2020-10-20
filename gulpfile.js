@@ -20,7 +20,7 @@ const typeCheck = tsLint.Linter.createProgram('tsconfig.json');
 // ----------------------------------------------------------------------------
 function startBuild() {
   // => Delete old files
-  del.sync(['./dist/**/*.*']);
+  del.sync(['./dist/**/*.*', '!./dist/**/*.db']);
   // => Copy files
   gulp.src('./resources/**/*').pipe(gulp.dest('dist/'));
   //=> Compile TS files
