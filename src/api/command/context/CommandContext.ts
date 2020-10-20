@@ -6,6 +6,8 @@ export interface CommandContext {
 
   getLabel(): string;
 
+  getPrefix(): string;
+
   getMessage(): Discord.Message;
 
   reply(...messages: string[]): void;

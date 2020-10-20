@@ -19,7 +19,7 @@ export class CommandEvent {
         const command: string = args.shift().toLowerCase();
         const commandObject: Command = Bot.getInstance().getCommandManager().getCommand(command);
         if (commandObject == null) return;
-        commandObject.call(new ImmutableCommandContext(message, command, args));
+        commandObject.call(new ImmutableCommandContext(message, command, prefix, args));
       });
   }
 }

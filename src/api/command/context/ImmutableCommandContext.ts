@@ -5,11 +5,13 @@ import { CommandContext } from './CommandContext';
 export class ImmutableCommandContext implements CommandContext {
   private readonly message: Discord.Message;
   private readonly label: string;
+  private readonly prefix: string;
   private readonly args: string[];
 
-  constructor(message: Discord.Message, label: string, args: string[]) {
+  constructor(message: Discord.Message, label: string, prefix: string, args: string[]) {
     this.message = message;
     this.label = label;
+    this.prefix = prefix;
     this.args = args;
   }
 
@@ -19,6 +21,10 @@ export class ImmutableCommandContext implements CommandContext {
 
   getLabel(): string {
     return this.label;
+  }
+
+  getPrefix(): string {
+    return this.prefix;
   }
 
   getMessage(): Discord.Message {
