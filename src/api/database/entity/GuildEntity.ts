@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, EntityOptions, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({
+  name: 'Guilds',
+} as EntityOptions)
 export class GuildEntity {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,6 +14,8 @@ export class GuildEntity {
   ownerId: string;
 
   @Column()
-  vip: boolean;
+  premium: boolean;
 
+  @Column('simple-array')
+  customPrefix: string[];
 }

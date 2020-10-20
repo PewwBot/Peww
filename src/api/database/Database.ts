@@ -3,22 +3,20 @@ import 'reflect-metadata';
 import { Connection, createConnection, ConnectionOptions } from 'typeorm';
 import { Bot } from '../../Bot';
 
+export type Mode = 'test' | 'normal';
+
 export class Database {
   private connection: Connection;
 
-  public load(callback: (error: Error) => void) {
+  public load(mode: Mode = 'normal', callback: (error: Error) => void) {
     createConnection({
-      type: 'mariadb',
-      host: '',
-      port: 0,
-      username: '',
-      password: '',
-      database: '',
+      type: 'sqlite',
+      database: __dirname + '../../../data.db',
       entities: [
-        __dirname + '/api/database/entity/*.js'
+        __dirname + '/entity/*.js'
       ],
       synchronize: true,
-      logging: false
+      logging: mode === 'test'
     } as ConnectionOptions).then((connection: Connection) => {
       this.connection = connection;
       callback(null);
