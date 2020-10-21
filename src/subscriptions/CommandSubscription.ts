@@ -10,6 +10,7 @@ import { Subscription } from '../api/subscription/Subscription';
 export class CommandSubscription implements SubscriptionRegisterer<'message'> {
   get(): Subscription<'message'> {
     return Subscriptions.create('message')
+      .name('Command')
       .filter((sub, message) => message.channel instanceof Discord.TextChannel)
       .handler((sub, message) => {
         if (!(message.channel instanceof Discord.TextChannel)) return;
