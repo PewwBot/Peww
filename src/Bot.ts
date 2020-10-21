@@ -1,10 +1,8 @@
 import * as Discord from 'discord.js';
 import { Logger } from 'tslog';
-import { CommandCategory } from './api/command/CommandCategory';
 import { CommandManager } from './api/command/CommandManager';
-import { Commands } from './api/command/Commands';
 import { Database } from './api/database/Database';
-import { Subscriptions } from './api/event/Subscriptions';
+import { SubscriptionManager } from './api/subscription/SubscriptionManager';
 import { Config } from './Config';
 
 export class Bot {
@@ -16,6 +14,7 @@ export class Bot {
 
   private database: Database;
   private commandManager: CommandManager;
+  private subscriptionManager: SubscriptionManager;
 
   public start(callback: (error: Error) => void) {
     Bot.instance = this;
@@ -35,6 +34,7 @@ export class Bot {
         this.client
           .login(this.config.getData().token)
           .then((_value) => {
+            this.subscriptionManager = new SubscriptionManager();
             this.commandManager = new CommandManager();
             callback(null);
           })
@@ -61,7 +61,15 @@ export class Bot {
     return this.logger;
   }
 
+  public getDatabase(): Database {
+    return this.database;
+  }
+
   public getCommandManager(): CommandManager {
     return this.commandManager;
+  }
+
+  public getSubscriptionManager(): SubscriptionManager {
+    return this.subscriptionManager;
   }
 }

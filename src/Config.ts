@@ -4,6 +4,7 @@ import * as path from 'path';
 export type ConfigType = {
   token: string;
   prefix: string[];
+  ownerId: string;
 };
 
 export class Config {

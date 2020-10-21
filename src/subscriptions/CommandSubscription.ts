@@ -1,14 +1,15 @@
-import { SubscriptionLoader } from '../api/event/SubscriptionLoader';
-import { Subscriptions } from '../api/event/Subscriptions';
+import { SubscriptionRegisterer } from './../api/subscription/SubscriptionRegisterer';
+import { Subscriptions } from '../api/subscription/Subscriptions';
 
 import * as Discord from 'discord.js';
 import { Bot } from '../Bot';
 import { Command } from '../api/command/Command';
 import { ImmutableCommandContext } from '../api/command/context/ImmutableCommandContext';
+import { Subscription } from '../api/subscription/Subscription';
 
-export class CommandEvent implements SubscriptionLoader {
-  load(): void {
-    Subscriptions.create('message')
+export class CommandSubscription implements SubscriptionRegisterer<'message'> {
+  get(): Subscription<'message'> {
+    return Subscriptions.create('message')
       .filter((sub, message) => message.channel instanceof Discord.TextChannel)
       .handler((sub, message) => {
         if (!(message.channel instanceof Discord.TextChannel)) return;
@@ -23,7 +24,6 @@ export class CommandEvent implements SubscriptionLoader {
         const commandObject: Command = Bot.getInstance().getCommandManager().getCommand(command);
         if (commandObject == null) return;
         commandObject.call(new ImmutableCommandContext(message, command, prefix, args));
-      })
-      .register();
+      });
   }
 }

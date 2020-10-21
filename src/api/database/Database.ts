@@ -1,7 +1,5 @@
-import { GuildEntity } from './entity/GuildEntity';
 import 'reflect-metadata';
 import { Connection, createConnection, ConnectionOptions } from 'typeorm';
-import { Bot } from '../../Bot';
 
 export type Mode = 'test' | 'normal';
 
@@ -23,6 +21,10 @@ export class Database {
     }).catch((error: Error) => {
       callback(error);
     });
+  }
+
+  public getConnection(): Connection {
+    return this.connection;
   }
 
 }
