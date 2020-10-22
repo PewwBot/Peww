@@ -1,3 +1,4 @@
+import { GuildControlScheduler } from './schedulers/GuildControlScheduler';
 import { ManagementCommands } from './commands/ManagementCommands';
 import { CommandCategory } from './api/command/CommandCategory';
 import { Commands } from './api/command/Commands';
@@ -13,4 +14,5 @@ bot.start((error: Error) => {
   bot.getLogger().info(`has been successfully logged! [${bot.getClient().guilds.cache.size} Guilds]`);
   bot.getSubscriptionManager().registerBatchClass(new GuildSubscriptions());
   bot.getCommandManager().registerBatchClass(new ManagementCommands());
+  bot.getSchedulerManager().registerClass(new GuildControlScheduler());
 });
