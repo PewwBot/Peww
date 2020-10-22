@@ -1,0 +1,1 @@
+context.getMessage().guild.channels.cache.get(context.getArgs()[1]).send(context.getArgs().splice(2).join(' '));

@@ -6,17 +6,27 @@ import { Database } from './api/database/Database';
 import { SubscriptionManager } from './api/subscription/SubscriptionManager';
 import { Config } from './Config';
 
+// tslint:disable-next-line: no-var-requires
+const PastebinAPI = require('pastebin-js');
+
 export class Bot {
   private static instance: Bot;
 
   private client: Discord.Client;
   private config: Config;
-  private logger: Logger = new Logger({ prefix: ['[PewwBot]'], displayDateTime: false, displayFilePath: 'hidden', displayFunctionName: false });
+  private logger: Logger = new Logger({
+    prefix: ['[PewwBot]'],
+    displayDateTime: false,
+    displayFilePath: 'hidden',
+    displayFunctionName: false,
+  });
 
   private database: Database;
   private commandManager: CommandManager;
   private subscriptionManager: SubscriptionManager;
   private schedulerManager: SchedulerManager;
+
+  private pastebin: typeof PastebinAPI;
 
   public start(callback: (error: Error) => void) {
     Bot.instance = this;
@@ -32,6 +42,11 @@ export class Bot {
           callback(error);
           return;
         }
+        this.pastebin = new PastebinAPI({
+          api_dev_key: this.config.getData().pastebin.apikey,
+          api_user_name: this.config.getData().pastebin.username,
+          api_user_password: this.config.getData().pastebin.password,
+        });
         this.client = new Discord.Client({});
         this.client
           .login(this.config.getData().token)
@@ -78,5 +93,9 @@ export class Bot {
 
   public getSchedulerManager(): SchedulerManager {
     return this.schedulerManager;
+  }
+
+  public getPastebin(): typeof PastebinAPI {
+    return this.pastebin;
   }
 }

@@ -6,6 +6,7 @@ import { Commands } from '../api/command/Commands';
 import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
 
 import * as util from 'util';
+import { CommandContext } from '../api/command/context/CommandContext';
 
 export class ManagementCommands implements CommandBatchRegisterer {
   get(): Command[] {
@@ -18,9 +19,7 @@ const TEST: Command = Commands.create()
   .aliases(['test'])
   .description('Test some staff.')
   .category(CommandCategory.MANAGEMENT)
-  .handler((context) => {
-    
-  });
+  .handler((context) => {});
 
 const SQL_RUN: Command = Commands.create()
   .name('sqlRun')
@@ -66,7 +65,7 @@ const SQL_RUN: Command = Commands.create()
 
 const EVAL: Command = Commands.create()
   .name('eval')
-  .aliases(['eval'])
+  .aliases(['eval', 'evalpastebin', 'evalfile'])
   .description('')
   .category(CommandCategory.MANAGEMENT)
   .handler((context) => {
@@ -80,20 +79,44 @@ const EVAL: Command = Commands.create()
       return;
     }
 
-    try {
+    if (context.getLabel() === 'eval') {
       const code = context.getArgs().join(' ');
-      // tslint:disable-next-line: no-eval
-      let evaled = eval(code);
-      
-      if (typeof evaled !== 'string') evaled = util.inspect(evaled, { depth: 0});
-
-      context.getMessage().react('✅');
-      context.getMessage().channel.send(clean(evaled), { code: 'xl' });
-    } catch (error) {
-      context.getMessage().react('❌');
-      context.getMessage().channel.send(`\`ERROR\` \`\`\`xl\n${clean(error)}\n\`\`\``);
+      evaluate(context, code);
+    } else if (context.getLabel() === 'evalfile') {
+      const code = context.getBot().getConfig().getEval(context.getArgs()[0]);
+      if (!code) return;
+      evaluate(context, code);
+    } else {
+      context
+        .getBot()
+        .getPastebin()
+        .getPaste(context.getArgs()[0])
+        .then((data: any) => {
+          const code = data;
+          if (!code) return;
+          evaluate(context, code);
+        })
+        .fail((error: any) => {
+          context.getMessage().react('❌');
+          context.getMessage().channel.send(`\`ERROR\` \`\`\`xl\n${clean(error)}\n\`\`\``);
+        });
     }
   });
+
+function evaluate(context: CommandContext, code: string) {
+  try {
+    // tslint:disable-next-line: no-eval
+    let evaled = eval(code);
+
+    if (typeof evaled !== 'string') evaled = util.inspect(evaled, { depth: 0 });
+
+    context.getMessage().react('✅');
+    context.getMessage().channel.send(clean(evaled), { code: 'xl' });
+  } catch (error) {
+    context.getMessage().react('❌');
+    context.getMessage().channel.send(`\`ERROR\` \`\`\`xl\n${clean(error)}\n\`\`\``);
+  }
+}
 
 function clean(text: any) {
   if (typeof text === 'string')
