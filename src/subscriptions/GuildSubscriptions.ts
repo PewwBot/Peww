@@ -2,14 +2,13 @@ import * as Discord from 'discord.js';
 import { Bot } from './../Bot';
 import { SubscriptionBatchRegisterer } from './../api/subscription/SubscriptionBatchRegisterer';
 
-import * as util from 'util';
 import { Subscription } from '../api/subscription/Subscription';
 import { Subscriptions } from '../api/subscription/Subscriptions';
 import { GuildEntity } from '../api/database/entity/GuildEntity';
 
 export class GuildSubscriptions implements SubscriptionBatchRegisterer {
   get(): Subscription<any>[] {
-    return [GUILD_CREATE];
+    return [GUILD_CREATE, GUILD_DELETE];
   }
 }
 
@@ -26,4 +25,12 @@ const GUILD_CREATE: Subscription<'guildCreate'> = Subscriptions.create('guildCre
       await repository.save(guildEntity);
       return;
     }
+  });
+
+const GUILD_DELETE: Subscription<'guildDelete'> = Subscriptions.create('guildDelete')
+  .name('guildDelete')
+  .handler(async (sub, guild) => {
+    const repository = Bot.getInstance().getDatabase().getConnection().getRepository(GuildEntity);
+    const guildEntity = await repository.findOne({ guildId: guild.id });
+    if (guildEntity) repository.remove(guildEntity);
   });
