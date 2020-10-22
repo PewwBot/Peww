@@ -3,10 +3,13 @@ import { Schedulers } from './../api/scheduler/Schedulers';
 import { Scheduler } from '../api/scheduler/Scheduler';
 import { SchedulerRegisterer } from './../api/scheduler/SchedulerRegisterer';
 import { Bot } from '../Bot';
+
+import moment from 'moment';
+
 export class GuildControlScheduler implements SchedulerRegisterer {
   get(): Scheduler {
     return Schedulers.create('GuildControl')
-      .ms(900000)
+      .msMoment(moment.duration(15, 'minutes'))
       .handler(async () => {
         const queryRunner = Bot.getInstance().getDatabase().getConnection().createQueryRunner();
         await queryRunner.connect();

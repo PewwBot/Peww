@@ -1,5 +1,8 @@
 import { Scheduler } from './Scheduler';
 import { SchedulerImpl } from './SchedulerImpl';
+
+import moment from 'moment';
+
 export class SchedulerBuilder {
   private data: {
     name?: string;
@@ -21,6 +24,11 @@ export class SchedulerBuilder {
 
   public ms(ms: number): SchedulerBuilder {
     this.data.ms = ms;
+    return this;
+  }
+
+  public msMoment(ms: moment.Duration): SchedulerBuilder {
+    this.data.ms = ms.milliseconds();
     return this;
   }
 

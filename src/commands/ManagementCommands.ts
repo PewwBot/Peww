@@ -9,9 +9,18 @@ import * as util from 'util';
 
 export class ManagementCommands implements CommandBatchRegisterer {
   get(): Command[] {
-    return [SQL_RUN, EVAL];
+    return [TEST, SQL_RUN, EVAL];
   }
 }
+
+const TEST: Command = Commands.create()
+  .name('test')
+  .aliases(['test'])
+  .description('Test some staff.')
+  .category(CommandCategory.MANAGEMENT)
+  .handler((context) => {
+    
+  });
 
 const SQL_RUN: Command = Commands.create()
   .name('sqlRun')

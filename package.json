@@ -64,6 +64,8 @@
     "discord.js": "^12.3.1",
     "fs": "0.0.1-security",
     "mariadb": "^2.5.0",
+    "moment": "^2.29.1",
+    "moment-jdateformatparser": "^1.2.1",
     "path": "^0.12.7",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
