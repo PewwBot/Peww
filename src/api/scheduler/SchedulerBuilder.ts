@@ -28,7 +28,7 @@ export class SchedulerBuilder {
   }
 
   public msMoment(ms: moment.Duration): SchedulerBuilder {
-    this.data.ms = ms.milliseconds();
+    this.data.ms = ms.asMilliseconds();
     return this;
   }
 
