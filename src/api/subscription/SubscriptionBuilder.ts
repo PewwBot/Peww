@@ -3,6 +3,9 @@ import { Predicate, PredicateType } from '../../utils/Predicate';
 import { Subscription } from './Subscription';
 import { SubscriptionPredicate } from './SubscriptionPredicate';
 import { SubscriptionImpl } from './SubscriptionImpl';
+import { Requirement } from '../../utils/Requirement';
+import { Group } from '../../utils/Group';
+import { deprecate } from 'util';
 
 export class SubscriptionBuilder<K extends keyof Discord.ClientEvents> {
   private readonly event: K;
@@ -26,10 +29,19 @@ export class SubscriptionBuilder<K extends keyof Discord.ClientEvents> {
     return this;
   }
 
-  public filter(predicate: (sub: Subscription<K>, ...args: Discord.ClientEvents[K]) => boolean): SubscriptionBuilder<K> {
+  public filter(
+    predicate: (sub: Subscription<K>, ...args: Discord.ClientEvents[K]) => boolean
+  ): SubscriptionBuilder<K> {
     this.data.predicates.push(predicate);
     return this;
   }
+
+  /*public req(requirement: Requirement<Group<Subscription<K>, Discord.ClientEvents[K]>>): SubscriptionBuilder<K> {
+    this.data.predicates.push((sub: Subscription<K>, ...args: Discord.ClientEvents[K]) => {
+      return requirement.control(new Group(sub, args));
+    });
+    return this;
+  }*/
 
   public handler(handler: (sub: Subscription<K>, ...args: Discord.ClientEvents[K]) => void): Subscription<K> {
     return new SubscriptionImpl<K>(this.event, this.data.name, this.data.predicates, handler);

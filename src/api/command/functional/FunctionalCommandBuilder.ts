@@ -3,6 +3,7 @@ import { CommandCategory } from '../CommandCategory';
 import { CommandContext } from '../context/CommandContext';
 import { FunctionalCommand } from './FunctionalCommand';
 import { Predicate } from '../../../utils/Predicate';
+import { Requirement } from '../../../utils/Requirement';
 
 export class FunctionalCommandBuilder {
   private data: {
@@ -41,6 +42,15 @@ export class FunctionalCommandBuilder {
 
   public filter(predicate: (context: CommandContext) => boolean): FunctionalCommandBuilder {
     this.data.predicates.push(Predicate.of(predicate));
+    return this;
+  }
+
+  public req(requirement: Requirement<CommandContext>): FunctionalCommandBuilder {
+    this.data.predicates.push(
+      Predicate.of((context) => {
+        return requirement.control(context);
+      })
+    );
     return this;
   }
 
