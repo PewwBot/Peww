@@ -1,3 +1,4 @@
+import { SchedulerManager } from './api/scheduler/SchedulerManager';
 import * as Discord from 'discord.js';
 import { Logger } from 'tslog';
 import { CommandManager } from './api/command/CommandManager';
@@ -10,11 +11,12 @@ export class Bot {
 
   private client: Discord.Client;
   private config: Config;
-  private logger: Logger = new Logger({ prefix: ['[PewwBot]'], displayDateTime: false, displayFilePath: 'hidden' });
+  private logger: Logger = new Logger({ prefix: ['[PewwBot]'], displayDateTime: false, displayFilePath: 'hidden', displayFunctionName: false });
 
   private database: Database;
   private commandManager: CommandManager;
   private subscriptionManager: SubscriptionManager;
+  private schedulerManager: SchedulerManager;
 
   public start(callback: (error: Error) => void) {
     Bot.instance = this;
@@ -36,6 +38,7 @@ export class Bot {
           .then((_value) => {
             this.subscriptionManager = new SubscriptionManager();
             this.commandManager = new CommandManager();
+            this.schedulerManager = new SchedulerManager();
             callback(null);
           })
           .catch((error: Error) => {
@@ -71,5 +74,9 @@ export class Bot {
 
   public getSubscriptionManager(): SubscriptionManager {
     return this.subscriptionManager;
+  }
+
+  public getSchedulerManager(): SchedulerManager {
+    return this.schedulerManager;
   }
 }
