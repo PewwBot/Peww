@@ -19,13 +19,30 @@ export class Config {
   public load(callback: (error: Error) => void) {
     try {
       this.data = JSON.parse(fs.readFileSync(path.join(__dirname, 'config/config.json'), 'utf-8'));
-      fs.readdirSync(path.join(__dirname, 'evaluates/')).filter((file) => file.endsWith('.epew')).forEach((file) =>
-        this.evalFiles.set(file.replace('.epew', ''), fs.readFileSync(path.join(__dirname, 'evaluates/' + file), 'utf-8'))
-      );
+      fs.readdirSync(path.join(__dirname, 'evaluates/'))
+        .filter((file) => file.endsWith('.epew'))
+        .forEach((file) =>
+          this.evalFiles.set(
+            file.replace('.epew', ''),
+            fs.readFileSync(path.join(__dirname, 'evaluates/' + file), 'utf-8')
+          )
+        );
       callback(null);
     } catch (error) {
       callback(error);
     }
+  }
+
+  public reloadEval() {
+    this.evalFiles = new Map();
+    fs.readdirSync(path.join(__dirname, 'evaluates/'))
+      .filter((file) => file.endsWith('.epew'))
+      .forEach((file) =>
+        this.evalFiles.set(
+          file.replace('.epew', ''),
+          fs.readFileSync(path.join(__dirname, 'evaluates/' + file), 'utf-8')
+        )
+      );
   }
 
   public getData(): ConfigType {

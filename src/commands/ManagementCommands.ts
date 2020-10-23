@@ -66,7 +66,7 @@ const SQL_RUN: Command = Commands.create()
 const EVAL: Command = Commands.create()
   .name('eval')
   .aliases(['eval', 'evalpastebin', 'evalfile'])
-  .description('')
+  .description('used to run code.')
   .category(CommandCategory.MANAGEMENT)
   .handler((context) => {
     if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
@@ -101,6 +101,20 @@ const EVAL: Command = Commands.create()
           context.getMessage().channel.send(`\`ERROR\` \`\`\`xl\n${clean(error)}\n\`\`\``);
         });
     }
+  });
+
+const EVAL_RELOAD: Command = Commands.create()
+  .name('evalReload')
+  .aliases(['evalreload'])
+  .description('the code is used to refresh files in the eval system.')
+  .category(CommandCategory.MANAGEMENT)
+  .handler((context) => {
+    if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
+      context.getMessage().delete();
+      return;
+    }
+    context.getBot().getConfig().reloadEval();
+    context.getMessage().react('✅');
   });
 
 function evaluate(context: CommandContext, code: string) {
