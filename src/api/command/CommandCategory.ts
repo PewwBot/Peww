@@ -1,5 +1,6 @@
 export class CommandCategory {
   public static readonly MANAGEMENT = new CommandCategory('MANAGEMENT');
+  public static readonly SETTING = new CommandCategory('SETTING');
   public static readonly NONE = new CommandCategory('NONE');
 
   private name: string;

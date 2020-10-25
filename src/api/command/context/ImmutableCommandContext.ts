@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 import { Bot } from '../../../Bot';
+import { EmbedBuilder } from '../../embed/EmbedBuilder';
 import { CommandContext } from './CommandContext';
 
 export class ImmutableCommandContext implements CommandContext {
@@ -37,5 +38,9 @@ export class ImmutableCommandContext implements CommandContext {
 
   getArgs(): string[] {
     return this.args;
+  }
+
+  createEmbedBuilder(data?: Discord.MessageEmbed | Discord.MessageEmbedOptions): EmbedBuilder {
+    return new EmbedBuilder(data);
   }
 }

@@ -10,7 +10,7 @@ import { CommandContext } from '../api/command/context/CommandContext';
 
 export class ManagementCommands implements CommandBatchRegisterer {
   get(): Command[] {
-    return [TEST, SQL_RUN, EVAL];
+    return [TEST, SQL_RUN, EVAL, EVAL_RELOAD];
   }
 }
 
@@ -19,7 +19,9 @@ const TEST: Command = Commands.create()
   .aliases(['test'])
   .description('Test some staff.')
   .category(CommandCategory.MANAGEMENT)
-  .handler((context) => {});
+  .handler(async (context) => {
+    
+  });
 
 const SQL_RUN: Command = Commands.create()
   .name('sqlRun')
@@ -68,7 +70,7 @@ const EVAL: Command = Commands.create()
   .aliases(['eval', 'evalpastebin', 'evalfile'])
   .description('used to run code.')
   .category(CommandCategory.MANAGEMENT)
-  .handler((context) => {
+  .handler(async (context) => {
     if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
       context.getMessage().delete();
       return;
@@ -81,20 +83,20 @@ const EVAL: Command = Commands.create()
 
     if (context.getLabel() === 'eval') {
       const code = context.getArgs().join(' ');
-      evaluate(context, code);
+      await evaluate(context, code);
     } else if (context.getLabel() === 'evalfile') {
       const code = context.getBot().getConfig().getEval(context.getArgs()[0]);
       if (!code) return;
-      evaluate(context, code);
+      await evaluate(context, code);
     } else {
       context
         .getBot()
         .getPastebin()
         .getPaste(context.getArgs()[0])
-        .then((data: any) => {
+        .then(async (data: any) => {
           const code = data;
           if (!code) return;
-          evaluate(context, code);
+          await evaluate(context, code);
         })
         .fail((error: any) => {
           context.getMessage().react('❌');
@@ -117,10 +119,10 @@ const EVAL_RELOAD: Command = Commands.create()
     context.getMessage().react('✅');
   });
 
-function evaluate(context: CommandContext, code: string) {
+async function evaluate(context: CommandContext, code: string) {
   try {
     // tslint:disable-next-line: no-eval
-    let evaled = eval(code);
+    let evaled = await eval(code);
 
     if (typeof evaled !== 'string') evaled = util.inspect(evaled, { depth: 0 });
 

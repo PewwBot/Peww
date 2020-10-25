@@ -14,19 +14,36 @@ export class GuildControlScheduler implements SchedulerRegisterer {
         const queryRunner = Bot.getInstance().getDatabase().getConnection().createQueryRunner();
         await queryRunner.connect();
         const guildEntities = await queryRunner.manager.find(GuildEntity);
-        if (!guildEntities || guildEntities.length < 1) return;
         const needRemoveGuilds: GuildEntity[] = [];
-        for (const guildEntity of guildEntities) {
-          if (Bot.getInstance().getClient().guilds.cache.get(guildEntity.guildId)) continue;
-          needRemoveGuilds.push(guildEntity);
+        const needAddGuilds: GuildEntity[] = [];
+        if (!(!guildEntities || guildEntities.length < 1)) {
+          for (const guildEntity of guildEntities) {
+            if (Bot.getInstance().getClient().guilds.cache.get(guildEntity.guildId)) continue;
+            needRemoveGuilds.push(guildEntity);
+          }
         }
-        if (needRemoveGuilds.length < 1) {
+        for (const guild of Bot.getInstance().getClient().guilds.cache.values()) {
+          if (
+            guildEntities.some((guildEntity) => {
+              return guildEntity.guildId === guild.id;
+            })
+          )
+            continue;
+          const newGuildEntity = new GuildEntity();
+          newGuildEntity.guildId = guild.id;
+          newGuildEntity.ownerId = guild.ownerID;
+          newGuildEntity.premium = false;
+          newGuildEntity.customPrefix = [];
+          needAddGuilds.push(newGuildEntity);
+        }
+        if (needRemoveGuilds.length < 1 && needAddGuilds.length < 1) {
           queryRunner.release();
           return;
         }
         await queryRunner.startTransaction();
         try {
-          await queryRunner.manager.remove(needRemoveGuilds);
+          if (needRemoveGuilds.length > 0) await queryRunner.manager.remove(needRemoveGuilds);
+          if (needAddGuilds.length > 0) await queryRunner.manager.save(needAddGuilds);
           await queryRunner.commitTransaction();
         } catch (error) {
           Bot.getInstance().getLogger().prettyError(error);

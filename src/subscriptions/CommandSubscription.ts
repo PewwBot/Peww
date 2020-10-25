@@ -6,16 +6,20 @@ import { Bot } from '../Bot';
 import { Command } from '../api/command/Command';
 import { ImmutableCommandContext } from '../api/command/context/ImmutableCommandContext';
 import { Subscription } from '../api/subscription/Subscription';
+import { Guild } from '../api/cache/Guild';
 
 export class CommandSubscription implements SubscriptionRegisterer<'message'> {
   get(): Subscription<'message'> {
     return Subscriptions.create('message')
       .name('Command')
       .filter((sub, message) => message.channel instanceof Discord.TextChannel)
-      .handler((sub, message) => {
-        if (!(message.channel instanceof Discord.TextChannel)) return;
+      .handler(async (sub, message) => {
         let prefix = null;
-        for (const thisPrefix of Bot.getInstance().getConfig().getData().prefix) {
+        const allPrefix = Bot.getInstance().getConfig().getData().prefix;
+        allPrefix.push(`<@!${Bot.getInstance().getClient().user.id}> `);
+        const guild = await Bot.getInstance().getCacheManager().getGuild(message.guild.id, true);
+        if (guild && guild.getCustomPrefix().length > 0) allPrefix.push(...guild.getCustomPrefix());
+        for (const thisPrefix of allPrefix) {
           if (message.content.startsWith(thisPrefix)) prefix = thisPrefix;
         }
         if (!prefix) return;

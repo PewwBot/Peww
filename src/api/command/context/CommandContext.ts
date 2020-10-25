@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 import { Bot } from '../../../Bot';
+import { EmbedBuilder } from '../../embed/EmbedBuilder';
 
 export interface CommandContext {
   getBot(): Bot;
@@ -13,4 +14,6 @@ export interface CommandContext {
   reply(...messages: string[]): void;
 
   getArgs(): string[];
+
+  createEmbedBuilder(): EmbedBuilder;
 }
