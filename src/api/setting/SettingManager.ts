@@ -7,7 +7,8 @@ export class SettingManager {
 
   constructor() {}
 
-  public get<T, V, M>(name: string): Setting<T, V, M> {
+  public get<T, V, M>(name: string): Setting<T, V, M> | undefined {
+    if (!this.data.has(name)) return null;
     return this.data.get(name);
   }
 
@@ -37,6 +38,12 @@ export class SettingManager {
   public registerAllClass(...settingRegisterers: SettingRegisterer<any, any, any>[]): void {
     settingRegisterers.forEach((settingRegisterer) => {
       this.registerClass(settingRegisterer);
+    });
+  }
+
+  public registerAllBatchClass(...settingBatchRegisterers: SettingBatchRegisterer[]): void {
+    settingBatchRegisterers.forEach((settingBatchRegisterer) => {
+      this.registerBatchClass(settingBatchRegisterer);
     });
   }
 

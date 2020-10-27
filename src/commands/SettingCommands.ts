@@ -2,6 +2,7 @@ import { Command } from '../api/command/Command';
 import { CommandBatchRegisterer } from '../api/command/CommandBatchRegisterer';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { Commands } from '../api/command/Commands';
+import { Bot } from '../Bot';
 
 export class SettingCommands implements CommandBatchRegisterer {
   get(): Command[] {
@@ -29,6 +30,16 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
         return;
       }
+      const selectedSetting: Setting = context.getArgs()[1].toLocaleLowerCase('tr-TR') as Setting;
+      if (!selectedSetting) {
+        context.getMessage().channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
+        return;
+      }
+      if (!settings.includes(selectedSetting)) {
+        context.getMessage().channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
+        return;
+      }
+      Bot.getInstance().getSettingManager().get(selectedSetting).help(context);
     } else {
 
     }

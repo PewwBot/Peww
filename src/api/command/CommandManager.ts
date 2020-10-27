@@ -44,6 +44,12 @@ export class CommandManager {
     });
   }
 
+  public registerAllBatchClass(...commandBatchRegisterers: CommandBatchRegisterer[]): void {
+    commandBatchRegisterers.forEach((commandBatchRegisterer) => {
+      this.registerBatchClass(commandBatchRegisterer);
+    });
+  }
+
   public unregister(command: Command): void {
     this.commands = this.commands.filter((cmd) => cmd.name !== command.name);
   }

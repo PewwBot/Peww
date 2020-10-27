@@ -40,6 +40,12 @@ export class SubscriptionManager {
     });
   }
 
+  public registerAllBatchClass(...subscriptionBatchRegisterers: SubscriptionBatchRegisterer[]): void {
+    subscriptionBatchRegisterers.forEach((subscriptionBatchRegisterer) => {
+      this.registerBatchClass(subscriptionBatchRegisterer);
+    });
+  }
+
   public unregister(subscription: Subscription<any>): void {
     const sub = this.getSubscription(subscription.name);
     if (sub) sub.unregister();

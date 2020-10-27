@@ -1,10 +1,9 @@
 import { PrefixSetting } from './settings/PrefixSetting';
 import { GuildControlScheduler } from './schedulers/GuildControlScheduler';
 import { ManagementCommands } from './commands/ManagementCommands';
-import { CommandCategory } from './api/command/CommandCategory';
-import { Commands } from './api/command/Commands';
 import { Bot } from './Bot';
 import { GuildSubscriptions } from './subscriptions/GuildSubscriptions';
+import { SettingCommands } from './commands/SettingCommands';
 
 const bot = new Bot();
 bot.start((error: Error) => {
@@ -14,7 +13,7 @@ bot.start((error: Error) => {
   }
   bot.getLogger().info(`has been successfully logged! [${bot.getClient().guilds.cache.size} Guilds]`);
   bot.getSubscriptionManager().registerBatchClass(new GuildSubscriptions());
-  bot.getCommandManager().registerBatchClass(new ManagementCommands());
+  bot.getCommandManager().registerAllBatchClass(new ManagementCommands(), new SettingCommands());
   bot.getSchedulerManager().registerClass(new GuildControlScheduler());
   bot.getSettingManager().registerClass(new PrefixSetting());
 });

@@ -39,6 +39,12 @@ export class SchedulerManager {
     });
   }
 
+  public registerAllBatchClass(...schedulerBatchRegisterers: SchedulerBatchRegisterer[]): void {
+    schedulerBatchRegisterers.forEach((schedulerBatchRegisterer) => {
+      this.registerBatchClass(schedulerBatchRegisterer);
+    });
+  }
+
   public unregister(scheduler: Scheduler): void {
     const sch = this.getScheduler(scheduler.name);
     if (sch) sch.unregister();
