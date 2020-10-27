@@ -9,6 +9,7 @@ import { CacheManager } from './api/cache/CacheManager';
 import * as fs from 'fs';
 import * as path from 'path';
 import { LocaleManager } from './api/locale/LocaleManager';
+import { SettingManager } from './api/setting/SettingManager';
 
 // tslint:disable-next-line: no-var-requires
 const PastebinAPI = require('pastebin-js');
@@ -33,6 +34,7 @@ export class Bot {
   private commandManager: CommandManager;
   private subscriptionManager: SubscriptionManager;
   private schedulerManager: SchedulerManager;
+  private settingManager: SettingManager;
 
   private pastebin: typeof PastebinAPI;
 
@@ -68,6 +70,7 @@ export class Bot {
             .login(this.config.getData().token)
             .then((_value) => {
               // this.loadAllGuilds();
+              this.settingManager = new SettingManager();
               this.subscriptionManager = new SubscriptionManager();
               this.commandManager = new CommandManager();
               this.schedulerManager = new SchedulerManager();
@@ -129,6 +132,10 @@ export class Bot {
 
   public getSchedulerManager(): SchedulerManager {
     return this.schedulerManager;
+  }
+
+  public getSettingManager(): SettingManager {
+    return this.settingManager;
   }
 
   public getPastebin(): typeof PastebinAPI {
