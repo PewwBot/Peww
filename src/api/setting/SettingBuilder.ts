@@ -21,7 +21,7 @@ export class SettingBuilder<T, V> {
   public handler(handler: (t: T, v: V) => void): Setting<T, V> {
     return {
       name: this.data.name,
-      change: handler
+      accept: handler
     };
   }
 }
