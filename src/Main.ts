@@ -1,3 +1,4 @@
+import { PrefixSetting } from './settings/PrefixSetting';
 import { GuildControlScheduler } from './schedulers/GuildControlScheduler';
 import { ManagementCommands } from './commands/ManagementCommands';
 import { CommandCategory } from './api/command/CommandCategory';
@@ -15,4 +16,5 @@ bot.start((error: Error) => {
   bot.getSubscriptionManager().registerBatchClass(new GuildSubscriptions());
   bot.getCommandManager().registerBatchClass(new ManagementCommands());
   bot.getSchedulerManager().registerClass(new GuildControlScheduler());
+  bot.getSettingManager().registerClass(new PrefixSetting());
 });
