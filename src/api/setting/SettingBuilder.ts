@@ -1,27 +1,35 @@
+import { SettingChangeStatus } from './SettingChangeStatus';
 import { Setting } from './Setting';
 
-export class SettingBuilder<T, V> {
+export class SettingBuilder<T, V, M> {
   private data: {
     name?: string;
+    get?: (t: T) => Promise<V>;
   } = {};
 
   constructor(name: string) {
     this.data.name = name;
   }
 
-  public static newBuilder<T, V>(name: string): SettingBuilder<T, V> {
+  public static newBuilder<T, V, M>(name: string): SettingBuilder<T, V, M> {
     return new SettingBuilder(name);
   }
 
-  public name(name: string): SettingBuilder<T, V> {
+  public name(name: string): SettingBuilder<T, V, M> {
     this.data.name = name;
     return this;
   }
 
-  public handler(handler: (t: T, v: V) => void): Setting<T, V> {
+  public getHandler(handler: (t: T) => Promise<V | undefined>): SettingBuilder<T, V, M> {
+    this.data.get = handler;
+    return this;
+  }
+
+  public changeHandler(handler: (t: T, v: V, mode?: M) => Promise<SettingChangeStatus<V>>): Setting<T, V, M> {
     return {
       name: this.data.name,
-      accept: handler
+      get: this.data.get,
+      change: handler,
     };
   }
 }
