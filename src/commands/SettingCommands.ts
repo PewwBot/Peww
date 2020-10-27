@@ -11,11 +11,25 @@ export class SettingCommands implements CommandBatchRegisterer {
 
 type Setting = 'prefix';
 
+const settings: Setting[] = ['prefix'] 
+
 const SETTING_COMMAND_MAIN: Command = Commands.create()
   .name('settingMain')
   .description('')
   .aliases(['setting', 'ayar'])
   .category(CommandCategory.SETTING)
   .handler((context) => {
-    
+    if (context.getArgs().length < 1) {
+      context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
+      return;
+    }
+
+    if (context.getArgs()[0] === 'help') {
+      if (context.getArgs().length < 2) {
+        context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
+        return;
+      }
+    } else {
+
+    }
   });
