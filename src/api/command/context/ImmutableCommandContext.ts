@@ -28,6 +28,10 @@ export class ImmutableCommandContext implements CommandContext {
     return this.prefix;
   }
 
+  getOrganizedPrefix(): string {
+    return this.prefix.startsWith('<@!') ? this.getBot().getConfig().getData().prefix[0] : this.prefix;
+  }
+
   getMessage(): Discord.Message {
     return this.message;
   }

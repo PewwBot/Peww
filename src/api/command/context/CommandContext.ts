@@ -9,6 +9,8 @@ export interface CommandContext {
 
   getPrefix(): string;
 
+  getOrganizedPrefix(): string;
+
   getMessage(): Discord.Message;
 
   reply(...messages: string[]): void;
