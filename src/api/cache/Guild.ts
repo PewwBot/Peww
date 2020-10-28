@@ -1,12 +1,14 @@
 import * as Discord from 'discord.js';
 import { Bot } from '../../Bot';
 import { GuildEntity } from '../database/entity/GuildEntity';
+import { GuildSettings } from '../database/entity/GuildSettingEntity';
 
 export class Guild {
   guildId: string;
   ownerId: string;
   premium: boolean = false;
   customPrefix: string[] = [];
+  settings: GuildSettings[] = [];
 
   constructor(args?: { guildId: string; ownerId: string; premium: boolean; customPrefix: string[] }) {
     if (!args) return;
@@ -28,7 +30,7 @@ export class Guild {
         premium: false,
         customPrefix: [],
       });
-      if (!await guild.load()) {
+      if (!(await guild.load())) {
         if (createWhenNotCreated) {
           const guildEntity = new GuildEntity();
           guildEntity.guildId = guild.guildId;
@@ -55,15 +57,27 @@ export class Guild {
       this.ownerId = guildEntityFromDatabase.ownerId;
       this.premium = guildEntityFromDatabase.premium;
       this.customPrefix = guildEntityFromDatabase.customPrefix;
-      return true;
+      return await this.loadSettings();
     }
     return false;
   }
 
+  public async loadSettings(): Promise<boolean> {
+    const repository = Bot.getInstance().getDatabase().getConnection().getRepository(GuildSettings);
+    const settings = await repository.find({ guildId: this.getGuildId() });
+    if (settings) {
+      for (const setting of settings) {
+        this.settings.push(setting);
+      }
+    }
+    return true;
+  }
+
   public async save(): Promise<boolean> {
-    const repository = Bot.getInstance().getDatabase().getConnection().getRepository(GuildEntity);
+    const queryRunner = Bot.getInstance().getDatabase().getConnection().createQueryRunner();
+    await queryRunner.connect();
     try {
-      let guildEntity = await repository.findOne({ guildId: this.getGuildId() });
+      let guildEntity = await queryRunner.manager.findOne(GuildEntity, { guildId: this.getGuildId() });
       if (!guildEntity) {
         guildEntity = new GuildEntity();
         guildEntity.guildId = this.guildId;
@@ -71,8 +85,20 @@ export class Guild {
       guildEntity.ownerId = this.ownerId;
       guildEntity.premium = this.premium;
       guildEntity.customPrefix = this.customPrefix;
-      await repository.save(guildEntity);
-      return true;
+      await queryRunner.startTransaction();
+      let ret = true;
+      try {
+        await queryRunner.manager.save(guildEntity);
+        if (this.settings.length > 0) await queryRunner.manager.save(this.settings);
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        Bot.getInstance().getLogger().prettyError(error);
+        await queryRunner.rollbackTransaction();
+        ret = false;
+      } finally {
+        await queryRunner.release();
+      }
+      return ret;
     } catch (error) {
       return false;
     }

@@ -1,0 +1,72 @@
+import { Project, CompileStream } from 'gulp-typescript';
+import { Duplex, PassThrough, Readable } from 'stream';
+import { Reporter } from 'gulp-typescript/release/reporter';
+
+type Callback = () => void;
+
+/**
+ * This is used to ensure that each project object is not busy when it is to be used
+ * This prevents the annoying:
+ * "Error: gulp-typescript: A project cannot be used in two compilations
+ * at the same time. Create multiple projects with createProject instead."
+ * @param project The project
+ * @param reporter The reporter for the project
+ * @returns {CompileStream} compiled project stream
+ */
+export function tsCompileQStream(project: Project, reporter?: Reporter): CompileStream {
+  return new (class extends PassThrough implements CompileStream {
+    public readonly js: Duplex = this;
+    public readonly dts: Duplex = new PassThrough();
+    private transformStream: CompileStream;
+    private signal: Callback;
+
+    constructor() {
+      super({ objectMode: true });
+      this.on('pipe', this.checkExistingFlow);
+    }
+
+    private checkExistingFlow(src: Readable) {
+      this.removeListener('pipe', this.checkExistingFlow);
+      src.unpipe(this);
+
+      this.signal = CompileScheduler.scheduleCompilation(project, () => {
+        this.transformStream = project(reporter).on('finish', () => this.signal());
+
+        const compileStream = src.pipe(this.transformStream);
+        compileStream.js.pipe(this.js);
+        compileStream.dts.pipe(this.dts);
+      });
+    }
+  })();
+}
+
+class CompileScheduler {
+  private static compileGateKeeper: Map<Project, Callback[]> = new Map();
+
+  public static scheduleCompilation(project: Project, beginCompilation: Callback): Callback {
+    let projectQueue = CompileScheduler.compileGateKeeper.get(project);
+    if (!projectQueue) {
+      projectQueue = [];
+      CompileScheduler.compileGateKeeper.set(project, projectQueue);
+    }
+    const ret = CompileScheduler.startNext(project);
+    if (projectQueue.length) {
+      projectQueue.push(beginCompilation);
+    } else {
+      projectQueue.push(ret);
+      beginCompilation();
+    }
+    return ret;
+  }
+
+  private static startNext(project: Project): Callback {
+    return () => {
+      const projectQueue = CompileScheduler.compileGateKeeper.get(project);
+      if (projectQueue.length) {
+        const nextCompilation = projectQueue.shift();
+        nextCompilation();
+      }
+    };
+  }
+  private constructor() {}
+}

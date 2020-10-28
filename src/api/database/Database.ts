@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Connection, createConnection, ConnectionOptions } from 'typeorm';
+import { Bot } from '../../Bot';
 
 export type Mode = 'test' | 'normal';
 
@@ -9,7 +10,7 @@ export class Database {
   public load(mode: Mode = 'normal', callback: (error: Error) => void) {
     createConnection({
       type: 'sqlite',
-      database: __dirname + '../../../data.db',
+      database: Bot.getInstance().getMainFolder() + 'data.db',
       entities: [
         __dirname + '/entity/*.js'
       ],

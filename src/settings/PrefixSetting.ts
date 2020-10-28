@@ -6,11 +6,11 @@ import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { Bot } from '../Bot';
 
-export type PrefixMod = 'set' | 'add' | 'remove' | 'clear' | 'get';
+export type PrefixMode = 'set' | 'add' | 'remove' | 'clear' | 'get';
 
-export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] | undefined, PrefixMod> {
-  get(): Setting<Discord.Guild, string[] | undefined, PrefixMod> {
-    return Settings.create<Discord.Guild, string[] | undefined, PrefixMod>('prefix')
+export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] | undefined, PrefixMode> {
+  get(): Setting<Discord.Guild, string[] | undefined, PrefixMode> {
+    return Settings.create<Discord.Guild, string[] | undefined, PrefixMode>('prefix')
       .modes('get', 'set', 'add', 'remove', 'clear')
       .getHandler(async (guild) => {
         const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);

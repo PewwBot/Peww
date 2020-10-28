@@ -10,8 +10,8 @@ export class SettingCommands implements CommandBatchRegisterer {
   }
 }
 
-type Setting = 'prefix';
-const settings: Setting[] = ['prefix'];
+type Setting = 'prefix' | 'joinmessage';
+const settings: Setting[] = ['prefix', 'joinmessage'];
 
 const SETTING_COMMAND_MAIN: Command = Commands.create()
   .name('settingMain')
