@@ -57,4 +57,8 @@ export class SettingManager {
     this.data.delete(settingName);
   }
 
+  public getData(): Map<string, Setting<any, any, any>> {
+    return this.data;
+  }
+
 }

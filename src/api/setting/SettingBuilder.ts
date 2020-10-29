@@ -8,11 +8,12 @@ import { EmptyOrganizer } from './organizers/EmptyOrganizer';
 export class SettingBuilder<T, V, M> {
   private data: {
     name?: string;
-    organizer: SettingValueOrganizer<any>;
+    typeOrganizer?: (context: CommandContext) => any;
+    valueOrganizer: SettingValueOrganizer<any>;
     modes?: M[];
     help?: (context: CommandContext) => void;
     get?: (t: T) => Promise<V>;
-  } = { organizer: new EmptyOrganizer() };
+  } = { valueOrganizer: new EmptyOrganizer() };
 
   constructor(name: string) {
     this.data.name = name;
@@ -27,8 +28,13 @@ export class SettingBuilder<T, V, M> {
     return this;
   }
 
-  public organizer(organizer: SettingValueOrganizer<any>): SettingBuilder<T, V, M> {
-    this.data.organizer = organizer;
+  public typeOrganizer(organizer: (context: CommandContext) => any): SettingBuilder<T, V, M> {
+    this.data.typeOrganizer = organizer;
+    return this;
+  }
+
+  public valueOrganizer(organizer: SettingValueOrganizer<any>): SettingBuilder<T, V, M> {
+    this.data.valueOrganizer = organizer;
     return this;
   }
 
@@ -50,7 +56,8 @@ export class SettingBuilder<T, V, M> {
   public changeHandler(handler: (t: T, v: V, mode?: M) => Promise<SettingChangeStatus<V>>): Setting<T, V, M> {
     return {
       name: this.data.name,
-      getValueOrganizer: () => this.data.organizer,
+      typeOrganizer: this.data.typeOrganizer,
+      valueOrganizer: this.data.valueOrganizer,
       getModes: () => {
         return this.data.modes;
       },

@@ -10,9 +10,6 @@ export class SettingCommands implements CommandBatchRegisterer {
   }
 }
 
-type Setting = 'prefix' | 'joinmessage';
-const settings: Setting[] = ['prefix', 'joinmessage'];
-
 const SETTING_COMMAND_MAIN: Command = Commands.create()
   .name('settingMain')
   .description('')
@@ -29,14 +26,14 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
         return;
       }
-      const selectedSetting: Setting = context.getArgs()[1].toLocaleLowerCase('tr-TR') as Setting;
+      const selectedSetting: string = context.getArgs()[1].toLocaleLowerCase('tr-TR');
       if (!selectedSetting) {
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
-      if (!settings.includes(selectedSetting)) {
+      if (![...context.getBot().getSettingManager().getData().keys()].includes(selectedSetting)) {
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
@@ -48,14 +45,14 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
         return;
       }
-      const selectedSetting: Setting = context.getArgs()[0].toLocaleLowerCase('tr-TR') as Setting;
+      const selectedSetting: string = context.getArgs()[0].toLocaleLowerCase('tr-TR');
       if (!selectedSetting) {
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
-      if (!settings.includes(selectedSetting)) {
+      if (![...context.getBot().getSettingManager().getData().keys()].includes(selectedSetting)) {
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
@@ -73,7 +70,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
           );
         return;
       }
-      const changeStatus = await setting.change(context.getMessage().guild, setting.getValueOrganizer().organize(context.getArgs().splice(2)), settingMode);
+      const changeStatus = await setting.change(setting.typeOrganizer(context), setting.valueOrganizer.organize(context.getArgs().splice(2)), settingMode);
       if (changeStatus.isSuccessfully()) {
         context.getMessage().react('✅');
         if (changeStatus.getMessage()) {

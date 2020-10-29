@@ -5,7 +5,9 @@ import { SettingChangeStatus } from './SettingChangeStatus';
 export interface Setting<T, V, M> {
   name: string;
 
-  getValueOrganizer(): SettingValueOrganizer<any>;
+  typeOrganizer: (context: CommandContext) => any;
+
+  valueOrganizer: SettingValueOrganizer<any>;
 
   getModes(): M[];
 

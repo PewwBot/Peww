@@ -14,7 +14,10 @@ export class JoinSetting implements SettingRegisterer<Discord.Guild, string | un
   get(): Setting<Discord.Guild, string | undefined, JoinMode> {
     return Settings.create<Discord.Guild, string | undefined, JoinMode>('joinmessage')
       .modes('get', 'set', 'clear')
-      .organizer(new StringOrganizer())
+      .typeOrganizer((context) => {
+        return context.getMessage().guild;
+      })
+      .valueOrganizer(new StringOrganizer())
       .getHandler(async (guild) => {
         const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
         if (!guildData) return null;
@@ -48,15 +51,15 @@ export class JoinSetting implements SettingRegisterer<Discord.Guild, string | un
           }
         }
         if (data.length < 1)
-          return SettingChangeStatus.of(null, () => '`JoinMessage` ayarını değiştirebilmek için değer belirtmeniz gerekli!');
+          return SettingChangeStatus.of(
+            null,
+            () => '`JoinMessage` ayarını değiştirebilmek için değer belirtmeniz gerekli!'
+          );
         if (mode === 'set') {
           setting.data.value = data;
           if (putNew) guildData.settings.push(setting);
           if (await guildData.save()) {
-            return SettingChangeStatus.of(
-              data,
-              () => `\`JoinMessage\` ayarı \`${data}\` olarak ayarlandı!`
-            );
+            return SettingChangeStatus.of(data, () => `\`JoinMessage\` ayarı \`${data}\` olarak ayarlandı!`);
           }
         }
         return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');

@@ -12,6 +12,9 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
   get(): Setting<Discord.Guild, string[] | undefined, PrefixMode> {
     return Settings.create<Discord.Guild, string[] | undefined, PrefixMode>('prefix')
       .modes('get', 'set', 'add', 'remove', 'clear')
+      .typeOrganizer((context) => {
+        return context.getMessage().guild;
+      })
       .getHandler(async (guild) => {
         const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
         if (!guildData) return null;
