@@ -6,6 +6,7 @@ import { Setting } from '../api/setting/Setting';
 import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { Bot } from '../Bot';
+import { StringOrganizer } from '../api/setting/organizers/StringOrganizer';
 
 export type JoinMode = 'get' | 'set' | 'clear';
 
@@ -13,6 +14,7 @@ export class JoinSetting implements SettingRegisterer<Discord.Guild, string | un
   get(): Setting<Discord.Guild, string | undefined, JoinMode> {
     return Settings.create<Discord.Guild, string | undefined, JoinMode>('joinmessage')
       .modes('get', 'set', 'clear')
+      .organizer(new StringOrganizer())
       .getHandler(async (guild) => {
         const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
         if (!guildData) return null;

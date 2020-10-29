@@ -2,14 +2,17 @@ import { CommandContext } from './../command/context/CommandContext';
 import { SettingChangeStatus } from './SettingChangeStatus';
 import { Setting } from './Setting';
 import { MessageEmbed } from 'discord.js';
+import { SettingValueOrganizer } from './SettingValueOrganizer';
+import { EmptyOrganizer } from './organizers/EmptyOrganizer';
 
 export class SettingBuilder<T, V, M> {
   private data: {
     name?: string;
+    organizer: SettingValueOrganizer<any>;
     modes?: M[];
     help?: (context: CommandContext) => void;
     get?: (t: T) => Promise<V>;
-  } = {};
+  } = { organizer: new EmptyOrganizer() };
 
   constructor(name: string) {
     this.data.name = name;
@@ -21,6 +24,11 @@ export class SettingBuilder<T, V, M> {
 
   public name(name: string): SettingBuilder<T, V, M> {
     this.data.name = name;
+    return this;
+  }
+
+  public organizer(organizer: SettingValueOrganizer<any>): SettingBuilder<T, V, M> {
+    this.data.organizer = organizer;
     return this;
   }
 
@@ -42,6 +50,7 @@ export class SettingBuilder<T, V, M> {
   public changeHandler(handler: (t: T, v: V, mode?: M) => Promise<SettingChangeStatus<V>>): Setting<T, V, M> {
     return {
       name: this.data.name,
+      getValueOrganizer: () => this.data.organizer,
       getModes: () => {
         return this.data.modes;
       },

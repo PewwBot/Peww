@@ -73,7 +73,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
           );
         return;
       }
-      const changeStatus = await setting.change(context.getMessage().guild, context.getArgs().splice(2), settingMode);
+      const changeStatus = await setting.change(context.getMessage().guild, setting.getValueOrganizer().organize(context.getArgs().splice(2)), settingMode);
       if (changeStatus.isSuccessfully()) {
         context.getMessage().react('✅');
         if (changeStatus.getMessage()) {
