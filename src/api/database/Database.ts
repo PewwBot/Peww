@@ -10,7 +10,7 @@ export class Database {
   public load(mode: Mode = 'normal', callback: (error: Error) => void) {
     createConnection({
       type: 'sqlite',
-      database: Bot.getInstance().getMainFolder() + 'data.db',
+      database: Bot.getInstance().getMainFolder() + '/data.db',
       entities: [
         __dirname + '/entity/*.js'
       ],
