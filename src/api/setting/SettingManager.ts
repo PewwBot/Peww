@@ -3,22 +3,22 @@ import { SettingBatchRegisterer } from './SettingBatchRegisterer';
 import { SettingRegisterer } from './SettingRegisterer';
 
 export class SettingManager {
-  private data: Map<string, Setting<any, any, any>> = new Map();
+  private data: Map<string, Setting<any, any>> = new Map();
 
   constructor() {}
 
-  public get<T, V, M>(name: string): Setting<T, V, M> | undefined {
+  public get<T, V>(name: string): Setting<T, V> | undefined {
     if (!this.data.has(name)) return null;
     return this.data.get(name);
   }
 
-  public register<T, V, M>(setting: Setting<T, V, M>): void {
+  public register<T, V>(setting: Setting<T, V>): void {
     if (!this.get(setting.name)) {
       this.data.set(setting.name, setting);
     }
   }
 
-  public registerClass<T, V, M>(settingRegisterer: SettingRegisterer<T, V, M>): void {
+  public registerClass<T, V>(settingRegisterer: SettingRegisterer<T, V>): void {
     const setting = settingRegisterer.get();
     if (!this.get(setting.name)) {
       this.data.set(setting.name, setting);
@@ -31,11 +31,11 @@ export class SettingManager {
     });
   }
 
-  public registerAll(...settings: Setting<any, any, any>[]): void {
+  public registerAll(...settings: Setting<any, any>[]): void {
     settings.forEach((setting) => this.register(setting));
   }
 
-  public registerAllClass(...settingRegisterers: SettingRegisterer<any, any, any>[]): void {
+  public registerAllClass(...settingRegisterers: SettingRegisterer<any, any>[]): void {
     settingRegisterers.forEach((settingRegisterer) => {
       this.registerClass(settingRegisterer);
     });
@@ -47,7 +47,7 @@ export class SettingManager {
     });
   }
 
-  public unregister(setting: Setting<any, any, any>): void {
+  public unregister(setting: Setting<any, any>): void {
     if (!this.data.has(setting.name)) return;
     this.data.delete(setting.name);
   }
@@ -57,7 +57,7 @@ export class SettingManager {
     this.data.delete(settingName);
   }
 
-  public getData(): Map<string, Setting<any, any, any>> {
+  public getData(): Map<string, Setting<any, any>> {
     return this.data;
   }
 

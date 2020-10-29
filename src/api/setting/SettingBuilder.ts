@@ -5,12 +5,12 @@ import { MessageEmbed } from 'discord.js';
 import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { EmptyOrganizer } from './organizers/EmptyOrganizer';
 
-export class SettingBuilder<T, V, M> {
+export class SettingBuilder<T, V> {
   private data: {
     name?: string;
     typeOrganizer?: (context: CommandContext) => any;
     valueOrganizer: SettingValueOrganizer<any>;
-    modes?: M[];
+    modes?: string[];
     help?: (context: CommandContext) => void;
     get?: (t: T) => Promise<V>;
   } = { valueOrganizer: new EmptyOrganizer() };
@@ -19,41 +19,41 @@ export class SettingBuilder<T, V, M> {
     this.data.name = name;
   }
 
-  public static newBuilder<T, V, M>(name: string): SettingBuilder<T, V, M> {
+  public static newBuilder<T, V>(name: string): SettingBuilder<T, V> {
     return new SettingBuilder(name);
   }
 
-  public name(name: string): SettingBuilder<T, V, M> {
+  public name(name: string): SettingBuilder<T, V> {
     this.data.name = name;
     return this;
   }
 
-  public typeOrganizer(organizer: (context: CommandContext) => any): SettingBuilder<T, V, M> {
+  public typeOrganizer(organizer: (context: CommandContext) => any): SettingBuilder<T, V> {
     this.data.typeOrganizer = organizer;
     return this;
   }
 
-  public valueOrganizer(organizer: SettingValueOrganizer<any>): SettingBuilder<T, V, M> {
+  public valueOrganizer(organizer: SettingValueOrganizer<any>): SettingBuilder<T, V> {
     this.data.valueOrganizer = organizer;
     return this;
   }
 
-  public modes(...modes: M[]): SettingBuilder<T, V, M> {
+  public modes(...modes: string[]): SettingBuilder<T, V> {
     this.data.modes = modes;
     return this;
   }
 
-  public help(handler: (context: CommandContext) => void): SettingBuilder<T, V, M> {
+  public help(handler: (context: CommandContext) => void): SettingBuilder<T, V> {
     this.data.help = handler;
     return this;
   }
 
-  public getHandler(handler: (t: T) => Promise<V | undefined>): SettingBuilder<T, V, M> {
+  public getHandler(handler: (t: T) => Promise<V | undefined>): SettingBuilder<T, V> {
     this.data.get = handler;
     return this;
   }
 
-  public changeHandler(handler: (t: T, v: V, mode?: M) => Promise<SettingChangeStatus<V>>): Setting<T, V, M> {
+  public changeHandler(handler: (t: T, v: V, mode?: string) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
     return {
       name: this.data.name,
       typeOrganizer: this.data.typeOrganizer,

@@ -8,11 +8,9 @@ import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { Bot } from '../Bot';
 import { StringOrganizer } from '../api/setting/organizers/StringOrganizer';
 
-export type JoinMode = 'get' | 'set' | 'clear';
-
-export class JoinSetting implements SettingRegisterer<Discord.Guild, string | undefined, JoinMode> {
-  get(): Setting<Discord.Guild, string | undefined, JoinMode> {
-    return Settings.create<Discord.Guild, string | undefined, JoinMode>('joinmessage')
+export class JoinSetting implements SettingRegisterer<Discord.Guild, string | undefined> {
+  get(): Setting<Discord.Guild, string | undefined> {
+    return Settings.create<Discord.Guild, string | undefined>('joinmessage')
       .modes('get', 'set', 'clear')
       .typeOrganizer((context) => {
         return context.getMessage().guild;

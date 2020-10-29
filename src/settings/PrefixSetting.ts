@@ -6,11 +6,9 @@ import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { Bot } from '../Bot';
 
-export type PrefixMode = 'set' | 'add' | 'remove' | 'clear' | 'get';
-
-export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] | undefined, PrefixMode> {
-  get(): Setting<Discord.Guild, string[] | undefined, PrefixMode> {
-    return Settings.create<Discord.Guild, string[] | undefined, PrefixMode>('prefix')
+export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] | undefined> {
+  get(): Setting<Discord.Guild, string[] | undefined> {
+    return Settings.create<Discord.Guild, string[] | undefined>('prefix')
       .modes('get', 'set', 'add', 'remove', 'clear')
       .typeOrganizer((context) => {
         return context.getMessage().guild;
