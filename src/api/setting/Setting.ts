@@ -18,5 +18,5 @@ export interface Setting<T, V> {
 
   // get(t: T): Promise<V | undefined>;
 
-  handle(t: T, v: V, currentModeAliases?: string, mode?: SettingMode): Promise<SettingChangeStatus<V>>;
+  handle(t: T, v: V, mode?: SettingMode, currentModeArgs?: string[]): Promise<SettingChangeStatus<V>>;
 }

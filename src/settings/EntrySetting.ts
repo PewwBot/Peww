@@ -15,16 +15,16 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
       .mode(
         SettingMode.of(
           'MODE_MODIFIER',
-          ['join:mode:set', 'leave:mode:set'],
+          ['join mode set', 'leave mode set'],
           'Mesaj modunu değiştirir. (embed, message, off)'
         )
       )
-      .mode(SettingMode.of('MESSAGE_MODIFIER', ['join:message:set', 'leave:message:set'], 'Mesajı değiştirir.'))
+      .mode(SettingMode.of('MESSAGE_MODIFIER', ['join message set', 'leave message set'], 'Mesajı değiştirir.'))
       .mode(SettingMode.of('GET', ['get', 'control'], 'Bilgilendirme yapar.'))
       .mode(SettingMode.of('CLEAR', ['clear'], 'Ayarı varsayılana çevirir.'))
       .typeOrganizer((context) => context.getMessage().guild)
       .valueOrganizer(new EmptyOrganizer())
-      .handler(async (guild, data, currentModeAliases, mode) => {
+      .handler(async (guild, data, mode, currentModeArgs) => {
         const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
         let setting = guildData.settings.find((setting) => setting.key === 'entry');
@@ -68,7 +68,7 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
                 () => 'Mesaj modu hatalı!\nAyarlayabileceğiniz modlar: embed, message, off'
               );
             }
-            const entryMode = currentModeAliases.split(':', 2)[0];
+            const entryMode = currentModeArgs[0];
             switch (entryMode) {
               case 'join':
                 (setting.data as any).join.mode = data[0];
@@ -91,7 +91,7 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
           case 'MESSAGE_MODIFIER':
             if (data.length < 1)
               return SettingChangeStatus.of(null, () => 'Ayarı değiştirmek için belirtmeniz gerekir!');
-            const entryMessage = currentModeAliases.split(':', 2)[0];
+            const entryMessage = currentModeArgs[0];
             switch (entryMessage) {
               case 'join':
                 (setting.data as any).join.message = data.join(' ');

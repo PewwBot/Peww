@@ -59,7 +59,7 @@ export class SettingBuilder<T, V> {
     return this;
   }*/
 
-  public handler(handler: (t: T, v: V, currentModeAliases?: string, mode?: SettingMode) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
+  public handler(handler: (t: T, v: V, mode?: SettingMode, currentModeArgs?: string[]) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
     return {
       name: this.data.name,
       typeOrganizer: this.data.typeOrganizer,

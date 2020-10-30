@@ -44,6 +44,10 @@ export class ImmutableCommandContext implements CommandContext {
     return this.args;
   }
 
+  getImmutableArgs(): string[] {
+    return Object.assign([], this.args);
+  }
+
   createEmbedBuilder(data?: Discord.MessageEmbed | Discord.MessageEmbedOptions): EmbedBuilder {
     return new EmbedBuilder(data);
   }

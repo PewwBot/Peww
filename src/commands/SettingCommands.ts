@@ -61,23 +61,46 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         return;
       }
 
-      const settingModeValue = context.getArgs()[1];
-      if (settingModeValue === 'help') {
+      if (context.getArgs()[1] === 'help') {
         setting.help(context);
         return;
       }
-      const settingMode = setting.getModes().find((mode) => mode.getAliases().includes(settingModeValue), null);
+
+      const settingModeValue: string[] = [];
+      let settingMode;
+      for (const modeControlArg of Object.assign([], context.getArgs()).splice(1)) {
+        settingMode = setting
+          .getModes()
+          .find(
+            (mode) =>
+              mode
+                .getAliases()
+                .includes(
+                  settingModeValue.length < 1 ? modeControlArg : settingModeValue.join(' ') + ' ' + modeControlArg
+                ),
+            null
+          );
+        settingModeValue.push(modeControlArg);
+        if (settingMode) break;
+      }
       if (!settingMode) {
         context
           .getMessage()
           .channel.send(
             context
               .createEmbedBuilder()
-              .setDescription(`\`${selectedSetting}\` adlı ayarın \`${settingModeValue}\` adında bir ayar modu yok!`)
+              .setDescription(
+                `\`${selectedSetting}\` adlı ayarın \`${settingModeValue.join(' ')}\` adında bir ayar modu yok!`
+              )
           );
         return;
       }
-      const changeStatus = await setting.handle(setting.typeOrganizer(context), setting.valueOrganizer.organize(context.getArgs().splice(2)), settingModeValue, settingMode);
+      const changeStatus = await setting.handle(
+        setting.typeOrganizer(context),
+        setting.valueOrganizer.organize(context.getArgs().splice(settingModeValue.length + 1)),
+        settingMode,
+        settingModeValue
+      );
       if (changeStatus.isSuccessfully()) {
         context.getMessage().react('✅');
         if (changeStatus.getMessage()) {

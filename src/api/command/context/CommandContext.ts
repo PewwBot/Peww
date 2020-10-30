@@ -17,5 +17,7 @@ export interface CommandContext {
 
   getArgs(): string[];
 
+  getImmutableArgs(): string[];
+
   createEmbedBuilder(): EmbedBuilder;
 }
