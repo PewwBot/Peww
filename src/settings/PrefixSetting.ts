@@ -1,27 +1,27 @@
-/*import { SettingRegisterer } from '../api/setting/SettingRegisterer';
+import { SettingRegisterer } from '../api/setting/SettingRegisterer';
 
 import * as Discord from 'discord.js';
 import { Setting } from '../api/setting/Setting';
 import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { Bot } from '../Bot';
+import { SettingMode } from '../api/setting/SettingMode';
 
 export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] | undefined> {
   get(): Setting<Discord.Guild, string[] | undefined> {
     return Settings.create<Discord.Guild, string[] | undefined>('prefix')
-      .modes('get', 'set', 'add', 'remove', 'clear')
+      .mode(SettingMode.of('GET', ['get', 'control'], 'Bilgilendirme yapar.'))
+      .mode(SettingMode.of('SET', ['set'], 'Belirleme yapar.'))
+      .mode(SettingMode.of('ADD', ['add'], 'Ekleme yapar.'))
+      .mode(SettingMode.of('REMOVE', ['remove'], 'Çıkarma yapar.'))
+      .mode(SettingMode.of('CLEAR', ['clear'], 'Ayarı varsayılana çevirir.'))
       .typeOrganizer((context) => {
         return context.getMessage().guild;
       })
-      .getHandler(async (guild) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
-        if (!guildData) return null;
-        return guildData.getCustomPrefix();
-      })
-      .changeHandler(async (guild, data, mode) => {
+      .handler(async (guild, data, mode, currentModeArgs) => {
         const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
-        if (mode === 'get') {
+        if (mode.getName() === 'GET') {
           return SettingChangeStatus.of(
             guildData.getCustomPrefix(),
             () =>
@@ -35,10 +35,12 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
               }`
           );
         }
-        if (mode === 'clear') {
+        if (mode.getName() === 'CLEAR') {
           guildData.customPrefix = [];
           if (await guildData.save()) {
             return SettingChangeStatus.of([], () => '`Prefix` ayarı sıfırlandı!');
+          } else {
+            return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
           }
         }
         if (data.length < 1)
@@ -46,47 +48,63 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
         if (data.some((val) => Bot.getInstance().getConfig().getData().prefix.includes(val))) {
           return SettingChangeStatus.of(
             null,
-            () =>
-              '`Prefix` ayarı için belirttiğiniz değer ana prefix listesinde olduğu için ayarlanamaz!'
+            () => '`Prefix` ayarı için belirttiğiniz değer ana prefix listesinde olduğu için ayarlanamaz!'
           );
         }
         data = data.filter((val) => !(val.length > 2));
-        if (data.length < 1) return SettingChangeStatus.of(null, () => '`Prefix` ayarı en fazla 2 karakter\'den oluşabilir!');
-        if (mode === 'set') {
-          if (!guildData.isPremium() && data.length > 2) return SettingChangeStatus.of(null, () => 'Sunucu `Premium` özelliğine sahip olmadığı için 2 adet\'ten fazla özel prefix belirleyemezsin!');
-          guildData.customPrefix = data;
-          if (await guildData.save()) {
-            return SettingChangeStatus.of(
-              data,
-              () => `\`Prefix\` ayarı ${data.map((prefix) => `\`${prefix}\``).join(', ')} olarak ayarlandı!`
-            );
-          }
-        } else if (mode === 'add') {
-          if (!guildData.isPremium() && data.length > 2) return SettingChangeStatus.of(null, () => 'Sunucu `Premium` özelliğine sahip olmadığı için 2 adet\'ten fazla özel prefix belirleyemezsin!');
-          const changedData = data.filter((val) => !guildData.customPrefix.includes(val));
-          if (!guildData.isPremium() && (changedData.length + guildData.getCustomPrefix().length) > 2) return SettingChangeStatus.of(null, () => 'Sunucu `Premium` özelliğine sahip olmadığı için 2 adet\'ten fazla özel prefix belirleyemezsin!');
-          if (changedData.length < 1)
-            return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
-          guildData.customPrefix.push(...changedData);
-          if (await guildData.save()) {
-            return SettingChangeStatus.of(
-              changedData,
-              () => `\`Prefix\` ayarına ${data.map((prefix) => `\`${prefix}\``).join(', ')} eklendi!`
-            );
-          }
-        } else if (mode === 'remove') {
-          const changedData = data.filter((val) => guildData.customPrefix.includes(val));
-          if (changedData.length < 1)
-            return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
-          guildData.customPrefix = guildData.customPrefix.filter((val) => !changedData.includes(val));
-          if (await guildData.save()) {
-            return SettingChangeStatus.of(
-              changedData,
-              () => `\`Prefix\` ayarından ${data.map((prefix) => `\`${prefix}\``).join(', ')} çıkarıldı!`
-            );
-          }
+        if (data.length < 1)
+          return SettingChangeStatus.of(null, () => "`Prefix` ayarı en fazla 2 karakter'den oluşabilir!");
+        switch (mode.getName()) {
+          case 'SET':
+            if (!guildData.isPremium() && data.length > 2)
+              return SettingChangeStatus.of(
+                null,
+                () => "Sunucu `Premium` özelliğine sahip olmadığı için 2 adet'ten fazla özel prefix belirleyemezsin!"
+              );
+            guildData.customPrefix = data;
+            if (await guildData.save()) {
+              return SettingChangeStatus.of(
+                data,
+                () => `\`Prefix\` ayarı ${data.map((prefix) => `\`${prefix}\``).join(', ')} olarak ayarlandı!`
+              );
+            }
+            break;
+          case 'ADD':
+            if (!guildData.isPremium() && data.length > 2)
+              return SettingChangeStatus.of(
+                null,
+                () => "Sunucu `Premium` özelliğine sahip olmadığı için 2 adet'ten fazla özel prefix belirleyemezsin!"
+              );
+            const changedDataAdd = data.filter((val) => !guildData.customPrefix.includes(val));
+            if (!guildData.isPremium() && changedDataAdd.length + guildData.getCustomPrefix().length > 2)
+              return SettingChangeStatus.of(
+                null,
+                () => "Sunucu `Premium` özelliğine sahip olmadığı için 2 adet'ten fazla özel prefix belirleyemezsin!"
+              );
+            if (changedDataAdd.length < 1)
+              return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
+            guildData.customPrefix.push(...changedDataAdd);
+            if (await guildData.save()) {
+              return SettingChangeStatus.of(
+                changedDataAdd,
+                () => `\`Prefix\` ayarına ${data.map((prefix) => `\`${prefix}\``).join(', ')} eklendi!`
+              );
+            }
+            break;
+          case 'REMOVE':
+            const changedDataRemove = data.filter((val) => guildData.customPrefix.includes(val));
+            if (changedDataRemove.length < 1)
+              return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
+            guildData.customPrefix = guildData.customPrefix.filter((val) => !changedDataRemove.includes(val));
+            if (await guildData.save()) {
+              return SettingChangeStatus.of(
+                changedDataRemove,
+                () => `\`Prefix\` ayarından ${data.map((prefix) => `\`${prefix}\``).join(', ')} çıkarıldı!`
+              );
+            }
+            break;
         }
         return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
       });
   }
-}*/
+}
