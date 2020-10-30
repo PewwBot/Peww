@@ -2,6 +2,7 @@ import { Command } from '../api/command/Command';
 import { CommandBatchRegisterer } from '../api/command/CommandBatchRegisterer';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { Commands } from '../api/command/Commands';
+import { EmbedBuilder } from '../api/embed/EmbedBuilder';
 import { Bot } from '../Bot';
 
 export class SettingCommands implements CommandBatchRegisterer {
@@ -17,23 +18,41 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
   .category(CommandCategory.SETTING)
   .handler(async (context) => {
     if (context.getArgs().length < 1) {
-      context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
+      const embedBuilder = context
+        .createEmbedBuilder()
+        .setColor('#b3e324')
+        .setAuthor('Peww', context.getMessage().client.user.avatarURL());
+      embedBuilder.setDescription(
+        `Aşşağıda bulunan ayarları \`${context.getOrganizedPrefix()}${context.getLabel()} <ayar>\` şeklinde ayarlayabilirsin!`
+      );
+      embedBuilder.addField(
+        'Ayarlar',
+        [...context.getBot().getSettingManager().getData().keys()].map((setting) => `\`${setting.charAt(0).toLocaleUpperCase('tr-TR') + setting.slice(1)}\``).join(', '),
+        true
+      );
+      context.getMessage().react('✅');
+      context.getMessage().channel.send(embedBuilder);
       return;
     }
 
     if (context.getArgs()[0] === 'help') {
       if (context.getArgs().length < 2) {
-        context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
+        context.getMessage().react('❌');
+        context
+          .getMessage()
+          .channel.send(context.createEmbedBuilder().setDescription('Yardımını almak istediğin ayarı belirtmelisin!'));
         return;
       }
       const selectedSetting: string = context.getArgs()[1].toLocaleLowerCase('tr-TR');
       if (!selectedSetting) {
+        context.getMessage().react('❌');
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
       if (![...context.getBot().getSettingManager().getData().keys()].includes(selectedSetting)) {
+        context.getMessage().react('❌');
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
@@ -43,12 +62,14 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
     } else {
       const selectedSetting: string = context.getArgs()[0].toLocaleLowerCase('tr-TR');
       if (!selectedSetting) {
+        context.getMessage().react('❌');
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
       if (![...context.getBot().getSettingManager().getData().keys()].includes(selectedSetting)) {
+        context.getMessage().react('❌');
         context
           .getMessage()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
@@ -57,11 +78,13 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
       const setting = Bot.getInstance().getSettingManager().get(selectedSetting);
 
       if (context.getArgs().length < 2) {
+        context.getMessage().react('✅');
         setting.help(context);
         return;
       }
 
       if (context.getArgs()[1] === 'help') {
+        context.getMessage().react('✅');
         setting.help(context);
         return;
       }
