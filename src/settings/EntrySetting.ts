@@ -8,6 +8,7 @@ import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { Bot } from '../Bot';
 import { SettingMode } from '../api/setting/SettingMode';
 import { EmptyOrganizer } from '../api/setting/organizers/EmptyOrganizer';
+import { StringUtil } from '../utils/StringUtil';
 
 export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] | undefined> {
   get(): Setting<Discord.Guild, string[] | undefined> {
@@ -82,7 +83,7 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
               return SettingChangeStatus.of(
                 data,
                 () =>
-                  `\`Entry-${entryMode.charAt(0).toLocaleUpperCase('tr-TR') + entryMode.slice(1)}-Mode\` ayarı \`${
+                  `\`Entry-${StringUtil.capitalize(entryMode, 'tr-TR')}-Mode\` ayarı \`${
                     data[0]
                   }\` olarak ayarlandı!`
               );
@@ -105,7 +106,7 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
               return SettingChangeStatus.of(
                 data,
                 () =>
-                  `\`Entry-${entryMessage.charAt(0).toLocaleUpperCase('tr-TR') + entryMessage.slice(1)}-Message\` ayarı \`${
+                  `\`Entry-${StringUtil.capitalize(entryMessage, 'tr-TR')}-Message\` ayarı \`${
                     data.join(' ')
                   }\` olarak ayarlandı!`
               );

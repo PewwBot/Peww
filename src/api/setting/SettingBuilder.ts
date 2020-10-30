@@ -5,6 +5,7 @@ import { MessageEmbed } from 'discord.js';
 import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { EmptyOrganizer } from './organizers/EmptyOrganizer';
 import { SettingMode } from './SettingMode';
+import { StringUtil } from '../../utils/StringUtil';
 
 export class SettingBuilder<T, V> {
   private data: {
@@ -96,7 +97,7 @@ function createHelpEmbed(
     .createEmbedBuilder()
     .setDescription(
       `\`${
-        data.name.charAt(0).toLocaleUpperCase('tr-TR') + data.name.slice(1)
+        StringUtil.capitalize(data.name, 'tr-TR')
       }\` Ayarı hakkında yardım;\n\nKullanım: \`${context.getOrganizedPrefix()}${context.getLabel()} ${
         data.name
       } <mod> [<değer>]\`\nYapabileceğiniz düzenleme modları:\n${data.modes.map((mode) => `${mode.getAliases().map((aliases) => `\`${aliases}\``).join(', ')}${mode.getHelpMessage() ? ' - ' + mode.getHelpMessage() : ''}`).join('\n')}`

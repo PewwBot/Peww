@@ -4,6 +4,7 @@ import { CommandCategory } from '../api/command/CommandCategory';
 import { Commands } from '../api/command/Commands';
 import { EmbedBuilder } from '../api/embed/EmbedBuilder';
 import { Bot } from '../Bot';
+import { StringUtil } from '../utils/StringUtil';
 
 export class SettingCommands implements CommandBatchRegisterer {
   get(): Command[] {
@@ -27,7 +28,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
       );
       embedBuilder.addField(
         'Ayarlar',
-        [...context.getBot().getSettingManager().getData().keys()].map((setting) => `\`${setting.charAt(0).toLocaleUpperCase('tr-TR') + setting.slice(1)}\``).join(', '),
+        [...context.getBot().getSettingManager().getData().keys()].map((setting) => `\`${StringUtil.capitalize(setting, 'tr-TR')}\``).join(', '),
         true
       );
       context.getMessage().react('✅');
