@@ -14,5 +14,5 @@ export class GuildSettings {
   key: string;
 
   @Column('simple-json')
-  data: { value: any };
+  data: { };
 }

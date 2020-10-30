@@ -1,6 +1,7 @@
 import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { CommandContext } from '../command/context/CommandContext';
 import { SettingChangeStatus } from './SettingChangeStatus';
+import { SettingMode } from './SettingMode';
 
 export interface Setting<T, V> {
   name: string;
@@ -9,11 +10,13 @@ export interface Setting<T, V> {
 
   valueOrganizer: SettingValueOrganizer<any>;
 
-  getModes(): string[];
+  getModes(): SettingMode[];
+
+  getAllModesAliases(): string[];
 
   help(context: CommandContext): void;
 
-  get(t: T): Promise<V | undefined>;
+  // get(t: T): Promise<V | undefined>;
 
-  change(t: T, v: V, mode?: string): Promise<SettingChangeStatus<V>>;
+  handle(t: T, v: V, currentModeAliases?: string, mode?: SettingMode): Promise<SettingChangeStatus<V>>;
 }

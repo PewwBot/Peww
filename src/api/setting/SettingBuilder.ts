@@ -4,16 +4,17 @@ import { Setting } from './Setting';
 import { MessageEmbed } from 'discord.js';
 import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { EmptyOrganizer } from './organizers/EmptyOrganizer';
+import { SettingMode } from './SettingMode';
 
 export class SettingBuilder<T, V> {
   private data: {
     name?: string;
     typeOrganizer?: (context: CommandContext) => any;
     valueOrganizer: SettingValueOrganizer<any>;
-    modes?: string[];
+    modes: SettingMode[];
     help?: (context: CommandContext) => void;
-    get?: (t: T) => Promise<V>;
-  } = { valueOrganizer: new EmptyOrganizer() };
+    // get?: (t: T) => Promise<V>;
+  } = { valueOrganizer: new EmptyOrganizer(), modes: [] };
 
   constructor(name: string) {
     this.data.name = name;
@@ -38,8 +39,13 @@ export class SettingBuilder<T, V> {
     return this;
   }
 
-  public modes(...modes: string[]): SettingBuilder<T, V> {
+  public modes(...modes: SettingMode[]): SettingBuilder<T, V> {
     this.data.modes = modes;
+    return this;
+  }
+
+  public mode(mode: SettingMode): SettingBuilder<T, V> {
+    this.data.modes.push(mode);
     return this;
   }
 
@@ -48,12 +54,12 @@ export class SettingBuilder<T, V> {
     return this;
   }
 
-  public getHandler(handler: (t: T) => Promise<V | undefined>): SettingBuilder<T, V> {
+  /*public getHandler(handler: (t: T) => Promise<V | undefined>): SettingBuilder<T, V> {
     this.data.get = handler;
     return this;
-  }
+  }*/
 
-  public changeHandler(handler: (t: T, v: V, mode?: string) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
+  public handler(handler: (t: T, v: V, currentModeAliases?: string, mode?: SettingMode) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
     return {
       name: this.data.name,
       typeOrganizer: this.data.typeOrganizer,
@@ -61,13 +67,16 @@ export class SettingBuilder<T, V> {
       getModes: () => {
         return this.data.modes;
       },
+      getAllModesAliases: () => {
+        return this.data.modes.flatMap((mode) => mode.getAliases());
+      },
       help: this.data.help
         ? this.data.help
         : (context) => {
             context.getMessage().channel.send(createHelpEmbed(context, this.data));
           },
-      get: this.data.get,
-      change: handler,
+      // get: this.data.get,
+      handle: handler,
     };
   }
 }
@@ -76,9 +85,11 @@ function createHelpEmbed(
   context: CommandContext,
   data: {
     name?: string;
-    modes?: any[];
+    typeOrganizer?: (context: CommandContext) => any;
+    valueOrganizer: SettingValueOrganizer<any>;
+    modes: SettingMode[];
     help?: (context: CommandContext) => void;
-    get?: (t: any) => Promise<any>;
+    // get?: (t: any) => Promise<any>;
   }
 ): MessageEmbed {
   return context
@@ -88,7 +99,7 @@ function createHelpEmbed(
         data.name.charAt(0).toLocaleUpperCase('tr-TR') + data.name.slice(1)
       }\` Ayarı hakkında yardım;\n\nKullanım: \`${context.getOrganizedPrefix()}${context.getLabel()} ${
         data.name
-      } <mod> [<değer>]\`\nYapabileceğiniz düzenleme modları:\n${data.modes.map((mode) => `\`${mode}\``).join('\n')}`
+      } <mod> [<değer>]\`\nYapabileceğiniz düzenleme modları:\n${data.modes.map((mode) => `${mode.getAliases().map((aliases) => `\`${aliases}\``).join(', ')}${mode.getHelpMessage() ? ' - ' + mode.getHelpMessage() : ''}`).join('\n')}`
     )
     .setColor('#b3e324')
     .setAuthor('Peww', context.getMessage().client.user.avatarURL());

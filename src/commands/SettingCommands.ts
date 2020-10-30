@@ -41,10 +41,6 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
       }
       Bot.getInstance().getSettingManager().get(selectedSetting).help(context);
     } else {
-      if (context.getArgs().length < 2) {
-        context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Komutu eksik girdin!'));
-        return;
-      }
       const selectedSetting: string = context.getArgs()[0].toLocaleLowerCase('tr-TR');
       if (!selectedSetting) {
         context
@@ -59,18 +55,29 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         return;
       }
       const setting = Bot.getInstance().getSettingManager().get(selectedSetting);
-      const settingMode = context.getArgs()[1];
-      if (!setting.getModes().includes(settingMode)) {
+
+      if (context.getArgs().length < 2) {
+        setting.help(context);
+        return;
+      }
+
+      const settingModeValue = context.getArgs()[1];
+      if (settingModeValue === 'help') {
+        setting.help(context);
+        return;
+      }
+      const settingMode = setting.getModes().find((mode) => mode.getAliases().includes(settingModeValue), null);
+      if (!settingMode) {
         context
           .getMessage()
           .channel.send(
             context
               .createEmbedBuilder()
-              .setDescription(`\`${selectedSetting}\` adlı ayarın \`${settingMode}\` adında bir ayar modu yok!`)
+              .setDescription(`\`${selectedSetting}\` adlı ayarın \`${settingModeValue}\` adında bir ayar modu yok!`)
           );
         return;
       }
-      const changeStatus = await setting.change(setting.typeOrganizer(context), setting.valueOrganizer.organize(context.getArgs().splice(2)), settingMode);
+      const changeStatus = await setting.handle(setting.typeOrganizer(context), setting.valueOrganizer.organize(context.getArgs().splice(2)), settingModeValue, settingMode);
       if (changeStatus.isSuccessfully()) {
         context.getMessage().react('✅');
         if (changeStatus.getMessage()) {

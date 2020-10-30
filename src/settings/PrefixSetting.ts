@@ -1,4 +1,4 @@
-import { SettingRegisterer } from '../api/setting/SettingRegisterer';
+/*import { SettingRegisterer } from '../api/setting/SettingRegisterer';
 
 import * as Discord from 'discord.js';
 import { Setting } from '../api/setting/Setting';
@@ -53,6 +53,7 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
         data = data.filter((val) => !(val.length > 2));
         if (data.length < 1) return SettingChangeStatus.of(null, () => '`Prefix` ayarı en fazla 2 karakter\'den oluşabilir!');
         if (mode === 'set') {
+          if (!guildData.isPremium() && data.length > 2) return SettingChangeStatus.of(null, () => 'Sunucu `Premium` özelliğine sahip olmadığı için 2 adet\'ten fazla özel prefix belirleyemezsin!');
           guildData.customPrefix = data;
           if (await guildData.save()) {
             return SettingChangeStatus.of(
@@ -61,7 +62,9 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
             );
           }
         } else if (mode === 'add') {
+          if (!guildData.isPremium() && data.length > 2) return SettingChangeStatus.of(null, () => 'Sunucu `Premium` özelliğine sahip olmadığı için 2 adet\'ten fazla özel prefix belirleyemezsin!');
           const changedData = data.filter((val) => !guildData.customPrefix.includes(val));
+          if (!guildData.isPremium() && (changedData.length + guildData.getCustomPrefix().length) > 2) return SettingChangeStatus.of(null, () => 'Sunucu `Premium` özelliğine sahip olmadığı için 2 adet\'ten fazla özel prefix belirleyemezsin!');
           if (changedData.length < 1)
             return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
           guildData.customPrefix.push(...changedData);
@@ -86,4 +89,4 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
         return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
       });
   }
-}
+}*/
