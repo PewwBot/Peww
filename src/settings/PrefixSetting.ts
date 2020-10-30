@@ -51,9 +51,9 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
             () => '`Prefix` ayarı için belirttiğiniz değer ana prefix listesinde olduğu için ayarlanamaz!'
           );
         }
-        data = data.filter((val) => !(val.length > 2));
+        data = data.filter((val) => !(val.length > 3));
         if (data.length < 1)
-          return SettingChangeStatus.of(null, () => "`Prefix` ayarı en fazla 2 karakter'den oluşabilir!");
+          return SettingChangeStatus.of(null, () => "`Prefix` ayarı en fazla 3 karakter'den oluşabilir!");
         switch (mode.getName()) {
           case 'SET':
             if (!guildData.isPremium() && data.length > 2)
