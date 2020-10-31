@@ -16,9 +16,9 @@ export class CommandSubscription implements SubscriptionRegisterer<'message'> {
       .filter((sub, message) => !message.author.bot)
       .handler(async (sub, message) => {
         let prefix = null;
-        const allPrefix = Object.assign([], Bot.getInstance().getConfig().getData().prefix);
-        allPrefix.push(`<@!${Bot.getInstance().getClient().user.id}> `);
         const guild = await Bot.getInstance().getCacheManager().getGuild(message.guild.id, true);
+        const allPrefix = guild && !guild.defaultPrefix && guild.getCustomPrefix().length > 0 ? [] : Object.assign([], Bot.getInstance().getConfig().getData().prefix);
+        if ((guild && !guild.defaultPrefix && guild.getCustomPrefix().length > 0) || !guild) allPrefix.push(`<@!${Bot.getInstance().getClient().user.id}> `);
         if (guild && guild.getCustomPrefix().length > 0) allPrefix.push(...guild.getCustomPrefix());
         for (const thisPrefix of allPrefix) {
           if (message.content.startsWith(thisPrefix)) prefix = thisPrefix;

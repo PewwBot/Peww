@@ -18,4 +18,7 @@ export class GuildEntity {
 
   @Column('simple-array')
   customPrefix: string[];
+
+  @Column()
+  defaultPrefix: boolean;
 }

@@ -15,6 +15,7 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
       .mode(SettingMode.of('ADD', ['add'], 'Ekleme yapar.'))
       .mode(SettingMode.of('REMOVE', ['remove'], 'Çıkarma yapar.'))
       .mode(SettingMode.of('CLEAR', ['clear'], 'Ayarı varsayılana çevirir.'))
+      .mode(SettingMode.of('DEFAULT_PREFIX', ['default_prefix'], 'Botun kendi prefixlerinin kullanıp kullanılmayacağını ayarlar. (Sadece özel prefix belirliyse çalışır)'))
       .typeOrganizer((context) => {
         return context.getMessage().guild;
       })
@@ -32,8 +33,35 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
                       .getCustomPrefix()
                       .map((prefix) => `\`${prefix}\``)
                       .join(', ')
-              }`
+              } (Ana Prefixler: ${guildData.defaultPrefix ? '`Aktif`' : '`Devre Dışı`'})`
           );
+        }
+        if (mode.getName() === 'DEFAULT_PREFIX') {
+          if (data.length < 1) {
+            guildData.defaultPrefix = !guildData.defaultPrefix;
+            if (await guildData.save()) {
+              return SettingChangeStatus.of([], () => `\`Default-Prefix\` ayarı ${guildData.defaultPrefix ? '`aktif`' : '`devre dışı`'} edildi!`);
+            } else {
+              return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
+            }
+          }
+          switch (data[0]) {
+            case 'true':
+              guildData.defaultPrefix = true;
+              if (await guildData.save()) {
+                return SettingChangeStatus.of([], () => '`Default-Prefix` ayarı `aktif` edildi!');
+              } else {
+                return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
+              }
+            case 'false':
+              guildData.defaultPrefix = false;
+              if (await guildData.save()) {
+                return SettingChangeStatus.of([], () => '`Default-Prefix` ayarı `devre dışı` edildi!');
+              } else {
+                return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
+              }
+          }
+          return SettingChangeStatus.of(null, () => '`Default-Prefix` ayarını değiştirebilmek için değer belirtmeniz gerekli! `(true/false)`');
         }
         if (mode.getName() === 'CLEAR') {
           guildData.customPrefix = [];

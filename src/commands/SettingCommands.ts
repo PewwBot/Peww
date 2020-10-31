@@ -108,6 +108,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         if (settingMode) break;
       }
       if (!settingMode) {
+        context.getMessage().react('❌');
         context
           .getMessage()
           .channel.send(

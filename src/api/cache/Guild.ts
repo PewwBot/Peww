@@ -8,14 +8,16 @@ export class Guild {
   ownerId: string;
   premium: boolean = false;
   customPrefix: string[] = [];
+  defaultPrefix: boolean = true;
   settings: GuildSettings[] = [];
 
-  constructor(args?: { guildId: string; ownerId: string; premium: boolean; customPrefix: string[] }) {
+  constructor(args?: { guildId: string; ownerId: string; premium: boolean; customPrefix: string[], defaultPrefix: boolean }) {
     if (!args) return;
     this.guildId = args.guildId;
     this.ownerId = args.ownerId;
     this.premium = args.premium;
     this.customPrefix = args.customPrefix;
+    this.defaultPrefix = args.defaultPrefix;
   }
 
   public static async get(guildId: string, createWhenNotCreated: boolean = false): Promise<Guild | undefined> {
@@ -29,6 +31,7 @@ export class Guild {
         ownerId: orgGuild.ownerID,
         premium: false,
         customPrefix: [],
+        defaultPrefix: true
       });
       if (!(await guild.load())) {
         if (createWhenNotCreated) {
@@ -37,6 +40,7 @@ export class Guild {
           guildEntity.ownerId = guild.ownerId;
           guildEntity.premium = guild.premium;
           guildEntity.customPrefix = guild.customPrefix;
+          guildEntity.defaultPrefix = guild.defaultPrefix;
           await Bot.getInstance().getDatabase().getConnection().getRepository(GuildEntity).save(guildEntity);
           Bot.getInstance().getCacheManager().getGuildCache().getData().set(guildId, guild);
           return guild;
@@ -57,6 +61,7 @@ export class Guild {
       this.ownerId = guildEntityFromDatabase.ownerId;
       this.premium = guildEntityFromDatabase.premium;
       this.customPrefix = guildEntityFromDatabase.customPrefix;
+      this.defaultPrefix = guildEntityFromDatabase.defaultPrefix;
       return await this.loadSettings();
     }
     return false;
@@ -85,6 +90,7 @@ export class Guild {
       guildEntity.ownerId = this.ownerId;
       guildEntity.premium = this.premium;
       guildEntity.customPrefix = this.customPrefix;
+      guildEntity.defaultPrefix = this.defaultPrefix;
       await queryRunner.startTransaction();
       let ret = true;
       try {
