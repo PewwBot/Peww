@@ -34,6 +34,7 @@ export class GuildControlScheduler implements SchedulerRegisterer {
           newGuildEntity.ownerId = guild.ownerID;
           newGuildEntity.premium = false;
           newGuildEntity.customPrefix = [];
+          newGuildEntity.defaultPrefix = true;
           needAddGuilds.push(newGuildEntity);
         }
         if (needRemoveGuilds.length < 1 && needAddGuilds.length < 1) {

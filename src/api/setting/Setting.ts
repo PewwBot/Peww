@@ -6,7 +6,7 @@ import { SettingMode } from './SettingMode';
 export interface Setting<T, V> {
   name: string;
 
-  typeOrganizer: (context: CommandContext) => any;
+  typeOrganizer: (context: CommandContext) => T;
 
   valueOrganizer: SettingValueOrganizer<any>;
 

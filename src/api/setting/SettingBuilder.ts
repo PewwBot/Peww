@@ -30,7 +30,7 @@ export class SettingBuilder<T, V> {
     return this;
   }
 
-  public typeOrganizer(organizer: (context: CommandContext) => any): SettingBuilder<T, V> {
+  public typeOrganizer(organizer: (context: CommandContext) => T): SettingBuilder<T, V> {
     this.data.typeOrganizer = organizer;
     return this;
   }

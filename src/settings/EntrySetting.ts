@@ -9,10 +9,12 @@ import { Bot } from '../Bot';
 import { SettingMode } from '../api/setting/SettingMode';
 import { EmptyOrganizer } from '../api/setting/organizers/EmptyOrganizer';
 import { StringUtil } from '../utils/StringUtil';
+import { MentionUtil } from '../utils/MentionUtil';
 
-export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] | undefined> {
-  get(): Setting<Discord.Guild, string[] | undefined> {
-    return Settings.create<Discord.Guild, string[] | undefined>('entry')
+export class EntrySetting
+  implements SettingRegisterer<{ guild: Discord.Guild; channel: Discord.TextChannel }, string[] | undefined> {
+  get(): Setting<{ guild: Discord.Guild; channel: Discord.TextChannel }, string[] | undefined> {
+    return Settings.create<{ guild: Discord.Guild; channel: Discord.TextChannel }, string[] | undefined>('entry')
       .mode(
         SettingMode.of(
           'MODE_MODIFIER',
@@ -21,12 +23,16 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
         )
       )
       .mode(SettingMode.of('MESSAGE_MODIFIER', ['join message set', 'leave message set'], 'Mesajı değiştirir.'))
+      .mode(SettingMode.of('CHANNEL', ['channel set'], 'Mesajların oluşturalacağı odayı belirler.'))
       .mode(SettingMode.of('GET', ['get', 'control'], 'Bilgilendirme yapar.'))
       .mode(SettingMode.of('CLEAR', ['clear'], 'Ayarı varsayılana çevirir.'))
-      .typeOrganizer((context) => context.getMessage().guild)
+      .typeOrganizer((context) => ({
+        guild: context.getMessage().guild,
+        channel: context.getMessage().channel as Discord.TextChannel,
+      }))
       .valueOrganizer(new EmptyOrganizer())
-      .handler(async (guild, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
+      .handler(async (type, data, mode, currentModeArgs) => {
+        const guildData = await Bot.getInstance().getCacheManager().getGuild(type.guild.id);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
         let setting = guildData.settings.find((setting) => setting.key === 'entry');
         if (mode.getName() === 'GET') {
@@ -36,7 +42,9 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
               `\`Entry\` ayarı: ${
                 !setting || !setting.data
                   ? '`Yok`'
-                  : `\n\nGiriş Mesaj Modu: ${
+                  : `\n\nMesaj Kanalı: ${
+                      !(setting.data as any).channelId ? '`Yok`' : `<#${(setting.data as any).channelId}>`
+                    }\nGiriş Mesaj Modu: ${
                       !(setting.data as any).join.mode ? '`off`' : `\`${(setting.data as any).join.mode}\``
                     }\nGiriş Mesajı: ${
                       !(setting.data as any).join.message ? '`Yok`' : `\`${(setting.data as any).join.message}\``
@@ -51,12 +59,37 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
         let putNew = false;
         if (!setting) {
           setting = new GuildSettings();
-          setting.guildId = guild.id;
+          setting.guildId = type.guild.id;
           setting.key = 'entry';
-          setting.data = { join: { mode: 'off', message: null }, leave: { mode: 'off', message: null } };
+          setting.data = { join: { mode: 'off', message: null }, leave: { mode: 'off', message: null }, channelId: '' };
           putNew = true;
         }
         switch (mode.getName()) {
+          case 'CHANNEL':
+            if (data.length < 1) {
+              (setting.data as any).channelId = type.channel.id;
+              if (putNew) guildData.settings.push(setting);
+              if (await guildData.save()) {
+                return SettingChangeStatus.of(
+                  type.channel,
+                  () => `<#${type.channel.id}> odası giriş-çıkış bildirim odası olarak belirlendi!`
+                );
+              }
+            } else {
+              const channel = MentionUtil.getChannelFromMention(type.guild, data[0]);
+              if (!channel) {
+                return SettingChangeStatus.of(null, () => 'Ayarı değiştirmek için yazı kanalı etiketlemeniz gerekir!');
+              }
+              (setting.data as any).channelId = channel.id;
+              if (putNew) guildData.settings.push(setting);
+              if (await guildData.save()) {
+                return SettingChangeStatus.of(
+                  channel,
+                  () => `<#${channel.id}> odası giriş-çıkış bildirim odası olarak belirlendi!`
+                );
+              }
+            }
+            break;
           case 'MODE_MODIFIER':
             if (data.length < 1)
               return SettingChangeStatus.of(
@@ -83,9 +116,7 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
               return SettingChangeStatus.of(
                 data,
                 () =>
-                  `\`Entry-${StringUtil.capitalize(entryMode, 'tr-TR')}-Mode\` ayarı \`${
-                    data[0]
-                  }\` olarak ayarlandı!`
+                  `\`Entry-${StringUtil.capitalize(entryMode, 'tr-TR')}-Mode\` ayarı \`${data[0]}\` olarak ayarlandı!`
               );
             }
             break;
@@ -106,9 +137,9 @@ export class EntrySetting implements SettingRegisterer<Discord.Guild, string[] |
               return SettingChangeStatus.of(
                 data,
                 () =>
-                  `\`Entry-${StringUtil.capitalize(entryMessage, 'tr-TR')}-Message\` ayarı \`${
-                    data.join(' ')
-                  }\` olarak ayarlandı!`
+                  `\`Entry-${StringUtil.capitalize(entryMessage, 'tr-TR')}-Message\` ayarı \`${data.join(
+                    ' '
+                  )}\` olarak ayarlandı!`
               );
             }
             break;
