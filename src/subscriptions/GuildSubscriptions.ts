@@ -22,6 +22,7 @@ const GUILD_CREATE: Subscription<'guildCreate'> = Subscriptions.create('guildCre
       guildEntity.ownerId = guild.ownerID;
       guildEntity.premium = false;
       guildEntity.customPrefix = [];
+      guildEntity.defaultPrefix = true;
       await repository.save(guildEntity);
       return;
     }
