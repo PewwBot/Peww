@@ -5,7 +5,6 @@ import { SubscriptionBatchRegisterer } from './../api/subscription/SubscriptionB
 import { Subscription } from '../api/subscription/Subscription';
 import { Subscriptions } from '../api/subscription/Subscriptions';
 import { GuildEntity } from '../api/database/entity/GuildEntity';
-import { EmbedBuilder } from '../api/embed/EmbedBuilder';
 
 export class GuildSubscriptions implements SubscriptionBatchRegisterer {
   get(): Subscription<any>[] {
@@ -21,10 +20,11 @@ const GUILD_MEMBER_ADD: Subscription<'guildMemberAdd'> = Subscriptions.create('g
       const setting = guild.settings.find((setting) => setting.key === 'entry');
       if (
         !setting ||
-        !setting.data ||
-        !(setting.data as any).channelId ||
-        !(setting.data as any).join.mode ||
-        !(setting.data as any).join.message
+        (setting &&
+          (!setting.data ||
+            !(setting.data as any).channelId ||
+            !(setting.data as any).join.mode ||
+            !(setting.data as any).join.message))
       )
         return;
       const channel = member.guild.channels.cache.get((setting.data as any).channelId) as Discord.TextChannel;
@@ -54,10 +54,11 @@ const GUILD_MEMBER_REMOVE: Subscription<'guildMemberRemove'> = Subscriptions.cre
       const setting = guild.settings.find((setting) => setting.key === 'entry');
       if (
         !setting ||
-        !setting.data ||
-        !(setting.data as any).channelId ||
-        !(setting.data as any).leave.mode ||
-        !(setting.data as any).leave.message
+        (setting &&
+          (!setting.data ||
+            !(setting.data as any).channelId ||
+            !(setting.data as any).join.mode ||
+            !(setting.data as any).join.message))
       )
         return;
       const channel = member.guild.channels.cache.get((setting.data as any).channelId) as Discord.TextChannel;
