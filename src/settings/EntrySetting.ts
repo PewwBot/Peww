@@ -37,7 +37,7 @@ export class EntrySetting
         let setting = guildData.settings.find((setting) => setting.key === 'entry');
         if (mode.getName() === 'GET') {
           return SettingChangeStatus.of(
-            guildData.getCustomPrefix(),
+            !setting || !setting.data ? {} : setting.data,
             () =>
               `\`Entry\` ayarı: ${
                 !setting || !setting.data

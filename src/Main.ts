@@ -6,6 +6,7 @@ import { GuildSubscriptions } from './subscriptions/GuildSubscriptions';
 import { SettingCommands } from './commands/SettingCommands';
 import { EntrySetting } from './settings/EntrySetting';
 import { PrefixSetting } from './settings/PrefixSetting';
+import { StaffSetting } from './settings/StaffSetting';
 
 const bot = new Bot();
 bot.start((error: Error) => {
@@ -17,5 +18,5 @@ bot.start((error: Error) => {
   bot.getSubscriptionManager().registerBatchClass(new GuildSubscriptions());
   bot.getCommandManager().registerAllBatchClass(new ManagementCommands(), new SettingCommands());
   bot.getSchedulerManager().registerClass(new GuildControlScheduler());
-  bot.getSettingManager().registerAllClass(new PrefixSetting(), new EntrySetting());
+  bot.getSettingManager().registerAllClass(new PrefixSetting(), new EntrySetting(), new StaffSetting());
 });

@@ -15,4 +15,12 @@ export class MentionUtil {
     const id = matches[1];
     return guild.channels.cache.get(id);
   }
+
+  public static getRoleFromMention(guild: Discord.Guild, mention: string): Discord.Role {
+    const matches = mention.match(/^<@&(\d+)>$/);
+    if (!matches) return null;
+
+    const id = matches[1];
+    return guild.roles.cache.get(id);
+  }
 }

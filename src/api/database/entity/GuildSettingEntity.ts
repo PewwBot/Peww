@@ -13,6 +13,6 @@ export class GuildSettings {
   @Column()
   key: string;
 
-  @Column('simple-json')
+  @Column('simple-json', { nullable: true })
   data: { };
 }
