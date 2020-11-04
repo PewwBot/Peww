@@ -4,12 +4,14 @@ import { CommandContext } from '../context/CommandContext';
 import { FunctionalCommand } from './FunctionalCommand';
 import { Predicate } from '../../../utils/Predicate';
 import { Requirement } from '../../../utils/Requirement';
+import { CommandPermission, CommandPermissions } from '../CommandPermission';
 
 export class FunctionalCommandBuilder {
   private data: {
     name?: string;
     description?: string;
     aliases?: string[];
+    permission?: CommandPermission;
     category?: CommandCategory;
     predicates?: Predicate<CommandContext>[];
   } = {
@@ -32,6 +34,11 @@ export class FunctionalCommandBuilder {
 
   public aliases(aliases: string[]): FunctionalCommandBuilder {
     this.data.aliases = aliases;
+    return this;
+  }
+
+  public permission(permission: CommandPermission): FunctionalCommandBuilder {
+    this.data.permission = permission;
     return this;
   }
 
@@ -61,7 +68,8 @@ export class FunctionalCommandBuilder {
       this.data.category,
       this.data.predicates,
       { handle: handler },
-      this.data.aliases
+      this.data.aliases,
+      this.data.permission
     );
   }
 }

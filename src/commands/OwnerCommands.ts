@@ -4,6 +4,7 @@ import { CommandCategory } from '../api/command/CommandCategory';
 import { Commands } from '../api/command/Commands';
 import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
 import { MentionUtil } from '../utils/MentionUtil';
+import { CommandPermissions } from '../api/command/CommandPermission';
 
 export class OwnerCommands implements CommandBatchRegisterer {
   get(): Command[] {
@@ -16,6 +17,7 @@ const CHECK_STAFF: Command = Commands.create()
   .aliases(['check_staff'])
   .description('Checks the specified member is staff.')
   .category(CommandCategory.OWNER)
+  .permission(CommandPermissions.OWNER)
   .handler(async (context) => {
     let member: Discord.GuildMember;
     if (context.getArgs().length < 1) {

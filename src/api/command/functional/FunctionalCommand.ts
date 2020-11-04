@@ -3,6 +3,8 @@ import { CommandCategory } from '../CommandCategory';
 import { CommandContext } from '../context/CommandContext';
 import { FunctionalCommandHandler } from './FunctionalCommandHandler';
 import { Predicate } from '../../../utils/Predicate';
+import { CommandPermission } from '../CommandPermission';
+import { DMChannel, GuildChannel, NewsChannel, TextChannel } from 'discord.js';
 
 export class FunctionalCommand extends AbstractCommand {
   private readonly predicates: Predicate<CommandContext>[];
@@ -14,7 +16,8 @@ export class FunctionalCommand extends AbstractCommand {
     category: CommandCategory,
     predicates: Predicate<CommandContext>[],
     handler: FunctionalCommandHandler,
-    aliases?: string[]
+    aliases?: string[],
+    permission?: CommandPermission
   ) {
     super();
     this.name = name;
@@ -23,14 +26,21 @@ export class FunctionalCommand extends AbstractCommand {
     this.predicates = predicates;
     this.handler = handler;
     this.aliases = aliases ? aliases : ['errorred'];
+    if (permission) this.permission = permission;
   }
 
-  public call(context: CommandContext): void {
+  public async call(context: CommandContext): Promise<void> {
+    if (
+      this.permission &&
+      !await this.permission.test(
+        context.getMessage().channel instanceof DMChannel ? context.getMessage().author : context.getMessage().member
+      )
+    )
+      return;
     for (const predicate of this.predicates) {
       if (!predicate.apply(context)) return;
     }
 
     this.handler.handle(context);
   }
-
 }

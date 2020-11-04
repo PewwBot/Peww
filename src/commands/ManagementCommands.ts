@@ -7,6 +7,7 @@ import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer'
 
 import * as util from 'util';
 import { CommandContext } from '../api/command/context/CommandContext';
+import { CommandPermissions } from '../api/command/CommandPermission';
 
 export class ManagementCommands implements CommandBatchRegisterer {
   get(): Command[] {
@@ -19,6 +20,7 @@ const TEST: Command = Commands.create()
   .aliases(['test'])
   .description('Test some staff.')
   .category(CommandCategory.MANAGEMENT)
+  .permission(CommandPermissions.BOT_OWNER)
   .handler(async (context) => {
     
   });
@@ -28,6 +30,7 @@ const SQL_RUN: Command = Commands.create()
   .aliases(['sqlrun'])
   .description('Used to apply changes to the database.')
   .category(CommandCategory.MANAGEMENT)
+  .permission(CommandPermissions.BOT_OWNER)
   .handler((context) => {
     if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
       context.getMessage().delete();
@@ -70,6 +73,7 @@ const EVAL: Command = Commands.create()
   .aliases(['eval', 'evalpastebin', 'evalfile'])
   .description('used to run code.')
   .category(CommandCategory.MANAGEMENT)
+  .permission(CommandPermissions.BOT_OWNER)
   .handler(async (context) => {
     if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
       context.getMessage().delete();
@@ -110,6 +114,7 @@ const EVAL_RELOAD: Command = Commands.create()
   .aliases(['evalreload'])
   .description('the code is used to refresh files in the eval system.')
   .category(CommandCategory.MANAGEMENT)
+  .permission(CommandPermissions.BOT_OWNER)
   .handler((context) => {
     if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
       context.getMessage().delete();

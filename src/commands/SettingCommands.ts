@@ -1,6 +1,7 @@
 import { Command } from '../api/command/Command';
 import { CommandBatchRegisterer } from '../api/command/CommandBatchRegisterer';
 import { CommandCategory } from '../api/command/CommandCategory';
+import { CommandPermissions } from '../api/command/CommandPermission';
 import { Commands } from '../api/command/Commands';
 import { EmbedBuilder } from '../api/embed/EmbedBuilder';
 import { Bot } from '../Bot';
@@ -17,6 +18,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
   .description('')
   .aliases(['setting', 'ayar'])
   .category(CommandCategory.SETTING)
+  .permission(CommandPermissions.STAFF)
   .handler(async (context) => {
     if (context.getArgs().length < 1) {
       const embedBuilder = context
