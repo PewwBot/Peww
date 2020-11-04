@@ -21,7 +21,7 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
         return context.getMessage().guild;
       })
       .handler(async (guild, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
+        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id, true);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
         let setting = guildData.settings.find((setting) => setting.key === 'staffRoles');
         if (mode.getName() === 'GET') {

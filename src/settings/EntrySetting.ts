@@ -32,7 +32,7 @@ export class EntrySetting
       }))
       .valueOrganizer(new EmptyOrganizer())
       .handler(async (type, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(type.guild.id);
+        const guildData = await Bot.getInstance().getCacheManager().getGuild(type.guild.id, true);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
         let setting = guildData.settings.find((setting) => setting.key === 'entry');
         if (mode.getName() === 'GET') {

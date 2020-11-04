@@ -20,7 +20,7 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
         return context.getMessage().guild;
       })
       .handler(async (guild, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id);
+        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id, true);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
         if (mode.getName() === 'GET') {
           return SettingChangeStatus.of(

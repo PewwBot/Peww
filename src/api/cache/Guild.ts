@@ -110,6 +110,17 @@ export class Guild {
     }
   }
 
+  public isStaff(member: Discord.GuildMember, ownerControl: boolean = false): boolean {
+    if (ownerControl && member.guild.ownerID === member.id) return true;
+    const setting = this.settings.find((setting) => setting.key === 'staffRoles');
+    if (setting && setting.data) {
+      const staffRoles = (setting.data as any).value as string[];
+      if (!staffRoles || staffRoles.length < 1) return false;
+      return staffRoles.some((staffRole) => member.roles.cache.has(staffRole));
+    }
+    return false;
+  }
+
   public async getGuild(): Promise<Discord.Guild | undefined> {
     if (!this.guildId) return null;
     let guild = Bot.getInstance().getClient().guilds.cache.get(this.getGuildId());
@@ -134,5 +145,13 @@ export class Guild {
 
   public getCustomPrefix(): string[] {
     return this.customPrefix;
+  }
+
+  public getDefaultPrefix(): boolean {
+    return this.defaultPrefix;
+  }
+
+  public getSettings(): GuildSettings[] {
+    return this.settings;
   }
 }
