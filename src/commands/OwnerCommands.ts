@@ -16,7 +16,7 @@ const CHECK_STAFF: Command = Commands.create()
   .name('checkStaff')
   .aliases(['check_staff'])
   .description('Checks the specified member is staff.')
-  .category(CommandCategory.OWNER)
+  .category(CommandCategory.MODERATION)
   .permission(CommandPermissions.OWNER)
   .handler(async (context) => {
     let member: Discord.GuildMember;
