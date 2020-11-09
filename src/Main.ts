@@ -8,7 +8,17 @@ import { PrefixSetting } from './settings/PrefixSetting';
 import { StaffSetting } from './settings/StaffSetting';
 import { OwnerCommands } from './commands/OwnerCommands';
 
-const bot = new Bot();
+import { ShardClientUtil as PewwShardClientUtil } from './api/shard/ShardClientUtil';
+import { BotShard } from './BotShard';
+
+declare module 'discord.js' {
+  // tslint:disable-next-line: no-empty-interface
+  interface ShardClientUtil extends PewwShardClientUtil {}
+}
+
+BotShard.start();
+
+/*const bot = new Bot();
 bot.start((error: Error) => {
   if (error) {
     bot.getLogger().prettyError(error);
@@ -19,4 +29,4 @@ bot.start((error: Error) => {
   bot.getCommandManager().registerAllBatchClass(new ManagementCommands(), new SettingCommands(), new OwnerCommands());
   bot.getSchedulerManager().registerClass(new GuildControlScheduler());
   bot.getSettingManager().registerAllClass(new PrefixSetting(), new EntrySetting(), new StaffSetting());
-});
+});*/
