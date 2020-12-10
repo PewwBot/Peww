@@ -1,7 +1,7 @@
 import { TextStyle } from '@js-joda/core';
 
 import * as Discord from 'discord.js';
-import { Bot } from '../../Bot';
+import { PewwBot } from '../../PewwBot';
 
 export class CommandPermissions {
   public static USER: CommandPermission = {
@@ -11,23 +11,23 @@ export class CommandPermissions {
   } as CommandPermission;
 
   public static BOT_OWNER: CommandPermission = {
-    test: async (member) => {
+    test: async (bot, member) => {
       if (!(member instanceof Discord.GuildMember)) return false;
-      return member.id === Bot.getInstance().getConfig().getData().ownerId;
+      return member.id === bot.getConfig().getData().ownerId;
     },
   } as CommandPermission;
 
   public static OWNER: CommandPermission = {
-    test: async (member) => {
+    test: async (bot, member) => {
       if (!(member instanceof Discord.GuildMember)) return false;
       return member.guild.ownerID === member.id;
     },
   } as CommandPermission;
 
   public static STAFF: CommandPermission = {
-    test: async (member) => {
+    test: async (bot, member) => {
       if (!(member instanceof Discord.GuildMember)) return false;
-      const guildData = await Bot.getInstance().getCacheManager().getGuild(member.guild.id);
+      const guildData = await bot.getCacheManager().getGuild(member.guild.id);
       return (
         member.guild.ownerID === member.id ||
         member.hasPermission('ADMINISTRATOR') ||
@@ -39,5 +39,5 @@ export class CommandPermissions {
 }
 
 export interface CommandPermission {
-  test(object: Discord.GuildMember | Discord.User): Promise<boolean>;
+  test(bot: PewwBot, object: Discord.GuildMember | Discord.User): Promise<boolean>;
 }

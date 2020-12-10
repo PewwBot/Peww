@@ -1,3 +1,4 @@
+import { PewwBot } from '../../PewwBot';
 import { CommandCategory } from './CommandCategory';
 import { CommandPermission } from './CommandPermission';
 import { CommandContext } from './context/CommandContext';
@@ -9,9 +10,9 @@ export interface Command {
   permission?: CommandPermission;
   category: CommandCategory;
 
-  register(): void;
+  register(bot: PewwBot): void;
 
-  unregister(): void;
+  unregister(bot: PewwBot): void;
 
   call(context: CommandContext): void;
 }

@@ -16,7 +16,7 @@ export class Config {
   private data: ConfigType;
   private evalFiles: Map<string, string> = new Map();
 
-  public load(callback: (error: Error) => void) {
+  public async load(): Promise<void> {
     try {
       this.data = JSON.parse(fs.readFileSync(path.join(__dirname, 'config/config.json'), 'utf-8'));
       fs.readdirSync(path.join(__dirname, 'evaluates/'))
@@ -27,9 +27,8 @@ export class Config {
             fs.readFileSync(path.join(__dirname, 'evaluates/' + file), 'utf-8')
           )
         );
-      callback(null);
     } catch (error) {
-      callback(error);
+      throw error;
     }
   }
 

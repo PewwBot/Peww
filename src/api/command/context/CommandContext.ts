@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js';
-import { Bot } from '../../../Bot';
+import { PewwBot } from '../../../PewwBot';
 import { EmbedBuilder } from '../../embed/EmbedBuilder';
 
 export interface CommandContext {
-  getBot(): Bot;
+  getBot(): PewwBot;
 
   getLabel(): string;
 

@@ -1,9 +1,15 @@
 import * as Discord from 'discord.js';
+import { PewwBot } from '../../PewwBot';
 import { Subscription } from './Subscription';
 import { SubscriptionBatchRegisterer } from './SubscriptionBatchRegisterer';
 import { SubscriptionRegisterer } from './SubscriptionRegisterer';
 export class SubscriptionManager {
+  private bot: PewwBot;
   private subscriptions: Subscription<any>[] = [];
+
+  constructor(bot: PewwBot) {
+    this.bot = bot;
+  }
 
   public getSubscription<K extends keyof Discord.ClientEvents>(subscriptionName: string): Subscription<K> {
     return this.subscriptions.find((subscription) => subscription.name === subscriptionName, null);
@@ -12,7 +18,7 @@ export class SubscriptionManager {
   public register<K extends keyof Discord.ClientEvents>(subscription: Subscription<K>): void {
     if (!this.getSubscription(subscription.name)) {
       this.subscriptions.push(subscription);
-      subscription.register();
+      subscription.register(this.bot);
     }
   }
 
@@ -20,7 +26,7 @@ export class SubscriptionManager {
     const subscription = subscriptionRegisterer.get();
     if (!this.getSubscription(subscription.name)) {
       this.subscriptions.push(subscription);
-      subscription.register();
+      subscription.register(this.bot);
     }
   }
 
@@ -48,13 +54,13 @@ export class SubscriptionManager {
 
   public unregister(subscription: Subscription<any>): void {
     const sub = this.getSubscription(subscription.name);
-    if (sub) sub.unregister();
+    if (sub) sub.unregister(this.bot);
     this.subscriptions = this.subscriptions.filter((sub) => sub.name !== subscription.name);
   }
 
   public unregisterWithName(subscriptionName: string): void {
     const sub = this.getSubscription(subscriptionName);
-    if (sub) sub.unregister();
+    if (sub) sub.unregister(this.bot);
     this.subscriptions = this.subscriptions.filter((sub) => sub.name !== subscriptionName);
   }
 }

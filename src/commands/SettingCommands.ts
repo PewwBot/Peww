@@ -4,7 +4,8 @@ import { CommandCategory } from '../api/command/CommandCategory';
 import { CommandPermissions } from '../api/command/CommandPermission';
 import { Commands } from '../api/command/Commands';
 import { EmbedBuilder } from '../api/embed/EmbedBuilder';
-import { Bot } from '../Bot';
+import { ImmutableSettingContext } from '../api/setting/context/ImmutableSettingContext';
+import { PewwBot } from '../PewwBot';
 import { StringUtil } from '../utils/StringUtil';
 
 export class SettingCommands implements CommandBatchRegisterer {
@@ -30,7 +31,9 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
       );
       embedBuilder.addField(
         'Ayarlar',
-        [...context.getBot().getSettingManager().getData().keys()].map((setting) => `\`${StringUtil.capitalize(setting, 'tr-TR')}\``).join(', '),
+        [...context.getBot().getSettingManager().getData().keys()]
+          .map((setting) => `\`${StringUtil.capitalize(setting, 'tr-TR')}\``)
+          .join(', '),
         true
       );
       context.getMessage().react('✅');
@@ -61,7 +64,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
-      Bot.getInstance().getSettingManager().get(selectedSetting).help(context);
+      context.getBot().getSettingManager().get(selectedSetting).help(context);
     } else {
       const selectedSetting: string = context.getArgs()[0].toLocaleLowerCase('tr-TR');
       if (!selectedSetting) {
@@ -78,7 +81,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
-      const setting = Bot.getInstance().getSettingManager().get(selectedSetting);
+      const setting = context.getBot().getSettingManager().get(selectedSetting);
 
       if (context.getArgs().length < 2) {
         context.getMessage().react('✅');
@@ -98,7 +101,7 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         settingMode = setting
           .getModes()
           .find(
-            (mode) =>
+            (mode: { getAliases: () => string | any[] }) =>
               mode
                 .getAliases()
                 .includes(
@@ -123,10 +126,13 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         return;
       }
       const changeStatus = await setting.handle(
-        setting.typeOrganizer(context),
-        setting.valueOrganizer.organize(context.getArgs().splice(settingModeValue.length + 1)),
-        settingMode,
-        settingModeValue
+        new ImmutableSettingContext(
+          context.getBot(),
+          setting.typeOrganizer(context),
+          setting.valueOrganizer.organize(context.getArgs().splice(settingModeValue.length + 1)),
+          settingMode,
+          settingModeValue
+        )
       );
       if (changeStatus.isSuccessfully()) {
         context.getMessage().react('✅');

@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js';
-import { Bot } from './../Bot';
+import { PewwBot } from '../PewwBot';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { Commands } from '../api/command/Commands';
@@ -52,7 +52,7 @@ const SQL_RUN: Command = Commands.create()
         if (rows && Array.isArray(rows) && rows.length > 0) {
           context.getMessage().channel.send(
             new Discord.MessageEmbed({
-              author: { name: 'Peww', iconURL: context.getBot().getClient().user.avatarURL() },
+              author: { name: 'Peww', iconURL: context.getBot().user.avatarURL() },
               description: `\`\`\`\n${rows.map((row) => JSON.stringify(row, null, '\t')).join('\n')}\n\`\`\``,
               color: '#29c458',
             })

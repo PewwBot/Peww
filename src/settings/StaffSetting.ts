@@ -4,7 +4,7 @@ import * as Discord from 'discord.js';
 import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
 import { SettingMode } from '../api/setting/SettingMode';
-import { Bot } from '../Bot';
+import { PewwBot } from '../PewwBot';
 import { SettingRegisterer } from '../api/setting/SettingRegisterer';
 import { GuildSettings } from '../api/database/entity/GuildSettingEntity';
 import { MentionUtil } from '../utils/MentionUtil';
@@ -20,16 +20,19 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
       .typeOrganizer((context) => {
         return context.getMessage().guild;
       })
-      .handler(async (guild, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id, true);
+      .handler(async (context) => {
+        const guildData = await context.getBot().getCacheManager().getGuild(context.getType().id, true);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
-        let setting = guildData.settings.find((setting) => setting.key === 'staffRoles');
-        if (mode.getName() === 'GET') {
+        let setting = guildData.settings.find((setting: { key: string }) => setting.key === 'staffRoles');
+        if (context.getMode().getName() === 'GET') {
           return SettingChangeStatus.of(
             !setting || !setting.data ? {} : setting.data,
             () =>
               `\`Staff\` ayarı: ${
-                !setting || !setting.data || !(setting.data as any).value || ((setting.data as any).value as string[]).length < 1
+                !setting ||
+                !setting.data ||
+                !(setting.data as any).value ||
+                ((setting.data as any).value as string[]).length < 1
                   ? '`Yok`'
                   : ((setting.data as any).value as string[]).map((staff) => `<@&${staff}>`).join(', ')
               }`
@@ -38,12 +41,12 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
         let putNew = false;
         if (!setting) {
           setting = new GuildSettings();
-          setting.guildId = guild.id;
+          setting.guildId = context.getType().id;
           setting.key = 'staffRoles';
           setting.data = { value: [] };
           putNew = true;
         }
-        if (mode.getName() === 'CLEAR') {
+        if (context.getMode().getName() === 'CLEAR') {
           (setting.data as any) = null;
           if (putNew) guildData.settings.push(setting);
           if (await guildData.save()) {
@@ -52,13 +55,13 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
             return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
           }
         }
-        if (data.length < 1)
+        if (context.getValue().length < 1)
           return SettingChangeStatus.of(null, () => '`Staff` ayarını değiştirebilmek için değer belirtmeniz gerekli!');
-        switch (mode.getName()) {
+        switch (context.getMode().getName()) {
           case 'SET':
             const rolesSet: string[] = [];
-            for (const roleId of data) {
-              const role = MentionUtil.getRoleFromMention(guild, roleId);
+            for (const roleId of context.getValue()) {
+              const role = MentionUtil.getRoleFromMention(context.getType(), roleId);
               if (!role) continue;
               rolesSet.push(role.id);
             }
@@ -74,15 +77,15 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
             if (putNew) guildData.settings.push(setting);
             if (await guildData.save()) {
               return SettingChangeStatus.of(
-                data,
+                context.getValue(),
                 () => `\`Staff\` ayarı ${rolesSet.map((staff) => `<@&${staff}>`).join(', ')} olarak ayarlandı!`
               );
             }
             break;
           case 'ADD':
             const rolesAdd: string[] = [];
-            for (const roleId of data) {
-              const role = MentionUtil.getRoleFromMention(guild, roleId);
+            for (const roleId of context.getValue()) {
+              const role = MentionUtil.getRoleFromMention(context.getType(), roleId);
               if (!role) continue;
               rolesAdd.push(role.id);
             }
@@ -108,8 +111,8 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
             break;
           case 'REMOVE':
             const rolesRemove: string[] = [];
-            for (const roleId of data) {
-              const role = MentionUtil.getRoleFromMention(guild, roleId);
+            for (const roleId of context.getValue()) {
+              const role = MentionUtil.getRoleFromMention(context.getType(), roleId);
               if (!role) continue;
               rolesRemove.push(role.id);
             }
@@ -118,7 +121,9 @@ export class StaffSetting implements SettingRegisterer<Discord.Guild, string[] |
                 null,
                 () => '`Staff` ayarını değiştirebilmek için değer belirtmeniz gerekli!'
               );
-            const changedDataRemove = rolesRemove.filter((val) => ((setting.data as any).value as string[]).includes(val));
+            const changedDataRemove = rolesRemove.filter((val) =>
+              ((setting.data as any).value as string[]).includes(val)
+            );
             if (changedDataRemove.length < 1)
               return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
             if (!setting.data) {

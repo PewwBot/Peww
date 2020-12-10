@@ -2,6 +2,7 @@ import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { CommandContext } from '../command/context/CommandContext';
 import { SettingChangeStatus } from './SettingChangeStatus';
 import { SettingMode } from './SettingMode';
+import { SettingContext } from './context/SettingContext';
 
 export interface Setting<T, V> {
   name: string;
@@ -18,5 +19,5 @@ export interface Setting<T, V> {
 
   // get(t: T): Promise<V | undefined>;
 
-  handle(t: T, v: V, mode?: SettingMode, currentModeArgs?: string[]): Promise<SettingChangeStatus<V>>;
+  handle(context: SettingContext<T, V>): Promise<SettingChangeStatus<V>>;
 }

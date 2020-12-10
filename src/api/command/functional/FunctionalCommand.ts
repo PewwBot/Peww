@@ -32,9 +32,10 @@ export class FunctionalCommand extends AbstractCommand {
   public async call(context: CommandContext): Promise<void> {
     if (
       this.permission &&
-      !await this.permission.test(
+      !(await this.permission.test(
+        context.getBot(),
         context.getMessage().channel instanceof DMChannel ? context.getMessage().author : context.getMessage().member
-      )
+      ))
     )
       return;
     for (const predicate of this.predicates) {

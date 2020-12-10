@@ -3,7 +3,7 @@ import { Subscription } from './Subscription';
 
 import { SubscriptionHandler } from './SubscriptionHandler';
 import { SubscriptionPredicate } from './SubscriptionPredicate';
-import { Bot } from '../../Bot';
+import { PewwBot } from '../../PewwBot';
 
 export class SubscriptionImpl<K extends keyof Discord.ClientEvents> implements Subscription<K> {
   event: K;
@@ -23,10 +23,10 @@ export class SubscriptionImpl<K extends keyof Discord.ClientEvents> implements S
     this.handler = handler;
   }
 
-  register(): void {
+  register(bot: PewwBot): void {
     this.listener = (...args: Discord.ClientEvents[K]) => {
       if (!this.isActive()) {
-        this.unregister();
+        this.unregister(bot);
         return;
       }
 
@@ -37,11 +37,11 @@ export class SubscriptionImpl<K extends keyof Discord.ClientEvents> implements S
       this.callCounter++;
       this.handler(this, ...args);
     };
-    Bot.getInstance().getClient().on(this.event, this.listener);
+    bot.on(this.event, this.listener);
   }
 
-  unregister() {
-    Bot.getInstance().getClient().off(this.event, this.listener);
+  unregister(bot: PewwBot) {
+    bot.off(this.event, this.listener);
   }
 
   isActive(): boolean {

@@ -6,6 +6,7 @@ import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { EmptyOrganizer } from './organizers/EmptyOrganizer';
 import { SettingMode } from './SettingMode';
 import { StringUtil } from '../../utils/StringUtil';
+import { SettingContext } from './context/SettingContext';
 
 export class SettingBuilder<T, V> {
   private data: {
@@ -60,7 +61,7 @@ export class SettingBuilder<T, V> {
     return this;
   }*/
 
-  public handler(handler: (t: T, v: V, mode?: SettingMode, currentModeArgs?: string[]) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
+  public handler(handler: (context: SettingContext<T, V>) => Promise<SettingChangeStatus<V>>): Setting<T, V> {
     return {
       name: this.data.name,
       typeOrganizer: this.data.typeOrganizer,

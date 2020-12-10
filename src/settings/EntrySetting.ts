@@ -5,7 +5,7 @@ import * as Discord from 'discord.js';
 import { Setting } from '../api/setting/Setting';
 import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
-import { Bot } from '../Bot';
+import { PewwBot } from '../PewwBot';
 import { SettingMode } from '../api/setting/SettingMode';
 import { EmptyOrganizer } from '../api/setting/organizers/EmptyOrganizer';
 import { StringUtil } from '../utils/StringUtil';
@@ -31,11 +31,11 @@ export class EntrySetting
         channel: context.getMessage().channel as Discord.TextChannel,
       }))
       .valueOrganizer(new EmptyOrganizer())
-      .handler(async (type, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(type.guild.id, true);
+      .handler(async (context) => {
+        const guildData = await context.getBot().getCacheManager().getGuild(context.getType().guild.id, true);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
         let setting = guildData.settings.find((setting) => setting.key === 'entry');
-        if (mode.getName() === 'GET') {
+        if (context.getMode().getName() === 'GET') {
           return SettingChangeStatus.of(
             !setting || !setting.data ? {} : setting.data,
             () =>
@@ -59,24 +59,24 @@ export class EntrySetting
         let putNew = false;
         if (!setting) {
           setting = new GuildSettings();
-          setting.guildId = type.guild.id;
+          setting.guildId = context.getType().guild.id;
           setting.key = 'entry';
           setting.data = { join: { mode: 'off', message: null }, leave: { mode: 'off', message: null }, channelId: '' };
           putNew = true;
         }
-        switch (mode.getName()) {
+        switch (context.getMode().getName()) {
           case 'CHANNEL':
-            if (data.length < 1) {
-              (setting.data as any).channelId = type.channel.id;
+            if (context.getValue().length < 1) {
+              (setting.data as any).channelId = context.getType().channel.id;
               if (putNew) guildData.settings.push(setting);
               if (await guildData.save()) {
                 return SettingChangeStatus.of(
-                  type.channel,
-                  () => `<#${type.channel.id}> odası giriş-çıkış bildirim odası olarak belirlendi!`
+                  context.getType().channel,
+                  () => `<#${context.getType().channel.id}> odası giriş-çıkış bildirim odası olarak belirlendi!`
                 );
               }
             } else {
-              const channel = MentionUtil.getChannelFromMention(type.guild, data[0]);
+              const channel = MentionUtil.getChannelFromMention(context.getType().guild, context.getValue()[0]);
               if (!channel) {
                 return SettingChangeStatus.of(null, () => 'Ayarı değiştirmek için yazı kanalı etiketlemeniz gerekir!');
               }
@@ -91,55 +91,57 @@ export class EntrySetting
             }
             break;
           case 'MODE_MODIFIER':
-            if (data.length < 1)
+            if (context.getValue().length < 1)
               return SettingChangeStatus.of(
                 null,
                 () => 'Ayarı değiştirmek için belirtmeniz gerekir!\nAyarlayabileceğiniz modlar: embed, message, off'
               );
-            if (!['embed', 'message', 'off'].includes(data[0])) {
+            if (!['embed', 'message', 'off'].includes(context.getValue()[0])) {
               return SettingChangeStatus.of(
                 null,
                 () => 'Mesaj modu hatalı!\nAyarlayabileceğiniz modlar: embed, message, off'
               );
             }
-            const entryMode = currentModeArgs[0];
+            const entryMode = context.getCurrentModeArgs()[0];
             switch (entryMode) {
               case 'join':
-                (setting.data as any).join.mode = data[0];
+                (setting.data as any).join.mode = context.getValue()[0];
                 break;
               case 'leave':
-                (setting.data as any).leave.mode = data[0];
+                (setting.data as any).leave.mode = context.getValue()[0];
                 break;
             }
             if (putNew) guildData.settings.push(setting);
             if (await guildData.save()) {
               return SettingChangeStatus.of(
-                data,
+                context.getValue(),
                 () =>
-                  `\`Entry-${StringUtil.capitalize(entryMode, 'tr-TR')}-Mode\` ayarı \`${data[0]}\` olarak ayarlandı!`
+                  `\`Entry-${StringUtil.capitalize(entryMode, 'tr-TR')}-Mode\` ayarı \`${
+                    context.getValue()[0]
+                  }\` olarak ayarlandı!`
               );
             }
             break;
           case 'MESSAGE_MODIFIER':
-            if (data.length < 1)
+            if (context.getValue().length < 1)
               return SettingChangeStatus.of(null, () => 'Ayarı değiştirmek için belirtmeniz gerekir!');
-            const entryMessage = currentModeArgs[0];
+            const entryMessage = context.getCurrentModeArgs()[0];
             switch (entryMessage) {
               case 'join':
-                (setting.data as any).join.message = data.join(' ');
+                (setting.data as any).join.message = context.getValue().join(' ');
                 break;
               case 'leave':
-                (setting.data as any).leave.message = data.join(' ');
+                (setting.data as any).leave.message = context.getValue().join(' ');
                 break;
             }
             if (putNew) guildData.settings.push(setting);
             if (await guildData.save()) {
               return SettingChangeStatus.of(
-                data,
+                context.getValue(),
                 () =>
-                  `\`Entry-${StringUtil.capitalize(entryMessage, 'tr-TR')}-Message\` ayarı \`${data.join(
-                    ' '
-                  )}\` olarak ayarlandı!`
+                  `\`Entry-${StringUtil.capitalize(entryMessage, 'tr-TR')}-Message\` ayarı \`${context
+                    .getValue()
+                    .join(' ')}\` olarak ayarlandı!`
               );
             }
             break;

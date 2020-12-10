@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js';
+import { PewwBot } from '../../PewwBot';
 
 export interface Subscription<K extends keyof Discord.ClientEvents> {
   event: K;
@@ -6,9 +7,9 @@ export interface Subscription<K extends keyof Discord.ClientEvents> {
   active: boolean;
   callCounter: number;
 
-  register(): void;
+  register(bot: PewwBot): void;
 
-  unregister(): void;
+  unregister(bot: PewwBot): void;
 
   isActive(): boolean;
 

@@ -1,14 +1,16 @@
-import { Bot } from './../../Bot';
+import { PewwBot } from '../../PewwBot';
 import { CommandSubscription } from '../../subscriptions/CommandSubscription';
 import { Command } from './Command';
 import { CommandRegisterer } from './CommandRegisterer';
 import { CommandBatchRegisterer } from './CommandBatchRegisterer';
 
 export class CommandManager {
+  private bot: PewwBot;
   private commands: Command[] = [];
 
-  constructor() {
-    Bot.getInstance().getSubscriptionManager().registerClass(new CommandSubscription());
+  constructor(bot: PewwBot) {
+    this.bot = bot;
+    this.bot.getSubscriptionManager().registerClass(new CommandSubscription(this.bot));
   }
 
   public getCommand(command: string): Command {

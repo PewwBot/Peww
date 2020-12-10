@@ -3,19 +3,21 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { LocaleData } from './LocaleData';
-import { Bot } from '../../Bot';
+import { PewwBot } from '../../PewwBot';
 
 export class Locale {
+  private bot: PewwBot;
   private code: LocaleCode;
   private data: LocaleData;
 
-  constructor(code: LocaleCode) {
+  constructor(bot: PewwBot, code: LocaleCode) {
+    this.bot = bot;
     this.code = code;
   }
 
   public load(): boolean {
     try {
-      this.data = JSON.parse(fs.readFileSync(path.join(Bot.getInstance().getMainFolder(), `locale/${this.code}.json`), 'utf-8'));
+      this.data = JSON.parse(fs.readFileSync(path.join(this.bot.getMainFolder(), `locale/${this.code}.json`), 'utf-8'));
       return true;
     } catch (error) {
       throw error;

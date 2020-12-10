@@ -4,7 +4,7 @@ import * as Discord from 'discord.js';
 import { Setting } from '../api/setting/Setting';
 import { Settings } from '../api/setting/Settings';
 import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
-import { Bot } from '../Bot';
+import { PewwBot } from '../PewwBot';
 import { SettingMode } from '../api/setting/SettingMode';
 
 export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] | undefined> {
@@ -15,14 +15,20 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
       .mode(SettingMode.of('ADD', ['add'], 'Ekleme yapar.'))
       .mode(SettingMode.of('REMOVE', ['remove'], 'Çıkarma yapar.'))
       .mode(SettingMode.of('CLEAR', ['clear'], 'Ayarı varsayılana çevirir.'))
-      .mode(SettingMode.of('DEFAULT_PREFIX', ['default_prefix'], 'Botun kendi prefixlerinin kullanıp kullanılmayacağını ayarlar. (Sadece özel prefix belirliyse çalışır)'))
+      .mode(
+        SettingMode.of(
+          'DEFAULT_PREFIX',
+          ['default_prefix'],
+          'Botun kendi prefixlerinin kullanıp kullanılmayacağını ayarlar. (Sadece özel prefix belirliyse çalışır)'
+        )
+      )
       .typeOrganizer((context) => {
         return context.getMessage().guild;
       })
-      .handler(async (guild, data, mode, currentModeArgs) => {
-        const guildData = await Bot.getInstance().getCacheManager().getGuild(guild.id, true);
+      .handler(async (context) => {
+        const guildData = await context.getBot().getCacheManager().getGuild(context.getType().id, true);
         if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
-        if (mode.getName() === 'GET') {
+        if (context.getMode().getName() === 'GET') {
           return SettingChangeStatus.of(
             guildData.getCustomPrefix(),
             () =>
@@ -31,21 +37,24 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
                   ? '`Yok`'
                   : guildData
                       .getCustomPrefix()
-                      .map((prefix) => `\`${prefix}\``)
+                      .map((prefix: any) => `\`${prefix}\``)
                       .join(', ')
               } (Ana Prefixler: ${guildData.defaultPrefix ? '`Aktif`' : '`Devre Dışı`'})`
           );
         }
-        if (mode.getName() === 'DEFAULT_PREFIX') {
-          if (data.length < 1) {
+        if (context.getMode().getName() === 'DEFAULT_PREFIX') {
+          if (context.getValue().length < 1) {
             guildData.defaultPrefix = !guildData.defaultPrefix;
             if (await guildData.save()) {
-              return SettingChangeStatus.of([], () => `\`Default-Prefix\` ayarı ${guildData.defaultPrefix ? '`aktif`' : '`devre dışı`'} edildi!`);
+              return SettingChangeStatus.of(
+                [],
+                () => `\`Default-Prefix\` ayarı ${guildData.defaultPrefix ? '`aktif`' : '`devre dışı`'} edildi!`
+              );
             } else {
               return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
             }
           }
-          switch (data[0]) {
+          switch (context.getValue()[0]) {
             case 'true':
               guildData.defaultPrefix = true;
               if (await guildData.save()) {
@@ -61,9 +70,12 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
                 return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
               }
           }
-          return SettingChangeStatus.of(null, () => '`Default-Prefix` ayarını değiştirebilmek için değer belirtmeniz gerekli! `(true/false)`');
+          return SettingChangeStatus.of(
+            null,
+            () => '`Default-Prefix` ayarını değiştirebilmek için değer belirtmeniz gerekli! `(true/false)`'
+          );
         }
-        if (mode.getName() === 'CLEAR') {
+        if (context.getMode().getName() === 'CLEAR') {
           guildData.customPrefix = [];
           if (await guildData.save()) {
             return SettingChangeStatus.of([], () => '`Prefix` ayarı sıfırlandı!');
@@ -71,18 +83,18 @@ export class PrefixSetting implements SettingRegisterer<Discord.Guild, string[] 
             return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
           }
         }
-        if (data.length < 1)
+        if (context.getValue().length < 1)
           return SettingChangeStatus.of(null, () => '`Prefix` ayarını değiştirebilmek için değer belirtmeniz gerekli!');
-        if (data.some((val) => Bot.getInstance().getConfig().getData().prefix.includes(val))) {
+        if (context.getValue().some((val) => context.getBot().getConfig().getData().prefix.includes(val))) {
           return SettingChangeStatus.of(
             null,
             () => '`Prefix` ayarı için belirttiğiniz değer ana prefix listesinde olduğu için ayarlanamaz!'
           );
         }
-        data = data.filter((val) => !(val.length > 3));
+        const data = context.getValue().filter((val) => !(val.length > 3));
         if (data.length < 1)
           return SettingChangeStatus.of(null, () => "`Prefix` ayarı en fazla 3 karakter'den oluşabilir!");
-        switch (mode.getName()) {
+        switch (context.getMode().getName()) {
           case 'SET':
             if (!guildData.isPremium() && data.length > 2)
               return SettingChangeStatus.of(

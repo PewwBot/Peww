@@ -1,8 +1,8 @@
 import { Command } from './Command';
 import { CommandCategory } from './CommandCategory';
-import { Bot } from '../../Bot';
 import { CommandContext } from './context/CommandContext';
 import { CommandPermission } from './CommandPermission';
+import { PewwBot } from '../../PewwBot';
 
 export abstract class AbstractCommand implements Command {
   name: string;
@@ -11,12 +11,12 @@ export abstract class AbstractCommand implements Command {
   permission?: CommandPermission;
   category: CommandCategory;
 
-  public register(): void {
-    Bot.getInstance().getCommandManager().register(this);
+  public register(bot: PewwBot): void {
+    bot.getCommandManager().register(this);
   }
 
-  public unregister(): void {
-    Bot.getInstance().getCommandManager().unregister(this);
+  public unregister(bot: PewwBot): void {
+    bot.getCommandManager().unregister(this);
   }
 
   abstract call(context: CommandContext): void;
