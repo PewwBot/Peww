@@ -6,6 +6,8 @@ import { PrefixSetting } from './settings/PrefixSetting';
 import { StaffSetting } from './settings/StaffSetting';
 import { ManagementCommands } from './commands/ManagementCommands';
 import { Database } from './api/database/Database';
+import { SettingCommands } from './commands/SettingCommands';
+import { OwnerCommands } from './commands/OwnerCommands';
 
 Database.load('test')
   .then(() => {
@@ -15,7 +17,7 @@ Database.load('test')
       bot.getSubscriptionManager().registerBatchClass(new GuildSubscriptions(bot));
       bot
         .getCommandManager()
-        .registerAllBatchClass(new ManagementCommands() /*new SettingCommands(), new OwnerCommands()*/);
+        .registerAllBatchClass(new ManagementCommands(), new SettingCommands(), new OwnerCommands());
       bot.getSchedulerManager().registerClass(new GuildControlScheduler(bot));
       bot.getSettingManager().registerAllClass(new PrefixSetting(), new EntrySetting(), new StaffSetting());
       bot.getLogger().info(`${bot.getCommandManager().getCount()} Commands loaded!`);

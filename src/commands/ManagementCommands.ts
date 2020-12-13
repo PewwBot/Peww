@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js';
-import { PewwBot } from '../PewwBot';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';

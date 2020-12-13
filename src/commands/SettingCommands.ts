@@ -1,26 +1,30 @@
-/*import { Command } from '../api/command/Command';
+import { AbstractCommand } from '../api/command/AbstractCommand';
+import { Command } from '../api/command/Command';
 import { CommandBatchRegisterer } from '../api/command/CommandBatchRegisterer';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { CommandPermissions } from '../api/command/CommandPermission';
-import { Commands } from '../api/command/Commands';
-import { EmbedBuilder } from '../api/embed/EmbedBuilder';
+import { CommandContext } from '../api/command/context/CommandContext';
 import { ImmutableSettingContext } from '../api/setting/context/ImmutableSettingContext';
-import { PewwBot } from '../PewwBot';
 import { StringUtil } from '../utils/StringUtil';
 
 export class SettingCommands implements CommandBatchRegisterer {
   get(): Command[] {
-    return [SETTING_COMMAND_MAIN];
+    return [new SettingCommand()];
   }
 }
 
-const SETTING_COMMAND_MAIN: Command = Commands.create()
-  .name('settingMain')
-  .description('')
-  .aliases(['setting', 'ayar'])
-  .category(CommandCategory.SETTING)
-  .permission(CommandPermissions.STAFF)
-  .handler(async (context) => {
+class SettingCommand extends AbstractCommand {
+  constructor() {
+    super({
+      name: 'setting',
+      aliases: ['setting'],
+      description: 'Bot settings',
+      category: CommandCategory.SETTING,
+      requiredCustomPermission: CommandPermissions.STAFF,
+    });
+  }
+
+  async run(context: CommandContext): Promise<void> {
     if (context.getArgs().length < 1) {
       const embedBuilder = context
         .createEmbedBuilder()
@@ -162,4 +166,5 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         }
       }
     }
-  });*/
+  }
+}

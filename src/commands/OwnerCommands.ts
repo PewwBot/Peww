@@ -1,24 +1,30 @@
-/*import * as Discord from 'discord.js';
+import * as Discord from 'discord.js';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
-import { Commands } from '../api/command/Commands';
 import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
 import { MentionUtil } from '../utils/MentionUtil';
 import { CommandPermissions } from '../api/command/CommandPermission';
+import { AbstractCommand } from '../api/command/AbstractCommand';
+import { CommandContext } from '../api/command/context/CommandContext';
 
 export class OwnerCommands implements CommandBatchRegisterer {
   get(): Command[] {
-    return [CHECK_STAFF];
+    return [new CheckStaffCommand()];
   }
 }
 
-const CHECK_STAFF: Command = Commands.create()
-  .name('checkStaff')
-  .aliases(['check_staff'])
-  .description('Checks the specified member is staff.')
-  .category(CommandCategory.MODERATION)
-  .permission(CommandPermissions.OWNER)
-  .handler(async (context) => {
+class CheckStaffCommand extends AbstractCommand {
+  constructor() {
+    super({
+      name: 'checkStaff',
+      aliases: ['check_staff'],
+      description: 'Checks the specified member is staff.',
+      category: CommandCategory.MANAGEMENT,
+      requiredCustomPermission: CommandPermissions.OWNER,
+    });
+  }
+
+  async run(context: CommandContext): Promise<void> {
     let member: Discord.GuildMember;
     if (context.getArgs().length < 1) {
       member = context.getMessage().member;
@@ -44,10 +50,9 @@ const CHECK_STAFF: Command = Commands.create()
     context.getMessage().channel.send(
       context
         .createEmbedBuilder()
-        .setDescription(
-          `<@!${member.id}> adlı üye \`${guildData.isStaff(member) ? 'Yetkili' : 'Yetkili Değil'}\``
-        )
+        .setDescription(`<@!${member.id}> adlı üye \`${guildData.isStaff(member) ? 'Yetkili' : 'Yetkili Değil'}\``)
         .setColor('#b3e324')
         .setAuthor('Peww', context.getMessage().client.user.avatarURL())
     );
-  });*/
+  }
+}
