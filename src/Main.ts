@@ -1,4 +1,3 @@
-import { GuildControlScheduler } from './schedulers/GuildControlScheduler';
 import { PewwBot } from './PewwBot';
 import { GuildSubscriptions } from './subscriptions/GuildSubscriptions';
 import { EntrySetting } from './settings/EntrySetting';
@@ -14,9 +13,10 @@ Database.load('test')
       bot.getLogger().info(`has been successfully logged! [${bot.guilds.cache.size} Guilds]`);
       bot.getSubscriptionManager().registerBatchClass(new GuildSubscriptions(bot));
       await bot.getCommandManager().registerPath(path.join(bot.getMainFolder(), 'commands/'));
-      bot.getSchedulerManager().registerClass(new GuildControlScheduler(bot));
+      await bot.getSchedulerManager().registerPath(path.join(bot.getMainFolder(), 'schedulers/'));
       bot.getSettingManager().registerAllClass(new PrefixSetting(), new EntrySetting(), new StaffSetting());
-      bot.getLogger().info(`${bot.getCommandManager().getCount()} Commands loaded!`);
+      bot.getLogger().info(`${bot.getCommandManager().getCount()} Command loaded!`);
+      bot.getLogger().info(`${bot.getSchedulerManager().getCount()} Scheduler loaded!`);
     });
   })
   .catch((_error) => {

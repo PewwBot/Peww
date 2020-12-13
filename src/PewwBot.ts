@@ -47,12 +47,12 @@ export class PewwBot extends Discord.Client {
       api_user_name: this.config.getData().pastebin.username,
       api_user_password: this.config.getData().pastebin.password,
     });
-    super.login(this.config.getData().token);
     this.cacheManager = new CacheManager(this);
     this.settingManager = new SettingManager();
     this.subscriptionManager = new SubscriptionManager(this);
     this.commandManager = new CommandManager(this);
-    this.schedulerManager = new SchedulerManager();
+    this.schedulerManager = new SchedulerManager(this);
+    super.login(this.config.getData().token);
   }
 
   public getMainFolder(): string {

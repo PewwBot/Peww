@@ -1,4 +1,6 @@
 import { Scheduler } from './Scheduler';
 import { BatchRegisterer } from './../../utils/BatchRegisterer';
 
-export interface SchedulerBatchRegisterer extends BatchRegisterer<Scheduler> {}
+export abstract class SchedulerBatchRegisterer implements BatchRegisterer<Scheduler> {
+  abstract get(): Scheduler[];
+}

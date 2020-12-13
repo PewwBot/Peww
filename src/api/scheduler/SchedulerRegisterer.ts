@@ -1,4 +1,6 @@
 import { Scheduler } from './Scheduler';
 import { Registerer } from './../../utils/Registerer';
 
-export interface SchedulerRegisterer extends Registerer<Scheduler> {}
+export abstract class SchedulerRegisterer implements Registerer<Scheduler> {
+  abstract get(): Scheduler;
+}

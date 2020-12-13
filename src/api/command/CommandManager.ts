@@ -66,18 +66,12 @@ export class CommandManager {
 
   public registerClass(commandRegisterer: CommandRegisterer): void {
     const command = commandRegisterer.get();
-    command.bot = this.bot;
-    if (!this.getCommandWithName(command.name)) {
-      this.commands.push(command);
-      command.init();
-    }
+    this.register(command);
   }
 
   public registerBatchClass(commandBatchRegisterer: CommandBatchRegisterer): void {
     commandBatchRegisterer.get().forEach((command) => {
-      command.bot = this.bot;
       this.register(command);
-      command.init();
     });
   }
 
