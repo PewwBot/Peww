@@ -9,11 +9,13 @@ import { CommandPermissions } from '../api/command/CommandPermission';
 import { AbstractCommand } from '../api/command/AbstractCommand';
 import { Database } from '../api/database/Database';
 
-export class ManagementCommands implements CommandBatchRegisterer {
+export class ManagementCommands extends CommandBatchRegisterer {
   get(): Command[] {
     return [new TestCommand(), new SqlRunCommand(), new EvalCommand(), new EvalReloadCommand()];
   }
 }
+
+export default ManagementCommands;
 
 class TestCommand extends AbstractCommand {
   constructor() {

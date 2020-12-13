@@ -1,4 +1,6 @@
 import { BatchRegisterer } from './../../utils/BatchRegisterer';
 import { Command } from './Command';
 
-export interface CommandBatchRegisterer extends BatchRegisterer<Command> {}
+export abstract class CommandBatchRegisterer implements BatchRegisterer<Command> {
+  abstract get(): Command[];
+}

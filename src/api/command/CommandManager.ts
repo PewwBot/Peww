@@ -3,6 +3,9 @@ import { CommandSubscription } from './CommandSubscription';
 import { Command } from './Command';
 import { CommandRegisterer } from './CommandRegisterer';
 import { CommandBatchRegisterer } from './CommandBatchRegisterer';
+import * as fs from 'fs';
+import * as path from 'path';
+import { AbstractCommand } from './AbstractCommand';
 
 export class CommandManager {
   private bot: PewwBot;
@@ -30,6 +33,34 @@ export class CommandManager {
     if (!this.getCommandWithName(command.name)) {
       this.commands.push(command);
       command.init();
+    }
+  }
+
+  public async registerPath(_path: string): Promise<void> {
+    const files = await fs.readdirSync(_path);
+    for (const file of files) {
+      const filePath = path.join(_path, file);
+      if ((await fs.statSync(filePath)).isDirectory()) {
+        this.registerPath(filePath);
+      } else {
+        const commandClazzRequire = await import(filePath);
+        const commandClazz = commandClazzRequire.default ? commandClazzRequire.default : commandClazzRequire[Object.keys(commandClazzRequire)[0]];
+        if (!commandClazz) continue;
+        const clazzObject = new commandClazz();
+        if (!clazzObject) continue;
+        if (clazzObject instanceof CommandBatchRegisterer) {
+          this.registerBatchClass(clazzObject);
+        } else if (clazzObject instanceof CommandRegisterer) {
+          this.registerClass(clazzObject);
+        } else {
+          this.register(clazzObject as Command);
+          for (const clazzObject of Object.keys(commandClazzRequire).splice(1)) {
+            const commandClazz = commandClazzRequire[clazzObject];
+            if (!commandClazz) continue;
+            this.register(new commandClazz() as Command);
+          }
+        }
+      }
     }
   }
 

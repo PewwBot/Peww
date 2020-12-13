@@ -7,11 +7,13 @@ import { CommandPermissions } from '../api/command/CommandPermission';
 import { AbstractCommand } from '../api/command/AbstractCommand';
 import { CommandContext } from '../api/command/context/CommandContext';
 
-export class OwnerCommands implements CommandBatchRegisterer {
+export class OwnerCommands extends CommandBatchRegisterer {
   get(): Command[] {
     return [new CheckStaffCommand()];
   }
 }
+
+export default OwnerCommands;
 
 class CheckStaffCommand extends AbstractCommand {
   constructor() {

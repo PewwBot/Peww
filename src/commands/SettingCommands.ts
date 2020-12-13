@@ -7,11 +7,13 @@ import { CommandContext } from '../api/command/context/CommandContext';
 import { ImmutableSettingContext } from '../api/setting/context/ImmutableSettingContext';
 import { StringUtil } from '../utils/StringUtil';
 
-export class SettingCommands implements CommandBatchRegisterer {
+export class SettingCommands extends CommandBatchRegisterer {
   get(): Command[] {
     return [new SettingCommand()];
   }
 }
+
+export default SettingCommands;
 
 class SettingCommand extends AbstractCommand {
   constructor() {
