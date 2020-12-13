@@ -37,7 +37,7 @@ export class CommandSubscription implements SubscriptionRegisterer<'message'> {
         const command: string = args.shift().toLowerCase();
         const commandObject: Command = this.bot.getCommandManager().getCommand(command);
         if (commandObject == null) return;
-        commandObject.call(new ImmutableCommandContext(this.bot, message, command, prefix, args));
+        commandObject.call(new ImmutableCommandContext(this.bot, message, commandObject, command, prefix, args));
       });
   }
 }

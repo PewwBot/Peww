@@ -1,18 +1,21 @@
 import * as Discord from 'discord.js';
 import { PewwBot } from '../../../PewwBot';
 import { EmbedBuilder } from '../../embed/EmbedBuilder';
+import { Command } from '../Command';
 import { CommandContext } from './CommandContext';
 
 export class ImmutableCommandContext implements CommandContext {
   private readonly bot: PewwBot;
   private readonly message: Discord.Message;
+  private readonly command: Command;
   private readonly label: string;
   private readonly prefix: string;
   private readonly args: string[];
 
-  constructor(bot: PewwBot, message: Discord.Message, label: string, prefix: string, args: string[]) {
+  constructor(bot: PewwBot, message: Discord.Message, command: Command, label: string, prefix: string, args: string[]) {
     this.bot = bot;
     this.message = message;
+    this.command = command;
     this.label = label;
     this.prefix = prefix;
     this.args = args;
@@ -24,6 +27,10 @@ export class ImmutableCommandContext implements CommandContext {
 
   getLabel(): string {
     return this.label;
+  }
+
+  getCommand(): Command {
+    return this.command;
   }
 
   getPrefix(): string {
@@ -54,11 +61,12 @@ export class ImmutableCommandContext implements CommandContext {
     return new EmbedBuilder(data);
   }
 
-  clone(newArgs?: string[]): CommandContext {
+  clone(newLabel?: string, newArgs?: string[]): CommandContext {
     const newContext = new ImmutableCommandContext(
       this.bot,
       this.message,
-      this.label,
+      this.command,
+      newLabel ? newLabel : this.label,
       this.prefix,
       newArgs ? newArgs : this.args
     );

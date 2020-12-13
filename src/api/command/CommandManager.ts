@@ -13,6 +13,10 @@ export class CommandManager {
     this.bot.getSubscriptionManager().registerClass(new CommandSubscription(this.bot));
   }
 
+  public getCount(): number {
+    return this.commands.length;
+  }
+
   public getCommand(command: string): Command {
     return this.commands.find((cmd) => cmd.aliases.includes(command), null);
   }
