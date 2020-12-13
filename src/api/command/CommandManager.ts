@@ -5,7 +5,6 @@ import { CommandRegisterer } from './CommandRegisterer';
 import { CommandBatchRegisterer } from './CommandBatchRegisterer';
 import * as fs from 'fs';
 import * as path from 'path';
-import { AbstractCommand } from './AbstractCommand';
 
 export class CommandManager {
   private bot: PewwBot;
@@ -13,7 +12,7 @@ export class CommandManager {
 
   constructor(bot: PewwBot) {
     this.bot = bot;
-    this.bot.getSubscriptionManager().registerClass(new CommandSubscription(this.bot));
+    this.bot.getSubscriptionManager().register(new CommandSubscription());
   }
 
   public getCount(): number {

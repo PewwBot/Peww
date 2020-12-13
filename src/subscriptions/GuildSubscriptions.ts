@@ -1,109 +1,140 @@
 import * as Discord from 'discord.js';
-import { PewwBot } from '../PewwBot';
-import { SubscriptionBatchRegisterer } from './../api/subscription/SubscriptionBatchRegisterer';
 
 import { Subscription } from '../api/subscription/Subscription';
-import { Subscriptions } from '../api/subscription/Subscriptions';
 import { GuildEntity } from '../api/database/entity/GuildEntity';
 import { Database } from '../api/database/Database';
+import { AbstractSubscription } from '../api/subscription/AbstractSubscription';
+import { SubscriptionContext } from '../api/subscription/context/SubscriptionContext';
+import { SubscriptionBatchRegisterer } from '../api/subscription/SubscriptionBatchRegisterer';
 
-export class GuildSubscriptions implements SubscriptionBatchRegisterer {
-  private bot: PewwBot;
+export class GuildSubscriptions extends SubscriptionBatchRegisterer {
+  get(): Subscription<any>[] {
+    return [new GuildMemberAdd(), new GuildMemberRemove(), new GuildCreate(), new GuildDelete()];
+  }
+}
 
-  constructor(bot: PewwBot) {
-    this.bot = bot;
+export default GuildSubscriptions;
+
+class GuildMemberAdd extends AbstractSubscription<'guildMemberAdd'> {
+  constructor() {
+    super({
+      event: 'guildMemberAdd',
+      name: 'guildMemberAdd',
+    });
   }
 
-  get(): Subscription<any>[] {
-    return [
-      Subscriptions.create('guildMemberAdd')
-        .name('guildMemberAdd')
-        .handler(async (sub, member) => {
-          const guild = await this.bot.getCacheManager().getGuild(member.guild.id);
-          if (guild) {
-            const setting = guild.settings.find((setting) => setting.key === 'entry');
-            if (
-              !setting ||
-              (setting &&
-                (!setting.data ||
-                  !(setting.data as any).channelId ||
-                  !(setting.data as any).join.mode ||
-                  !(setting.data as any).join.message))
-            )
-              return;
-            const channel = member.guild.channels.cache.get((setting.data as any).channelId) as Discord.TextChannel;
-            if (!channel) return;
-            if (!['off', 'embed', 'message'].includes((setting.data as any).join.mode)) return;
-            const mode: 'off' | 'embed' | 'message' = (setting.data as any).join.mode;
-            if (mode === 'off') return;
-            const rawMessage: string = (setting.data as any).join.message;
-            const message: string | Discord.MessageEmbed =
-              mode === 'message'
-                ? rawMessage
-                : new Discord.MessageEmbed()
-                    .setDescription(rawMessage)
-                    .setColor('#7ffc03')
-                    .setThumbnail(member.user.displayAvatarURL())
-                    .setTimestamp()
-                    .setTitle('Katılım Bilgilendirme');
-            channel.send(message);
-          }
-        }),
-      Subscriptions.create('guildMemberRemove')
-        .name('guildMemberRemove')
-        .handler(async (sub, member) => {
-          const guild = await this.bot.getCacheManager().getGuild(member.guild.id);
-          if (guild) {
-            const setting = guild.settings.find((setting) => setting.key === 'entry');
-            if (
-              !setting ||
-              (setting &&
-                (!setting.data ||
-                  !(setting.data as any).channelId ||
-                  !(setting.data as any).join.mode ||
-                  !(setting.data as any).join.message))
-            )
-              return;
-            const channel = member.guild.channels.cache.get((setting.data as any).channelId) as Discord.TextChannel;
-            if (!channel) return;
-            if (!['off', 'embed', 'message'].includes((setting.data as any).leave.mode)) return;
-            const mode: 'off' | 'embed' | 'message' = (setting.data as any).leave.mode;
-            if (mode === 'off') return;
-            const rawMessage: string = (setting.data as any).leave.message;
-            const message: string | Discord.MessageEmbed =
-              mode === 'message'
-                ? rawMessage
-                : new Discord.MessageEmbed()
-                    .setDescription(rawMessage)
-                    .setColor('#db1212')
-                    .setThumbnail(member.user.displayAvatarURL())
-                    .setTimestamp()
-                    .setTitle('Katılım Bilgilendirme');
-            channel.send(message);
-          }
-        }),
-      Subscriptions.create('guildCreate')
-        .name('guildCreate')
-        .handler(async (sub, guild) => {
-          const repository = Database.getConnection().getRepository(GuildEntity);
-          if (!(await repository.findOne({ guildId: guild.id }))) {
-            const guildEntity = new GuildEntity();
-            guildEntity.guildId = guild.id;
-            guildEntity.ownerId = guild.ownerID;
-            guildEntity.premium = false;
-            guildEntity.customPrefix = [];
-            guildEntity.defaultPrefix = true;
-            await repository.save(guildEntity);
-            return;
-          }
-        }),
-      Subscriptions.create('guildDelete')
-        .name('guildDelete')
-        .handler(async (sub, guild) => {
-          const repository = Database.getConnection().getRepository(GuildEntity);
-          const guildEntity = await repository.findOne({ guildId: guild.id });
-          if (guildEntity) repository.remove(guildEntity);
-        }),
-    ];
+  async run(context: SubscriptionContext<'guildMemberAdd'>): Promise<void> {
+    const guild = await this.bot.getCacheManager().getGuild(context.getParams()[0].guild.id);
+    if (guild) {
+      const setting = guild.settings.find((setting) => setting.key === 'entry');
+      if (
+        !setting ||
+        (setting &&
+          (!setting.data ||
+            !(setting.data as any).channelId ||
+            !(setting.data as any).join.mode ||
+            !(setting.data as any).join.message))
+      )
+        return;
+      const channel = context
+        .getParams()[0]
+        .guild.channels.cache.get((setting.data as any).channelId) as Discord.TextChannel;
+      if (!channel) return;
+      if (!['off', 'embed', 'message'].includes((setting.data as any).join.mode)) return;
+      const mode: 'off' | 'embed' | 'message' = (setting.data as any).join.mode;
+      if (mode === 'off') return;
+      const rawMessage: string = (setting.data as any).join.message;
+      const message: string | Discord.MessageEmbed =
+        mode === 'message'
+          ? rawMessage
+          : new Discord.MessageEmbed()
+              .setDescription(rawMessage)
+              .setColor('#7ffc03')
+              .setThumbnail(context.getParams()[0].user.displayAvatarURL())
+              .setTimestamp()
+              .setTitle('Katılım Bilgilendirme');
+      channel.send(message);
+    }
+  }
+}
+
+class GuildMemberRemove extends AbstractSubscription<'guildMemberRemove'> {
+  constructor() {
+    super({
+      event: 'guildMemberRemove',
+      name: 'guildMemberRemove',
+    });
+  }
+
+  async run(context: SubscriptionContext<'guildMemberRemove'>): Promise<void> {
+    const guild = await this.bot.getCacheManager().getGuild(context.getParams()[0].guild.id);
+    if (guild) {
+      const setting = guild.settings.find((setting) => setting.key === 'entry');
+      if (
+        !setting ||
+        (setting &&
+          (!setting.data ||
+            !(setting.data as any).channelId ||
+            !(setting.data as any).join.mode ||
+            !(setting.data as any).join.message))
+      )
+        return;
+      const channel = context
+        .getParams()[0]
+        .guild.channels.cache.get((setting.data as any).channelId) as Discord.TextChannel;
+      if (!channel) return;
+      if (!['off', 'embed', 'message'].includes((setting.data as any).leave.mode)) return;
+      const mode: 'off' | 'embed' | 'message' = (setting.data as any).leave.mode;
+      if (mode === 'off') return;
+      const rawMessage: string = (setting.data as any).leave.message;
+      const message: string | Discord.MessageEmbed =
+        mode === 'message'
+          ? rawMessage
+          : new Discord.MessageEmbed()
+              .setDescription(rawMessage)
+              .setColor('#db1212')
+              .setThumbnail(context.getParams()[0].user.displayAvatarURL())
+              .setTimestamp()
+              .setTitle('Katılım Bilgilendirme');
+      channel.send(message);
+    }
+  }
+}
+
+class GuildCreate extends AbstractSubscription<'guildCreate'> {
+  constructor() {
+    super({
+      event: 'guildCreate',
+      name: 'guildCreate',
+    });
+  }
+
+  async run(context: SubscriptionContext<'guildCreate'>): Promise<void> {
+    const repository = Database.getConnection().getRepository(GuildEntity);
+    if (!(await repository.findOne({ guildId: context.getParams()[0].id }))) {
+      const guildEntity = new GuildEntity();
+      guildEntity.guildId = context.getParams()[0].id;
+      guildEntity.ownerId = context.getParams()[0].ownerID;
+      guildEntity.premium = false;
+      guildEntity.customPrefix = [];
+      guildEntity.defaultPrefix = true;
+      await repository.save(guildEntity);
+      return;
+    }
+  }
+}
+
+class GuildDelete extends AbstractSubscription<'guildDelete'> {
+  constructor() {
+    super({
+      event: 'guildDelete',
+      name: 'guildDelete',
+    });
+  }
+
+  async run(context: SubscriptionContext<'guildDelete'>): Promise<void> {
+    const repository = Database.getConnection().getRepository(GuildEntity);
+    const guildEntity = await repository.findOne({ guildId: context.getParams()[0].id });
+    if (guildEntity) repository.remove(guildEntity);
   }
 }

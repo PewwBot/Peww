@@ -1,15 +1,26 @@
 import * as Discord from 'discord.js';
 import { PewwBot } from '../../PewwBot';
+import { SubscriptionContext } from './context/SubscriptionContext';
+import { SubscriptionPredicate } from './SubscriptionPredicate';
 
 export interface Subscription<K extends keyof Discord.ClientEvents> {
+  bot: PewwBot;
+  uniqueId: string;
   event: K;
   name: string;
   active: boolean;
   callCounter: number;
+  predicates: SubscriptionPredicate<K>[];
 
-  register(bot: PewwBot): void;
+  init(): void;
 
-  unregister(bot: PewwBot): void;
+  register(): void;
+
+  unregister(): void;
+
+  call(context: SubscriptionContext<K>): void;
+
+  run(context: SubscriptionContext<K>): void;
 
   isActive(): boolean;
 

@@ -2,6 +2,7 @@ import { PewwBot } from '../../PewwBot';
 
 export interface Scheduler {
   bot: PewwBot;
+  uniqueId: string;
   name: string;
   active: boolean;
   ms: number;
