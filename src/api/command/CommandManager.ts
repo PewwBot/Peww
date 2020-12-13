@@ -41,7 +41,7 @@ export class CommandManager {
     for (const file of files) {
       const filePath = path.join(_path, file);
       if ((await fs.statSync(filePath)).isDirectory()) {
-        this.registerPath(filePath);
+        await this.registerPath(filePath);
       } else {
         const commandClazzRequire = await import(filePath);
         const commandClazz = commandClazzRequire.default ? commandClazzRequire.default : commandClazzRequire[Object.keys(commandClazzRequire)[0]];
