@@ -14,7 +14,7 @@ export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents>
   name: string;
   active: boolean = true;
   callCounter: number = 0;
-  predicates: SubscriptionPredicate<K>[];
+  predicates: SubscriptionPredicate<K>[] = [];
 
   private listener: (...args: Discord.ClientEvents[K]) => void;
 
