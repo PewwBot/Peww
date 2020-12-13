@@ -7,7 +7,12 @@ export class CommandCategory {
   public static readonly SETTING = new CommandCategory(CommandPermissions.STAFF, 'setting', 'Ayar');
   public static readonly OTHER = new CommandCategory(CommandPermissions.USER, 'other', 'Diğer');
 
-  public static readonly VALUES: CommandCategory[] = [CommandCategory.MANAGEMENT, CommandCategory.MODERATION, CommandCategory.SETTING, CommandCategory.OTHER];
+  public static readonly VALUES: CommandCategory[] = [
+    CommandCategory.MANAGEMENT,
+    CommandCategory.MODERATION,
+    CommandCategory.SETTING,
+    CommandCategory.OTHER,
+  ];
 
   private permission?: CommandPermission | undefined;
   private id: string;

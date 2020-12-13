@@ -1,5 +1,5 @@
 import { PewwBot } from '../../PewwBot';
-import { CommandSubscription } from '../../subscriptions/CommandSubscription';
+import { CommandSubscription } from './CommandSubscription';
 import { Command } from './Command';
 import { CommandRegisterer } from './CommandRegisterer';
 import { CommandBatchRegisterer } from './CommandBatchRegisterer';
@@ -22,17 +22,27 @@ export class CommandManager {
   }
 
   public register(command: Command): void {
-    if (!this.getCommandWithName(command.name)) this.commands.push(command);
+    command.bot = this.bot;
+    if (!this.getCommandWithName(command.name)) {
+      this.commands.push(command);
+      command.init();
+    }
   }
 
   public registerClass(commandRegisterer: CommandRegisterer): void {
     const command = commandRegisterer.get();
-    if (!this.getCommandWithName(command.name)) this.commands.push(command);
+    command.bot = this.bot;
+    if (!this.getCommandWithName(command.name)) {
+      this.commands.push(command);
+      command.init();
+    }
   }
 
   public registerBatchClass(commandBatchRegisterer: CommandBatchRegisterer): void {
     commandBatchRegisterer.get().forEach((command) => {
+      command.bot = this.bot;
       this.register(command);
+      command.init();
     });
   }
 

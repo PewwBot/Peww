@@ -53,4 +53,15 @@ export class ImmutableCommandContext implements CommandContext {
   createEmbedBuilder(data?: Discord.MessageEmbed | Discord.MessageEmbedOptions): EmbedBuilder {
     return new EmbedBuilder(data);
   }
+
+  clone(newArgs?: string[]): CommandContext {
+    const newContext = new ImmutableCommandContext(
+      this.bot,
+      this.message,
+      this.label,
+      this.prefix,
+      newArgs ? newArgs : this.args
+    );
+    return newContext;
+  }
 }

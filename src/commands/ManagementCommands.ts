@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js';
+/*import * as Discord from 'discord.js';
 import { PewwBot } from '../PewwBot';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
@@ -143,4 +143,4 @@ function clean(text: any) {
   if (typeof text === 'string')
     return text.replace(/`/g, '`' + String.fromCharCode(8203)).replace(/@/g, '@' + String.fromCharCode(8203));
   else return text;
-}
+}*/

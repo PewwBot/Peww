@@ -5,13 +5,13 @@ import { EmbedBuilder } from '../../embed/EmbedBuilder';
 export interface CommandContext {
   getBot(): PewwBot;
 
+  getMessage(): Discord.Message;
+
   getLabel(): string;
 
   getPrefix(): string;
 
   getOrganizedPrefix(): string;
-
-  getMessage(): Discord.Message;
 
   reply(...messages: string[]): void;
 
@@ -20,4 +20,6 @@ export interface CommandContext {
   getImmutableArgs(): string[];
 
   createEmbedBuilder(): EmbedBuilder;
+
+  clone(newArgs?: string[]): CommandContext;
 }
