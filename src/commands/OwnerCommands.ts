@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js';
+/*import * as Discord from 'discord.js';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { Commands } from '../api/command/Commands';
@@ -50,4 +50,4 @@ const CHECK_STAFF: Command = Commands.create()
         .setColor('#b3e324')
         .setAuthor('Peww', context.getMessage().client.user.avatarURL())
     );
-  });
+  });*/

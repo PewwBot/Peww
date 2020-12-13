@@ -1,4 +1,4 @@
-import { Command } from '../api/command/Command';
+/*import { Command } from '../api/command/Command';
 import { CommandBatchRegisterer } from '../api/command/CommandBatchRegisterer';
 import { CommandCategory } from '../api/command/CommandCategory';
 import { CommandPermissions } from '../api/command/CommandPermission';
@@ -162,4 +162,4 @@ const SETTING_COMMAND_MAIN: Command = Commands.create()
         }
       }
     }
-  });
+  });*/

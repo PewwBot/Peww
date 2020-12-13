@@ -9,6 +9,8 @@
     "no-console": false,
     "no-unused-expression": false,
     "no-shadowed-variable": false,
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "ban-types": false,
+    "class-name": false
   }
 }

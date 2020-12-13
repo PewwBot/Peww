@@ -2,50 +2,52 @@ import * as Discord from 'discord.js';
 import { PewwBot } from '../PewwBot';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
-import { Commands } from '../api/command/Commands';
 import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
 
 import * as util from 'util';
 import { CommandContext } from '../api/command/context/CommandContext';
 import { CommandPermissions } from '../api/command/CommandPermission';
+import { AbstractCommand } from '../api/command/AbstractCommand';
+import { Database } from '../api/database/Database';
 
 export class ManagementCommands implements CommandBatchRegisterer {
   get(): Command[] {
-    return [TEST, SQL_RUN, EVAL, EVAL_RELOAD];
+    return [new TestCommand(), new SqlRunCommand(), new EvalCommand(), new EvalReloadCommand()];
   }
 }
 
-const TEST: Command = Commands.create()
-  .name('test')
-  .aliases(['test'])
-  .description('Test some staff.')
-  .category(CommandCategory.MANAGEMENT)
-  .permission(CommandPermissions.BOT_OWNER)
-  .handler(async (context) => {
-    
-  });
+class TestCommand extends AbstractCommand {
+  constructor() {
+    super({
+      name: 'test',
+      aliases: ['test'],
+      description: 'Test some staff.',
+      category: CommandCategory.MANAGEMENT,
+      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+    });
+  }
 
-const SQL_RUN: Command = Commands.create()
-  .name('sqlRun')
-  .aliases(['sqlrun'])
-  .description('Used to apply changes to the database.')
-  .category(CommandCategory.MANAGEMENT)
-  .permission(CommandPermissions.BOT_OWNER)
-  .handler((context) => {
-    if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
-      context.getMessage().delete();
-      return;
-    }
+  run(_context: CommandContext): void {}
+}
 
+class SqlRunCommand extends AbstractCommand {
+  constructor() {
+    super({
+      name: 'sqlRun',
+      aliases: ['sqlrun'],
+      description: 'Used to apply changes to the database.',
+      category: CommandCategory.MANAGEMENT,
+      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+    });
+  }
+
+  run(context: CommandContext): void {
     if (context.getArgs().length < 1) {
       context.getMessage().channel.send('I need you to tell me what to do to make any changes to the database.');
       return;
     }
 
-    context
-      .getBot()
-      .getDatabase()
-      .getConnection()
+    Database.getConnection()
       .query(context.getArgs().join(' '))
       .then((rows: any) => {
         context.getMessage().react('✅');
@@ -66,20 +68,21 @@ const SQL_RUN: Command = Commands.create()
           .getMessage()
           .channel.send('An error occurred while performing database operations! Error log sent to console!');
       });
-  });
+  }
+}
 
-const EVAL: Command = Commands.create()
-  .name('eval')
-  .aliases(['eval', 'evalpastebin', 'evalfile'])
-  .description('used to run code.')
-  .category(CommandCategory.MANAGEMENT)
-  .permission(CommandPermissions.BOT_OWNER)
-  .handler(async (context) => {
-    if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
-      context.getMessage().delete();
-      return;
-    }
+class EvalCommand extends AbstractCommand {
+  constructor() {
+    super({
+      name: 'eval',
+      aliases: ['eval', 'evalpastebin', 'evalfile'],
+      description: 'used to run code.',
+      category: CommandCategory.MANAGEMENT,
+      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+    });
+  }
 
+  async run(context: CommandContext): Promise<void> {
     if (context.getArgs().length < 1) {
       context.getMessage().channel.send('I want you to tell me what I have to do to play the code.');
       return;
@@ -107,22 +110,25 @@ const EVAL: Command = Commands.create()
           context.getMessage().channel.send(`\`ERROR\` \`\`\`xl\n${clean(error)}\n\`\`\``);
         });
     }
-  });
+  }
+}
 
-const EVAL_RELOAD: Command = Commands.create()
-  .name('evalReload')
-  .aliases(['evalreload'])
-  .description('the code is used to refresh files in the eval system.')
-  .category(CommandCategory.MANAGEMENT)
-  .permission(CommandPermissions.BOT_OWNER)
-  .handler((context) => {
-    if (context.getMessage().member.id !== context.getBot().getConfig().getData().ownerId) {
-      context.getMessage().delete();
-      return;
-    }
+class EvalReloadCommand extends AbstractCommand {
+  constructor() {
+    super({
+      name: 'evalReload',
+      aliases: ['evalreload'],
+      description: 'the code is used to refresh files in the eval system.',
+      category: CommandCategory.MANAGEMENT,
+      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+    });
+  }
+
+  run(context: CommandContext): void {
     context.getBot().getConfig().reloadEval();
     context.getMessage().react('✅');
-  });
+  }
+}
 
 async function evaluate(context: CommandContext, code: string) {
   try {

@@ -1,12 +1,11 @@
-import { SubscriptionRegisterer } from './../api/subscription/SubscriptionRegisterer';
-import { Subscriptions } from '../api/subscription/Subscriptions';
+import { SubscriptionRegisterer } from '../subscription/SubscriptionRegisterer';
+import { Subscriptions } from '../subscription/Subscriptions';
 
 import * as Discord from 'discord.js';
-import { PewwBot } from '../PewwBot';
-import { Command } from '../api/command/Command';
-import { ImmutableCommandContext } from '../api/command/context/ImmutableCommandContext';
-import { Subscription } from '../api/subscription/Subscription';
-import { Guild } from '../api/cache/Guild';
+import { PewwBot } from '../../PewwBot';
+import { Command } from './Command';
+import { ImmutableCommandContext } from './context/ImmutableCommandContext';
+import { Subscription } from '../subscription/Subscription';
 
 export class CommandSubscription implements SubscriptionRegisterer<'message'> {
   private bot: PewwBot;
@@ -38,7 +37,7 @@ export class CommandSubscription implements SubscriptionRegisterer<'message'> {
         const command: string = args.shift().toLowerCase();
         const commandObject: Command = this.bot.getCommandManager().getCommand(command);
         if (commandObject == null) return;
-        commandObject.call(new ImmutableCommandContext(this.bot, message, command, prefix, args));
+        commandObject.call(new ImmutableCommandContext(this.bot, message, commandObject, command, prefix, args));
       });
   }
 }
