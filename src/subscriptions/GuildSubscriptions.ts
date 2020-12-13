@@ -5,6 +5,7 @@ import { SubscriptionBatchRegisterer } from './../api/subscription/SubscriptionB
 import { Subscription } from '../api/subscription/Subscription';
 import { Subscriptions } from '../api/subscription/Subscriptions';
 import { GuildEntity } from '../api/database/entity/GuildEntity';
+import { Database } from '../api/database/Database';
 
 export class GuildSubscriptions implements SubscriptionBatchRegisterer {
   private bot: PewwBot;
@@ -84,7 +85,7 @@ export class GuildSubscriptions implements SubscriptionBatchRegisterer {
       Subscriptions.create('guildCreate')
         .name('guildCreate')
         .handler(async (sub, guild) => {
-          const repository = this.bot.getDatabase().getConnection().getRepository(GuildEntity);
+          const repository = Database.getConnection().getRepository(GuildEntity);
           if (!(await repository.findOne({ guildId: guild.id }))) {
             const guildEntity = new GuildEntity();
             guildEntity.guildId = guild.id;
@@ -99,7 +100,7 @@ export class GuildSubscriptions implements SubscriptionBatchRegisterer {
       Subscriptions.create('guildDelete')
         .name('guildDelete')
         .handler(async (sub, guild) => {
-          const repository = this.bot.getDatabase().getConnection().getRepository(GuildEntity);
+          const repository = Database.getConnection().getRepository(GuildEntity);
           const guildEntity = await repository.findOne({ guildId: guild.id });
           if (guildEntity) repository.remove(guildEntity);
         }),

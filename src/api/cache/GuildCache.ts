@@ -1,4 +1,5 @@
 import { PewwBot } from '../../PewwBot';
+import { Database } from '../database/Database';
 import { GuildEntity } from '../database/entity/GuildEntity';
 import { Cache } from './Cache';
 import { Guild } from './Guild';
@@ -32,7 +33,7 @@ export class GuildCache extends Cache<Guild> {
           guildEntity.premium = guild.premium;
           guildEntity.customPrefix = guild.customPrefix;
           guildEntity.defaultPrefix = guild.defaultPrefix;
-          await this.bot.getDatabase().getConnection().getRepository(GuildEntity).save(guildEntity);
+          await Database.getConnection().getRepository(GuildEntity).save(guildEntity);
           this.getData().set(guildId, guild);
           return guild;
         }

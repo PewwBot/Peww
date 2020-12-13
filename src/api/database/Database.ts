@@ -8,7 +8,6 @@ export class Database {
   public static connection: Connection;
 
   public static async load(mode: Mode = 'normal'): Promise<void> {
-    console.log(__dirname + '/entity/*.js');
     const connection = await createConnection({
       type: 'sqlite',
       database: path.join(__dirname, '../../data.db'),

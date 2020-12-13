@@ -2,7 +2,6 @@ import { SchedulerManager } from './api/scheduler/SchedulerManager';
 import * as Discord from 'discord.js';
 import { Logger } from 'tslog';
 import { CommandManager } from './api/command/CommandManager';
-import { Database } from './api/database/Database';
 import { SubscriptionManager } from './api/subscription/SubscriptionManager';
 import { Config } from './Config';
 import { CacheManager } from './api/cache/CacheManager';
@@ -25,7 +24,6 @@ export class PewwBot extends Discord.Client {
     displayFunctionName: false,
   });
 
-  private database: Database;
   private cacheManager: CacheManager;
   private localeManager: LocaleManager;
   private commandManager: CommandManager;
@@ -44,8 +42,6 @@ export class PewwBot extends Discord.Client {
     this.config.load();
     this.localeManager = new LocaleManager(this);
     this.localeManager.load();
-    this.database = new Database(this);
-    this.database.load('test');
     this.pastebin = new PastebinAPI({
       api_dev_key: this.config.getData().pastebin.apikey,
       api_user_name: this.config.getData().pastebin.username,
@@ -69,10 +65,6 @@ export class PewwBot extends Discord.Client {
 
   public getLogger(): Logger {
     return this.logger;
-  }
-
-  public getDatabase(): Database {
-    return this.database;
   }
 
   public getCacheManager(): CacheManager {

@@ -5,6 +5,7 @@ import { SchedulerRegisterer } from './../api/scheduler/SchedulerRegisterer';
 import { PewwBot } from '../PewwBot';
 
 import moment from 'moment';
+import { Database } from '../api/database/Database';
 
 export class GuildControlScheduler implements SchedulerRegisterer {
 
@@ -18,7 +19,7 @@ export class GuildControlScheduler implements SchedulerRegisterer {
     return Schedulers.create('GuildControl')
       .msMoment(moment.duration(15, 'minutes'))
       .handler(async () => {
-        const queryRunner = this.bot.getDatabase().getConnection().createQueryRunner();
+        const queryRunner = Database.getConnection().createQueryRunner();
         await queryRunner.connect();
         const guildEntities = await queryRunner.manager.find(GuildEntity);
         const needRemoveGuilds: GuildEntity[] = [];

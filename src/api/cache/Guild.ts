@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 import { PewwBot } from '../../PewwBot';
+import { Database } from '../database/Database';
 import { GuildEntity } from '../database/entity/GuildEntity';
 import { GuildSettings } from '../database/entity/GuildSettingEntity';
 
@@ -26,7 +27,7 @@ export class Guild {
   }
 
   public async load(): Promise<boolean> {
-    const repository = this.bot.getDatabase().getConnection().getRepository(GuildEntity);
+    const repository = Database.getConnection().getRepository(GuildEntity);
     const guildEntityFromDatabase = await repository.findOne({ guildId: this.getGuildId() });
     if (guildEntityFromDatabase) {
       this.guildId = guildEntityFromDatabase.guildId;
@@ -40,7 +41,7 @@ export class Guild {
   }
 
   public async loadSettings(): Promise<boolean> {
-    const repository = this.bot.getDatabase().getConnection().getRepository(GuildSettings);
+    const repository = Database.getConnection().getRepository(GuildSettings);
     const settings = await repository.find({ guildId: this.getGuildId() });
     if (settings) {
       for (const setting of settings) {
@@ -51,7 +52,7 @@ export class Guild {
   }
 
   public async save(): Promise<boolean> {
-    const queryRunner = this.bot.getDatabase().getConnection().createQueryRunner();
+    const queryRunner = Database.getConnection().createQueryRunner();
     await queryRunner.connect();
     try {
       let guildEntity = await queryRunner.manager.findOne(GuildEntity, { guildId: this.getGuildId() });
