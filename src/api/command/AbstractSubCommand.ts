@@ -1,5 +1,5 @@
 import { PermissionString } from 'discord.js';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 import { Command } from './Command';
 import { CommandError } from './CommandError';
 import { CommandPermission, CommandPermissions } from './CommandPermission';
@@ -9,7 +9,7 @@ import { SubCommand } from './SubCommand';
 
 export abstract class AbstractSubCommand implements SubCommand {
   command: Command;
-  uniqueId: string = uuid();
+  uniqueId: string = uuidv4();
   name: string;
   description: string = '';
   aliases: string[] = [];

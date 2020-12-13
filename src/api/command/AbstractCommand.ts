@@ -3,7 +3,7 @@ import { CommandCategory } from './CommandCategory';
 import { CommandContext } from './context/CommandContext';
 import { PewwBot } from '../../PewwBot';
 
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 import { MessageEmbed, PermissionString } from 'discord.js';
 import { SubCommand } from './SubCommand';
 import { CommandPredicate } from './CommandPredicate';
@@ -12,7 +12,7 @@ import { CommandPermission, CommandPermissions } from './CommandPermission';
 
 export abstract class AbstractCommand implements Command {
   bot: PewwBot;
-  uniqueId: string = uuid();
+  uniqueId: string = uuidv4();
   name: string;
   mode: 'normal' | 'subs' | 'subswithfunc' = 'normal';
   cooldown: { time: number; message: string | MessageEmbed } = undefined;
