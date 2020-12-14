@@ -51,11 +51,7 @@ export class PewwBot extends Discord.Client {
     this.subscriptionManager = new SubscriptionManager(this);
     this.commandManager = new CommandManager(this);
     this.schedulerManager = new SchedulerManager(this);
-    super.on('debug', (data) => this.getLogger().debug(data));
-    super
-      .login(this.config.getData().token)
-      .then(() => {})
-      .catch((error) => console.error(error));
+    super.login(this.config.getData().token);
   }
 
   public getMainFolder(): string {

@@ -6,7 +6,6 @@ Database.load('test')
   .then(() => {
     const bot = new PewwBot();
     bot.on('ready', async () => {
-      console.log(1);
       bot.getLogger().info(`has been successfully logged! [${bot.guilds.cache.size} Guilds]`);
       await bot.getSubscriptionManager().registerPath(path.join(bot.getMainFolder(), 'subscriptions/'));
       await bot.getCommandManager().registerPath(path.join(bot.getMainFolder(), 'commands/'));
