@@ -1,4 +1,3 @@
-import * as Discord from 'discord.js';
 import { PewwBot } from '../../../PewwBot';
 import { SettingMode } from '../SettingMode';
 import { SettingContext } from './SettingContext';
@@ -21,15 +20,19 @@ export class ImmutableSettingContext<T, V> implements SettingContext<T, V> {
   getBot(): PewwBot {
     return this.bot;
   }
+
   getType(): T {
     return this.type;
   }
+
   getValue(): V {
     return this.value;
   }
+
   getMode(): SettingMode {
     return this.mode;
   }
+
   getCurrentModeArgs(): string[] {
     return this.currentModeArgs;
   }

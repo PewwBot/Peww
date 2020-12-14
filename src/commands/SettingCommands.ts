@@ -37,7 +37,7 @@ class SettingCommand extends AbstractCommand {
       );
       embedBuilder.addField(
         'Ayarlar',
-        [...context.getBot().getSettingManager().getData().keys()]
+        context.getBot().getSettingManager().getNameAllSettings()
           .map((setting) => `\`${StringUtil.capitalize(setting, 'tr-TR')}\``)
           .join(', '),
         true
@@ -63,7 +63,7 @@ class SettingCommand extends AbstractCommand {
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
-      if (![...context.getBot().getSettingManager().getData().keys()].includes(selectedSetting)) {
+      if (!context.getBot().getSettingManager().getNameAllSettings().includes(selectedSetting)) {
         context.getMessage().react('❌');
         context
           .getMessage()
@@ -80,7 +80,7 @@ class SettingCommand extends AbstractCommand {
           .channel.send(context.createEmbedBuilder().setDescription(`\`${selectedSetting}\` adında bir ayar yok!`));
         return;
       }
-      if (![...context.getBot().getSettingManager().getData().keys()].includes(selectedSetting)) {
+      if (!context.getBot().getSettingManager().getNameAllSettings().includes(selectedSetting)) {
         context.getMessage().react('❌');
         context
           .getMessage()
@@ -131,11 +131,11 @@ class SettingCommand extends AbstractCommand {
           );
         return;
       }
-      const changeStatus = await setting.handle(
+      const changeStatus = await setting.call(
         new ImmutableSettingContext(
           context.getBot(),
-          setting.typeOrganizer(context),
-          setting.valueOrganizer.organize(context.getArgs().splice(settingModeValue.length + 1)),
+          setting.getTypeOrganizer().organize(context),
+          setting.getValueOrganizer().organize(context.getArgs().splice(settingModeValue.length + 1)),
           settingMode,
           settingModeValue
         )

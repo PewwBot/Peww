@@ -5,7 +5,6 @@ import { CommandManager } from './api/command/CommandManager';
 import { SubscriptionManager } from './api/subscription/SubscriptionManager';
 import { Config } from './Config';
 import { CacheManager } from './api/cache/CacheManager';
-import * as fs from 'fs';
 import * as path from 'path';
 import { LocaleManager } from './api/locale/LocaleManager';
 import { SettingManager } from './api/setting/SettingManager';
@@ -48,11 +47,15 @@ export class PewwBot extends Discord.Client {
       api_user_password: this.config.getData().pastebin.password,
     });
     this.cacheManager = new CacheManager(this);
-    this.settingManager = new SettingManager();
+    this.settingManager = new SettingManager(this);
     this.subscriptionManager = new SubscriptionManager(this);
     this.commandManager = new CommandManager(this);
     this.schedulerManager = new SchedulerManager(this);
-    super.login(this.config.getData().token);
+    super.on('debug', (data) => this.getLogger().debug(data));
+    super
+      .login(this.config.getData().token)
+      .then(() => {})
+      .catch((error) => console.error(error));
   }
 
   public getMainFolder(): string {

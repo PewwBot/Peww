@@ -1,15 +1,23 @@
 import { SettingValueOrganizer } from './SettingValueOrganizer';
 import { CommandContext } from '../command/context/CommandContext';
-import { SettingChangeStatus } from './SettingChangeStatus';
 import { SettingMode } from './SettingMode';
+import { SettingTypeOrganizer } from './SettingTypeOrganizer';
+import { PewwBot } from '../../PewwBot';
 import { SettingContext } from './context/SettingContext';
+import { SettingChangeStatus } from './SettingChangeStatus';
 
 export interface Setting<T, V> {
+  bot: PewwBot;
   name: string;
+  typeOrganizer: SettingTypeOrganizer<T>;
+  valueOrganizer: SettingValueOrganizer<V>;
+  modes: SettingMode[];
 
-  typeOrganizer: (context: CommandContext) => T;
+  init(): void;
 
-  valueOrganizer: SettingValueOrganizer<any>;
+  call(context: SettingContext<T, V>): Promise<SettingChangeStatus<V>>;
+
+  run(context: SettingContext<T, V>): Promise<SettingChangeStatus<V>>;
 
   getModes(): SettingMode[];
 
@@ -17,7 +25,9 @@ export interface Setting<T, V> {
 
   help(context: CommandContext): void;
 
-  // get(t: T): Promise<V | undefined>;
+  getTypeOrganizer(): SettingTypeOrganizer<T>;
 
-  handle(context: SettingContext<T, V>): Promise<SettingChangeStatus<V>>;
+  getValueOrganizer(): SettingValueOrganizer<V>;
+
+  // get(t: T): Promise<V | undefined>;
 }

@@ -8,7 +8,7 @@ export class SettingChangeStatus<T> {
     if (message) this.message = message;
   }
 
-  public static of<V>(data?: V, message?: () => string): SettingChangeStatus<V> {
+  public static of<T>(data?: T, message?: () => string): SettingChangeStatus<T> {
     return new SettingChangeStatus(data, message);
   }
 
