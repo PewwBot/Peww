@@ -12,48 +12,67 @@ export abstract class CommandUsage {
 
   abstract init(): void;
 
-  public with(arg: Argument<any>, need?: boolean): void {
+  public with(
+    arg: Argument<any>,
+    options?: {
+      need: boolean;
+    }
+  ): void {
     this.arguments.push({
       argument: arg,
       multiple: false,
-      need: need === undefined ? true : false,
-      queue: this.arguments.length + 1
+      need: options && options.need === undefined ? true : false,
+      queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
   }
 
-  public withName(argName: string, need?: boolean): void {
+  public withName(
+    argName: string,
+    options?: {
+      need: boolean;
+    }
+  ): void {
     const arg = this.command.bot.getArgumentManager().get(argName);
     if (!arg) return;
     this.arguments.push({
       argument: arg,
       multiple: false,
-      need: need === undefined ? true : false,
-      queue: this.arguments.length + 1
+      need: options && options.need === undefined ? true : false,
+      queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
   }
 
-  public withMultiple(arg: Argument<any>, need?: boolean): void {
+  public withMultiple(
+    arg: Argument<any>,
+    options?: {
+      need: boolean;
+    }
+  ): void {
     this.arguments.push({
       argument: arg,
       multiple: true,
-      need: need === undefined ? true : false,
-      queue: this.arguments.length + 1
+      need: options && options.need === undefined ? true : false,
+      queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
   }
 
-  public withMultipleName(argName: string, need?: boolean): void {
+  public withMultipleName(
+    argName: string,
+    options?: {
+      need: boolean;
+    }
+  ): void {
     const arg = this.command.bot.getArgumentManager().get(argName);
     if (!arg) return;
     this.arguments.push({
       argument: arg,
       multiple: true,
-      need: need === undefined ? true : false,
-      queue: this.arguments.length + 1
+      need: options && options.need === undefined ? true : false,
+      queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
   }
-
 }
