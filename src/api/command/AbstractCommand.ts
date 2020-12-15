@@ -74,15 +74,22 @@ export abstract class AbstractCommand implements Command {
     if (args.usage) {
       const usageObject: CommandUsage = new (args.usage as any)();
       usageObject.command = this;
-      usageObject.init();
-      // tslint:disable-next-line: forin
-      for (const usageArgumentNum in usageObject.arguments) {
-        const usageArgument = usageObject.arguments[usageArgumentNum];
-        if (usageArgument.multiple && Number(usageArgumentNum) < (usageObject.arguments.length - 1)) {
-          throw new CommandError('Only the last argument can be multiple.');
+      try {
+        usageObject.init();
+        // tslint:disable-next-line: forin
+        for (const usageArgumentNum in usageObject.arguments) {
+          const usageArgument = usageObject.arguments[usageArgumentNum];
+          if (usageArgument.multiple && Number(usageArgumentNum) < usageObject.arguments.length - 1) {
+            throw new CommandError('Only the last argument can be multiple.');
+          }
+          if (!usageArgument.argument.shift && usageArgument.multiple) {
+            throw new CommandError('Only those with shift can be multiple.');
+          }
         }
+        this.usage = usageObject;
+      } catch (error) {
+        throw error;
       }
-      this.usage = usageObject;
     }
   }
 

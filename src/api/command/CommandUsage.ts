@@ -1,5 +1,6 @@
 import { Argument } from './argument/Argument';
 import { Command } from './Command';
+import { CommandError } from './CommandError';
 
 export abstract class CommandUsage {
   command: Command;
@@ -21,7 +22,7 @@ export abstract class CommandUsage {
     this.arguments.push({
       argument: arg,
       multiple: false,
-      need: options && options.need === undefined ? true : false,
+      need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
@@ -38,10 +39,32 @@ export abstract class CommandUsage {
     this.arguments.push({
       argument: arg,
       multiple: false,
-      need: options && options.need === undefined ? true : false,
+      need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
+  }
+
+  public withCustom(
+    arg: Function,
+    options?: {
+      need: boolean;
+    }
+  ): void {
+    const argumentObject: Argument<any> = new (arg as any)();
+    argumentObject.bot = this.command.bot;
+    try {
+      argumentObject.init();
+      this.arguments.push({
+        argument: argumentObject,
+        multiple: false,
+        need: options ? (options.need === undefined ? true : options.need) : true,
+        queue: this.arguments.length + 1,
+      });
+      this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
+    } catch (error) {
+      throw new CommandError('The custom argument is incorrect!');
+    }
   }
 
   public withMultiple(
@@ -53,7 +76,7 @@ export abstract class CommandUsage {
     this.arguments.push({
       argument: arg,
       multiple: true,
-      need: options && options.need === undefined ? true : false,
+      need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
@@ -70,9 +93,31 @@ export abstract class CommandUsage {
     this.arguments.push({
       argument: arg,
       multiple: true,
-      need: options && options.need === undefined ? true : false,
+      need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
     this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
+  }
+
+  public withMultipleCustom(
+    arg: Function,
+    options?: {
+      need: boolean;
+    }
+  ): void {
+    const argumentObject: Argument<any> = new (arg as any)();
+    argumentObject.bot = this.command.bot;
+    try {
+      argumentObject.init();
+      this.arguments.push({
+        argument: argumentObject,
+        multiple: true,
+        need: options ? (options.need === undefined ? true : options.need) : true,
+        queue: this.arguments.length + 1,
+      });
+      this.arguments = this.arguments.sort((a, b) => a.queue - b.queue);
+    } catch (error) {
+      throw new CommandError('The custom argument is incorrect!');
+    }
   }
 }

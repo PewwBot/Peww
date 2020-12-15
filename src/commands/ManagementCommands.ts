@@ -10,6 +10,7 @@ import { AbstractCommand } from '../api/command/AbstractCommand';
 import { Database } from '../api/database/Database';
 import { CommandUsage } from '../api/command/CommandUsage';
 import { CommandError } from '../api/command/CommandError';
+import { AbstractArgument } from '../api/command/argument/AbstractArgument';
 
 export class ManagementCommands extends CommandBatchRegisterer {
   get(): Command[] {
@@ -36,8 +37,26 @@ class TestCommand extends AbstractCommand {
       usage: class Usage extends CommandUsage {
         init(): void {
           this.withName('guild');
+          this.withCustom(
+            class Test extends AbstractArgument<string> {
+              constructor() {
+                super({
+                  name: 'CustomTest',
+                });
+              }
+
+              init(): void {
+                this.setupOptions({
+                  shift: false,
+                });
+              }
+
+              async to(context: CommandContext, _controlledArg: string | undefined): Promise<string> {
+                return context.getLabel();
+              }
+            }
+          );
           this.withName('string');
-          this.withMultipleName('string');
         }
       },
     });
