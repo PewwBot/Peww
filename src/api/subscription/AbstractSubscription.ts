@@ -12,6 +12,7 @@ export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents>
   uniqueId: string = uuidv4();
   name: string;
   event: K;
+  once: boolean = false;
   active: boolean = true;
   callCounter: number = 0;
   predicates: SubscriptionPredicate<K>[] = [];
@@ -22,8 +23,9 @@ export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents>
     this.name = args.name;
   }
 
-  public setupOptions(args?: { event?: K; predicates?: SubscriptionPredicate<K>[] }) {
+  public setupOptions(args?: { event?: K; once?: boolean; predicates?: SubscriptionPredicate<K>[] }) {
     if (args.event) this.event = args.event;
+    if (args.once !== undefined) this.once = args.once;
     if (args.predicates) this.predicates = args.predicates;
   }
 
@@ -31,15 +33,13 @@ export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents>
 
   register(): void {
     this.listener = (...args: Discord.ClientEvents[K]) => {
-      if (!this.isActive()) {
-        this.unregister();
-        return;
-      }
+      if (!this.isActive()) return;
 
       this.callCounter++;
       this.call(new ImmutableSubscriptionContext(this.bot, args));
     };
-    this.bot.on(this.event, this.listener);
+    if (this.once) this.bot.once(this.event, this.listener);
+    else this.bot.on(this.event, this.listener);
   }
 
   unregister() {

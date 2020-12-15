@@ -8,6 +8,7 @@ export interface Subscription<K extends keyof Discord.ClientEvents> {
   uniqueId: string;
   name: string;
   event: K;
+  once: boolean;
   active: boolean;
   callCounter: number;
   predicates: SubscriptionPredicate<K>[];
