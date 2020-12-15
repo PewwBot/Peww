@@ -24,9 +24,13 @@ export class SchedulerManager {
   public register(scheduler: Scheduler): void {
     scheduler.bot = this.bot;
     if (!this.getScheduler(scheduler.name)) {
-      this.schedulers.push(scheduler);
-      scheduler.init();
-      scheduler.start();
+      try {
+        scheduler.init();
+        this.schedulers.push(scheduler);
+        scheduler.start();
+      } catch (error) {
+        this.bot.getLogger().error(`${scheduler.name} scheduler could not be loaded!`);
+      }
     }
   }
 

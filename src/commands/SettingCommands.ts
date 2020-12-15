@@ -19,6 +19,11 @@ class SettingCommand extends AbstractCommand {
   constructor() {
     super({
       name: 'setting',
+    });
+  }
+
+  init() {
+    this.setupOptions({
       aliases: ['setting'],
       description: 'Bot settings',
       category: CommandCategory.SETTING,
@@ -37,7 +42,10 @@ class SettingCommand extends AbstractCommand {
       );
       embedBuilder.addField(
         'Ayarlar',
-        context.getBot().getSettingManager().getNameAllSettings()
+        context
+          .getBot()
+          .getSettingManager()
+          .getNameAllSettings()
           .map((setting) => `\`${StringUtil.capitalize(setting, 'tr-TR')}\``)
           .join(', '),
         true

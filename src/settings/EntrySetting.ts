@@ -16,6 +16,11 @@ export class EntrySetting extends AbstractSetting<
   constructor() {
     super({
       name: 'entry',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       modes: [
         SettingMode.of(
           'MODE_MODIFIER',

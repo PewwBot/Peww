@@ -7,6 +7,11 @@ export class GuildControlScheduler extends AbstractScheduler {
   constructor() {
     super({
       name: 'GuildControl',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       ms: moment.duration(15, 'minutes'),
     });
   }

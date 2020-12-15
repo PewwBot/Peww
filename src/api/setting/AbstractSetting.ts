@@ -9,27 +9,31 @@ import { SettingChangeStatus } from './SettingChangeStatus';
 import { SettingMode } from './SettingMode';
 import { SettingTypeOrganizer } from './SettingTypeOrganizer';
 import { SettingValueOrganizer } from './SettingValueOrganizer';
+import { v4 as uuidv4 } from 'uuid';
 
 export abstract class AbstractSetting<T, V> implements Setting<T, V> {
   bot: PewwBot;
   name: string;
+  uniqueId: string = uuidv4();
   typeOrganizer: SettingTypeOrganizer<T>;
   valueOrganizer: SettingValueOrganizer<V> = new EmptyOrganizer() as SettingValueOrganizer<any>;
   modes: SettingMode[] = [];
 
-  constructor(args?: {
-    name?: string;
+  constructor(args: { name: string }) {
+    this.name = args.name;
+  }
+
+  public setupOptions(args?: {
     typeOrganizer?: SettingTypeOrganizer<T>;
     valueOrganizer?: SettingValueOrganizer<V>;
     modes?: SettingMode[];
   }) {
-    if (args.name) this.name = args.name;
     if (args.typeOrganizer) this.typeOrganizer = args.typeOrganizer;
     if (args.valueOrganizer) this.valueOrganizer = args.valueOrganizer;
     if (args.modes) this.modes = args.modes;
   }
 
-  init(): void {}
+  abstract init(): void;
 
   async call(context: SettingContext<T, V>): Promise<SettingChangeStatus<V>> {
     return this.run(context);

@@ -8,6 +8,7 @@ import { CacheManager } from './api/cache/CacheManager';
 import * as path from 'path';
 import { LocaleManager } from './api/locale/LocaleManager';
 import { SettingManager } from './api/setting/SettingManager';
+import { ArgumentManager } from './api/command/argument/ArgumentManager';
 
 // tslint:disable-next-line: no-var-requires
 const PastebinAPI = require('pastebin-js');
@@ -25,6 +26,7 @@ export class PewwBot extends Discord.Client {
 
   private cacheManager: CacheManager;
   private localeManager: LocaleManager;
+  private argumentManager: ArgumentManager;
   private commandManager: CommandManager;
   private subscriptionManager: SubscriptionManager;
   private schedulerManager: SchedulerManager;
@@ -49,6 +51,7 @@ export class PewwBot extends Discord.Client {
     this.cacheManager = new CacheManager(this);
     this.settingManager = new SettingManager(this);
     this.subscriptionManager = new SubscriptionManager(this);
+    this.argumentManager = new ArgumentManager(this);
     this.commandManager = new CommandManager(this);
     this.schedulerManager = new SchedulerManager(this);
     super.login(this.config.getData().token);
@@ -72,6 +75,10 @@ export class PewwBot extends Discord.Client {
 
   public getLocaleManager(): LocaleManager {
     return this.localeManager;
+  }
+
+  public getArgumentManager(): ArgumentManager {
+    return this.argumentManager;
   }
 
   public getCommandManager(): CommandManager {

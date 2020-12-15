@@ -18,9 +18,12 @@ export abstract class AbstractSubCommand implements SubCommand {
   requiredCustomPermission: CommandPermission = CommandPermissions.USER;
   predicates: CommandPredicate[] = [];
 
-  constructor(
+  constructor(args: { name: string }) {
+    this.name = args.name;
+  }
+
+  public setupOptions(
     args: {
-      name?: string;
       description?: string;
       aliases?: string[];
       subs?: Function[];
@@ -29,7 +32,6 @@ export abstract class AbstractSubCommand implements SubCommand {
       predicates?: CommandPredicate[];
     } = {}
   ) {
-    if (args.name) this.name = args.name;
     if (args.description) this.description = args.description;
     if (args.aliases) this.aliases = args.aliases;
     if (args.subs) {
@@ -43,7 +45,7 @@ export abstract class AbstractSubCommand implements SubCommand {
     if (args.predicates) this.predicates = args.predicates;
   }
 
-  init(): void {}
+  abstract init(): void;
 
   call(context: CommandContext): void {
     if (this.predicates.length > 0) {

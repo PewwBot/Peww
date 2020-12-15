@@ -9,6 +9,7 @@ import { SettingChangeStatus } from './SettingChangeStatus';
 export interface Setting<T, V> {
   bot: PewwBot;
   name: string;
+  uniqueId: string;
   typeOrganizer: SettingTypeOrganizer<T>;
   valueOrganizer: SettingValueOrganizer<V>;
   modes: SettingMode[];

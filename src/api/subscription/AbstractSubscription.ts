@@ -10,21 +10,24 @@ import { SubscriptionError } from './SubscriptionError';
 export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents> implements Subscription<K> {
   bot: PewwBot;
   uniqueId: string = uuidv4();
-  event: K;
   name: string;
+  event: K;
   active: boolean = true;
   callCounter: number = 0;
   predicates: SubscriptionPredicate<K>[] = [];
 
   private listener: (...args: Discord.ClientEvents[K]) => void;
 
-  constructor(args?: { event?: K; name?: string; predicates?: SubscriptionPredicate<K>[] }) {
+  constructor(args: { name: string }) {
+    this.name = args.name;
+  }
+
+  public setupOptions(args?: { event?: K; predicates?: SubscriptionPredicate<K>[] }) {
     if (args.event) this.event = args.event;
-    if (args.name) this.name = args.name;
     if (args.predicates) this.predicates = args.predicates;
   }
 
-  init(): void {}
+  abstract init(): void;
 
   register(): void {
     this.listener = (...args: Discord.ClientEvents[K]) => {

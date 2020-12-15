@@ -29,8 +29,12 @@ export class SettingManager {
   public register<T, V>(setting: Setting<T, V>): void {
     setting.bot = this.bot;
     if (!this.get(setting.name)) {
-      this.settings.set(setting.name, setting);
-      setting.init();
+      try {
+        setting.init();
+        this.settings.set(setting.name, setting);
+      } catch (error) {
+        this.bot.getLogger().error(`${setting.name} setting could not be loaded!`);
+      }
     }
   }
 

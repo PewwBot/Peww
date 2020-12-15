@@ -5,6 +5,7 @@ import { CommandRegisterer } from './CommandRegisterer';
 import { CommandBatchRegisterer } from './CommandBatchRegisterer';
 import * as fs from 'fs';
 import * as path from 'path';
+import { CommandError } from './CommandError';
 
 export class CommandManager {
   private bot: PewwBot;
@@ -30,8 +31,12 @@ export class CommandManager {
   public register(command: Command): void {
     command.bot = this.bot;
     if (!this.getCommandWithName(command.name)) {
-      this.commands.push(command);
-      command.init();
+      try {
+        command.init();
+        this.commands.push(command);
+      } catch (error) {
+        this.bot.getLogger().error(`${command.name} command could not be loaded!${error instanceof CommandError ? ` ${error.message}` : ''}`);
+      }
     }
   }
 

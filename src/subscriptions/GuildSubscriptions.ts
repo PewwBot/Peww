@@ -18,8 +18,13 @@ export default GuildSubscriptions;
 class GuildMemberAdd extends AbstractSubscription<'guildMemberAdd'> {
   constructor() {
     super({
-      event: 'guildMemberAdd',
       name: 'guildMemberAdd',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
+      event: 'guildMemberAdd',
     });
   }
 
@@ -61,8 +66,13 @@ class GuildMemberAdd extends AbstractSubscription<'guildMemberAdd'> {
 class GuildMemberRemove extends AbstractSubscription<'guildMemberRemove'> {
   constructor() {
     super({
-      event: 'guildMemberRemove',
       name: 'guildMemberRemove',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
+      event: 'guildMemberRemove',
     });
   }
 
@@ -104,8 +114,13 @@ class GuildMemberRemove extends AbstractSubscription<'guildMemberRemove'> {
 class GuildCreate extends AbstractSubscription<'guildCreate'> {
   constructor() {
     super({
-      event: 'guildCreate',
       name: 'guildCreate',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
+      event: 'guildCreate',
     });
   }
 
@@ -127,8 +142,13 @@ class GuildCreate extends AbstractSubscription<'guildCreate'> {
 class GuildDelete extends AbstractSubscription<'guildDelete'> {
   constructor() {
     super({
-      event: 'guildDelete',
       name: 'guildDelete',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
+      event: 'guildDelete',
     });
   }
 

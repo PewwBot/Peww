@@ -6,8 +6,8 @@ import { SubscriptionPredicate } from './SubscriptionPredicate';
 export interface Subscription<K extends keyof Discord.ClientEvents> {
   bot: PewwBot;
   uniqueId: string;
-  event: K;
   name: string;
+  event: K;
   active: boolean;
   callCounter: number;
   predicates: SubscriptionPredicate<K>[];

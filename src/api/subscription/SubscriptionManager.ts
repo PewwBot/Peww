@@ -24,9 +24,13 @@ export class SubscriptionManager {
   public register<K extends keyof Discord.ClientEvents>(subscription: Subscription<K>): void {
     subscription.bot = this.bot;
     if (!this.getSubscription(subscription.name)) {
-      this.subscriptions.push(subscription);
-      subscription.register();
-      subscription.init();
+      try {
+        subscription.init();
+        this.subscriptions.push(subscription);
+        subscription.register();
+      } catch (error) {
+        this.bot.getLogger().error(`${subscription.name} subscription could not be loaded!`);
+      }
     }
   }
 

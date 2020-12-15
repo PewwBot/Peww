@@ -11,8 +11,11 @@ export abstract class AbstractScheduler implements Scheduler {
 
   private process: NodeJS.Timeout;
 
-  constructor(args?: { name?: string; ms?: number | moment.Duration }) {
-    if (args.name) this.name = args.name;
+  constructor(args: { name: string }) {
+    this.name = args.name;
+  }
+
+  public setupOptions(args?: { ms?: number | moment.Duration }) {
     if (args.ms) {
       if ((args.ms as moment.Duration).asMilliseconds) {
         this.ms = (args.ms as moment.Duration).asMilliseconds();
@@ -22,7 +25,7 @@ export abstract class AbstractScheduler implements Scheduler {
     }
   }
 
-  init(): void {}
+  abstract init(): void;
 
   start(): void {
     this.process = setInterval(this.call, this.ms);

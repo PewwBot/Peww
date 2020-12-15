@@ -12,6 +12,11 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
   constructor() {
     super({
       name: 'staff',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       modes: [
         SettingMode.of('GET', ['get', 'control'], 'Bilgilendirme yapar.'),
         SettingMode.of('SET', ['set'], 'Belirleme yapar.'),

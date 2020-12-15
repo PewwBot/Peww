@@ -19,6 +19,11 @@ class CheckStaffCommand extends AbstractCommand {
   constructor() {
     super({
       name: 'checkStaff',
+    });
+  }
+
+  init() {
+    this.setupOptions({
       aliases: ['check_staff'],
       description: 'Checks the specified member is staff.',
       category: CommandCategory.MANAGEMENT,

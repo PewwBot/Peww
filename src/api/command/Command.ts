@@ -4,13 +4,14 @@ import { Predicate } from '../../utils/Predicate';
 import { CommandCategory } from './CommandCategory';
 import { CommandPermission } from './CommandPermission';
 import { CommandPredicate } from './CommandPredicate';
+import { CommandUsage } from './CommandUsage';
 import { CommandContext } from './context/CommandContext';
 import { SubCommand } from './SubCommand';
 
 export interface Command {
   bot: PewwBot;
   uniqueId: string;
-  mode: 'normal' | 'subs' | 'subswithfunc';
+  mode: 'normal' | 'argument' | 'subs' | 'subswithfunc';
   name: string;
   cooldown: {
     time: number;
@@ -20,7 +21,7 @@ export interface Command {
   runIn: ['text', 'dm'];
   category: CommandCategory;
   description: string;
-  usage: string;
+  usage: CommandUsage;
   aliases: string[];
   requiredPermissions: PermissionString[];
   requiredCustomPermission: CommandPermission;
@@ -47,5 +48,5 @@ export interface Command {
    */
   call(context: CommandContext): void;
 
-  run(context: CommandContext): void;
+  run(context: CommandContext, args?: any): void;
 }

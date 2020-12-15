@@ -7,8 +7,13 @@ import { SubscriptionContext } from '../subscription/context/SubscriptionContext
 export class CommandSubscription extends AbstractSubscription<'message'> {
   constructor() {
     super({
-      event: 'message',
       name: 'Command',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
+      event: 'message',
     });
   }
 

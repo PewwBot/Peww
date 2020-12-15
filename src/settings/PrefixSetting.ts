@@ -10,6 +10,11 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
   constructor() {
     super({
       name: 'prefix',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       modes: [
         SettingMode.of('GET', ['get', 'control'], 'Bilgilendirme yapar.'),
         SettingMode.of('SET', ['set'], 'Belirleme yapar.'),

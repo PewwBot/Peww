@@ -8,6 +8,8 @@ import { CommandContext } from '../api/command/context/CommandContext';
 import { CommandPermissions } from '../api/command/CommandPermission';
 import { AbstractCommand } from '../api/command/AbstractCommand';
 import { Database } from '../api/database/Database';
+import { CommandUsage } from '../api/command/CommandUsage';
+import { CommandError } from '../api/command/CommandError';
 
 export class ManagementCommands extends CommandBatchRegisterer {
   get(): Command[] {
@@ -21,20 +23,41 @@ class TestCommand extends AbstractCommand {
   constructor() {
     super({
       name: 'test',
+    });
+  }
+
+  init() {
+    this.setupOptions({
+      mode: 'argument',
       aliases: ['test'],
       description: 'Test some staff.',
       category: CommandCategory.MANAGEMENT,
       requiredCustomPermission: CommandPermissions.BOT_OWNER,
+      usage: class Usage extends CommandUsage {
+        init(): void {
+          this.withName('guild');
+          this.withName('string');
+          this.withMultipleName('string');
+        }
+      },
     });
   }
 
-  run(_context: CommandContext): void {}
+  run(_context: CommandContext, args: any[]): void {
+    console.log('Runned');
+    console.log(args);
+  }
 }
 
 class SqlRunCommand extends AbstractCommand {
   constructor() {
     super({
       name: 'sqlRun',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       aliases: ['sqlrun'],
       description: 'Used to apply changes to the database.',
       category: CommandCategory.MANAGEMENT,
@@ -76,6 +99,11 @@ class EvalCommand extends AbstractCommand {
   constructor() {
     super({
       name: 'eval',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       aliases: ['eval', 'evalpastebin', 'evalfile'],
       description: 'used to run code.',
       category: CommandCategory.MANAGEMENT,
@@ -118,6 +146,11 @@ class EvalReloadCommand extends AbstractCommand {
   constructor() {
     super({
       name: 'evalReload',
+    });
+  }
+
+  init(): void {
+    this.setupOptions({
       aliases: ['evalreload'],
       description: 'the code is used to refresh files in the eval system.',
       category: CommandCategory.MANAGEMENT,
