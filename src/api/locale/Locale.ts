@@ -1,31 +1,32 @@
-import { LocaleCode } from './LocaleCode';
 import * as fs from 'fs';
 import * as path from 'path';
-
-import { LocaleData } from './LocaleData';
 import { PewwBot } from '../../PewwBot';
+import { LocaleData } from './LocaleData';
+import { LocaleMeta } from './LocaleMeta';
 
 export class Locale {
   private bot: PewwBot;
-  private code: LocaleCode;
+  private name: string;
+  private meta: LocaleMeta;
   private data: LocaleData;
 
-  constructor(bot: PewwBot, code: LocaleCode) {
+  constructor(bot: PewwBot, name: string) {
     this.bot = bot;
-    this.code = code;
+    this.name = name;
   }
 
-  public load(): boolean {
+  public async load(): Promise<void> {
     try {
-      this.data = JSON.parse(fs.readFileSync(path.join(this.bot.getMainFolder(), `locale/${this.code}.json`), 'utf-8'));
-      return true;
+      const copyData = await JSON.parse(
+        fs.readFileSync(path.join(this.bot.getMainFolder(), `locales/${this.name}.json`), 'utf-8')
+      );
+      this.meta = copyData.meta;
+      if (this.meta) delete copyData.meta;
+      else throw new Error('Meta is missing');
+      this.data = copyData;
     } catch (error) {
       throw error;
     }
-  }
-
-  public getCode(): LocaleCode {
-    return this.code;
   }
 
   public getData(): LocaleData {

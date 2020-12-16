@@ -42,7 +42,7 @@ export class PewwBot extends Discord.Client {
     this.config = new Config();
     this.config.load();
     this.localeManager = new LocaleManager(this);
-    this.localeManager.load();
+    this.localeManager.loadPath(path.join(this.mainFolder, 'locales/'));
     this.pastebin = new PastebinAPI({
       api_dev_key: this.config.getData().pastebin.apikey,
       api_user_name: this.config.getData().pastebin.username,
