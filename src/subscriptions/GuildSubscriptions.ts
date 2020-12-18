@@ -6,6 +6,7 @@ import { Database } from '../api/database/Database';
 import { AbstractSubscription } from '../api/subscription/AbstractSubscription';
 import { SubscriptionContext } from '../api/subscription/context/SubscriptionContext';
 import { SubscriptionBatchRegisterer } from '../api/subscription/SubscriptionBatchRegisterer';
+import { PewwGuild } from '../structures/GuildStructure';
 
 export class GuildSubscriptions extends SubscriptionBatchRegisterer {
   get(): Subscription<any>[] {
@@ -29,9 +30,10 @@ class GuildMemberAdd extends AbstractSubscription<'guildMemberAdd'> {
   }
 
   async run(context: SubscriptionContext<'guildMemberAdd'>): Promise<void> {
-    const guild = await this.bot.getCacheManager().getGuild(context.getParams()[0].guild.id);
+    const guild: PewwGuild = (await this.bot.guilds.cache.get(context.getParams()[0].guild.id)) as PewwGuild;
     if (guild) {
-      const setting = guild.settings.find((setting) => setting.key === 'entry');
+      await guild.load();
+      const setting = guild.getPData().settings.find((setting) => setting.key === 'entry');
       if (
         !setting ||
         (setting &&
@@ -77,9 +79,10 @@ class GuildMemberRemove extends AbstractSubscription<'guildMemberRemove'> {
   }
 
   async run(context: SubscriptionContext<'guildMemberRemove'>): Promise<void> {
-    const guild = await this.bot.getCacheManager().getGuild(context.getParams()[0].guild.id);
+    const guild: PewwGuild = (await this.bot.guilds.cache.get(context.getParams()[0].guild.id)) as PewwGuild;
     if (guild) {
-      const setting = guild.settings.find((setting) => setting.key === 'entry');
+      await guild.load();
+      const setting = guild.getPData().settings.find((setting) => setting.key === 'entry');
       if (
         !setting ||
         (setting &&

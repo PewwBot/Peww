@@ -6,6 +6,7 @@ import { MentionUtil } from '../utils/MentionUtil';
 import { CommandPermissions } from '../api/command/CommandPermission';
 import { AbstractCommand } from '../api/command/AbstractCommand';
 import { CommandContext } from '../api/command/context/CommandContext';
+import { PewwGuild } from '../structures/GuildStructure';
 
 export class OwnerCommands extends CommandBatchRegisterer {
   get(): Command[] {
@@ -43,8 +44,8 @@ class CheckStaffCommand extends AbstractCommand {
       context.getMessage().channel.send(context.createEmbedBuilder().setDescription('Bir üye belirtmeniz gerekiyor!'));
       return;
     }
-    const guildData = await context.getBot().getCacheManager().getGuild(context.getMessage().guild.id, true);
-    if (!guildData) {
+    const guild: PewwGuild = (await context.getBot().guilds.cache.get(context.getMessage().guild.id)) as PewwGuild;
+    if (!guild) {
       context.getMessage().react('❌');
       context
         .getMessage()
@@ -53,11 +54,12 @@ class CheckStaffCommand extends AbstractCommand {
         );
       return;
     }
+    await guild.load();
     context.getMessage().react('✅');
     context.getMessage().channel.send(
       context
         .createEmbedBuilder()
-        .setDescription(`<@!${member.id}> adlı üye \`${guildData.isStaff(member) ? 'Yetkili' : 'Yetkili Değil'}\``)
+        .setDescription(`<@!${member.id}> adlı üye \`${guild.isStaff(member) ? 'Yetkili' : 'Yetkili Değil'}\``)
         .setColor('#b3e324')
         .setAuthor('Peww', context.getMessage().client.user.avatarURL())
     );

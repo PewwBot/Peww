@@ -7,6 +7,7 @@ import { AbstractSetting } from '../api/setting/AbstractSetting';
 import { SettingContext } from '../api/setting/context/SettingContext';
 import { CommandContext } from '../api/command/context/CommandContext';
 import { EmptyOrganizer } from '../api/setting/organizers/EmptyOrganizer';
+import { PewwGuild } from '../structures/GuildStructure';
 
 export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | undefined> {
   constructor() {
@@ -34,9 +35,10 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
   }
 
   async run(context: SettingContext<Discord.Guild, string[]>): Promise<SettingChangeStatus<string[]>> {
-    const guildData = await context.getBot().getCacheManager().getGuild(context.getType().id, true);
-    if (!guildData) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
-    let setting = guildData.settings.find((setting: { key: string }) => setting.key === 'staffRoles');
+    const guild: PewwGuild = (await context.getBot().guilds.cache.get(context.getType().id)) as PewwGuild;
+    if (!guild) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
+    await guild.load();
+    let setting = guild.getPData().settings.find((setting: { key: string }) => setting.key === 'staffRoles');
     if (context.getMode().getName() === 'GET') {
       return SettingChangeStatus.of<any>(
         !setting || !setting.data ? {} : setting.data,
@@ -61,10 +63,11 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
     }
     if (context.getMode().getName() === 'CLEAR') {
       (setting.data as any) = null;
-      if (putNew) guildData.settings.push(setting);
-      if (await guildData.save()) {
+      if (putNew) guild.getPData().settings.push(setting);
+      try {
+        await guild.save();
         return SettingChangeStatus.of([], () => '`Staff` ayarı sıfırlandı!');
-      } else {
+      } catch (error) {
         return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
       }
     }
@@ -84,13 +87,14 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
           setting.data = { value: [] };
         }
         ((setting.data as any).value as string[]) = rolesSet;
-        if (putNew) guildData.settings.push(setting);
-        if (await guildData.save()) {
+        if (putNew) guild.getPData().settings.push(setting);
+        try {
+          await guild.save();
           return SettingChangeStatus.of(
             context.getValue(),
             () => `\`Staff\` ayarı ${rolesSet.map((staff) => `<@&${staff}>`).join(', ')} olarak ayarlandı!`
           );
-        }
+        } catch (error) {}
         break;
       case 'ADD':
         const rolesAdd: string[] = [];
@@ -108,13 +112,14 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
         if (changedDataAdd.length < 1)
           return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
         ((setting.data as any).value as string[]).push(...changedDataAdd);
-        if (putNew) guildData.settings.push(setting);
-        if (await guildData.save()) {
+        if (putNew) guild.getPData().settings.push(setting);
+        try {
+          await guild.save();
           return SettingChangeStatus.of(
             changedDataAdd,
             () => `\`Staff\` ayarına ${changedDataAdd.map((staff) => `<@&${staff}>`).join(', ')} eklendi!`
           );
-        }
+        } catch (error) {}
         break;
       case 'REMOVE':
         const rolesRemove: string[] = [];
@@ -134,13 +139,14 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
         ((setting.data as any).value as string[]) = ((setting.data as any).value as string[]).filter(
           (val) => !changedDataRemove.includes(val)
         );
-        if (putNew) guildData.settings.push(setting);
-        if (await guildData.save()) {
+        if (putNew) guild.getPData().settings.push(setting);
+        try {
+          await guild.save();
           return SettingChangeStatus.of(
             changedDataRemove,
             () => `\`Staff\` ayarından ${changedDataRemove.map((staff) => `<@&${staff}>`).join(', ')} çıkarıldı!`
           );
-        }
+        } catch (error) {}
         break;
     }
     return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
