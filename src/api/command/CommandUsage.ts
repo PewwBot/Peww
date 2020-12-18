@@ -120,4 +120,22 @@ export abstract class CommandUsage {
       throw new CommandError('The custom argument is incorrect!');
     }
   }
+
+  public toUsageString(): string {
+    if (this.arguments.length < 0) return '';
+    let usageString = '';
+    for (const argument of this.arguments) {
+      if (!argument.argument.shift) continue;
+      usageString += `${argument.need ? '<' : '['}${
+        argument.multiple
+          ? `...${argument.argument.key}:${argument.argument.name}`
+          : `${argument.argument.key}:${argument.argument.name}`
+      }${argument.need ? '>' : ']'}`;
+    }
+    return usageString;
+  }
+
+  public toString(): string {
+    return this.toUsageString();
+  }
 }
