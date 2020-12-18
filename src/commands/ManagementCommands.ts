@@ -32,7 +32,7 @@ class TestCommand extends AbstractCommand {
       aliases: ['test'],
       description: 'Test some staff.',
       category: CommandCategory.MANAGEMENT,
-      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+      requiredPermission: CommandPermissions.BOT_OWNER,
       usage: class Usage extends CommandUsage {
         init(): void {
           this.withName('guild');
@@ -79,7 +79,7 @@ class SqlRunCommand extends AbstractCommand {
       aliases: ['sqlrun'],
       description: 'Used to apply changes to the database.',
       category: CommandCategory.MANAGEMENT,
-      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+      requiredPermission: CommandPermissions.BOT_OWNER,
     });
   }
 
@@ -125,7 +125,7 @@ class EvalCommand extends AbstractCommand {
       aliases: ['eval', 'evalpastebin', 'evalfile'],
       description: 'used to run code.',
       category: CommandCategory.MANAGEMENT,
-      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+      requiredPermission: CommandPermissions.BOT_OWNER,
     });
   }
 
@@ -172,7 +172,7 @@ class EvalReloadCommand extends AbstractCommand {
       aliases: ['evalreload'],
       description: 'the code is used to refresh files in the eval system.',
       category: CommandCategory.MANAGEMENT,
-      requiredCustomPermission: CommandPermissions.BOT_OWNER,
+      requiredPermission: CommandPermissions.BOT_OWNER,
     });
   }
 

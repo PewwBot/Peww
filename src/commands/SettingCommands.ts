@@ -27,7 +27,7 @@ class SettingCommand extends AbstractCommand {
       aliases: ['setting'],
       description: 'Bot settings',
       category: CommandCategory.SETTING,
-      requiredCustomPermission: CommandPermissions.STAFF,
+      requiredPermission: CommandPermissions.STAFF,
     });
   }
 
