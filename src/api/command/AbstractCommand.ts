@@ -24,8 +24,8 @@ export abstract class AbstractCommand implements Command {
   description: string = '';
   usage: CommandUsage = undefined;
   aliases: string[] = [];
-  requiredPermissions: PermissionString[] = [];
-  requiredCustomPermission: CommandPermission = CommandPermissions.USER;
+  requiredBotPermissions: PermissionString[] = [];
+  requiredPermission: CommandPermission = CommandPermissions.USER;
   predicates: CommandPredicate[] = [];
 
   [func: string]: any;
@@ -44,8 +44,8 @@ export abstract class AbstractCommand implements Command {
       description?: string;
       usage?: Function;
       aliases?: string[];
-      requiredPermissions?: PermissionString[];
-      requiredCustomPermission?: CommandPermission;
+      requiredBotPermissions?: PermissionString[];
+      requiredPermission?: CommandPermission;
       predicates?: CommandPredicate[];
     } = {}
   ): void {
@@ -68,8 +68,8 @@ export abstract class AbstractCommand implements Command {
     if (args.category) this.category = args.category;
     if (args.description) this.description = args.description;
     if (args.aliases) this.aliases = args.aliases;
-    if (args.requiredPermissions) this.requiredPermissions = args.requiredPermissions;
-    if (args.requiredCustomPermission) this.requiredCustomPermission = args.requiredCustomPermission;
+    if (args.requiredBotPermissions) this.requiredBotPermissions = args.requiredBotPermissions;
+    if (args.requiredPermission) this.requiredPermission = args.requiredPermission;
     if (args.predicates) this.predicates = args.predicates;
     if (args.usage) {
       const usageObject: CommandUsage = new (args.usage as any)();
@@ -135,9 +135,17 @@ export abstract class AbstractCommand implements Command {
         }
       }
     }
-    if (this.requiredCustomPermission) {
+    if (this.requiredBotPermissions.length > 0) {
+      for (const permission of this.requiredBotPermissions) {
+        if (!context.getMessage().guild.me.hasPermission(permission)) {
+          // TODO: add error message
+          return;
+        }
+      }
+    }
+    if (this.requiredPermission) {
       try {
-        this.requiredCustomPermission.test(context);
+        this.requiredPermission.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
           // TODO: add error message

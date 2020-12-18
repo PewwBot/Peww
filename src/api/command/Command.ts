@@ -22,8 +22,8 @@ export interface Command {
   description: string;
   usage: CommandUsage;
   aliases: string[];
-  requiredPermissions: PermissionString[];
-  requiredCustomPermission: CommandPermission;
+  requiredBotPermissions: PermissionString[];
+  requiredPermission: CommandPermission;
   predicates: CommandPredicate[];
 
   /**

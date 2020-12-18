@@ -11,8 +11,8 @@ export interface SubCommand {
   description: string;
   aliases: string[];
   subs: SubCommand[];
-  requiredPermissions: PermissionString[];
-  requiredCustomPermission: CommandPermission;
+  requiredBotPermissions: PermissionString[];
+  requiredPermission: CommandPermission;
   predicates: CommandPredicate[];
 
   init(): void;

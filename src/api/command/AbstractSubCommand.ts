@@ -14,8 +14,8 @@ export abstract class AbstractSubCommand implements SubCommand {
   description: string = '';
   aliases: string[] = [];
   subs: SubCommand[] = [];
-  requiredPermissions: PermissionString[] = [];
-  requiredCustomPermission: CommandPermission = CommandPermissions.USER;
+  requiredBotPermissions: PermissionString[] = [];
+  requiredPermission: CommandPermission = CommandPermissions.USER;
   predicates: CommandPredicate[] = [];
 
   constructor(args: { name: string }) {
@@ -27,8 +27,8 @@ export abstract class AbstractSubCommand implements SubCommand {
       description?: string;
       aliases?: string[];
       subs?: Function[];
-      requiredPermissions?: PermissionString[];
-      requiredCustomPermission?: CommandPermission;
+      requiredBotPermissions?: PermissionString[];
+      requiredPermission?: CommandPermission;
       predicates?: CommandPredicate[];
     } = {}
   ) {
@@ -40,8 +40,8 @@ export abstract class AbstractSubCommand implements SubCommand {
         this.subs.push(sub);
       }
     }
-    if (args.requiredPermissions) this.requiredPermissions = args.requiredPermissions;
-    if (args.requiredCustomPermission) this.requiredCustomPermission = args.requiredCustomPermission;
+    if (args.requiredBotPermissions) this.requiredBotPermissions = args.requiredBotPermissions;
+    if (args.requiredPermission) this.requiredPermission = args.requiredPermission;
     if (args.predicates) this.predicates = args.predicates;
   }
 
@@ -61,9 +61,17 @@ export abstract class AbstractSubCommand implements SubCommand {
         }
       }
     }
-    if (this.requiredCustomPermission) {
+    if (this.requiredBotPermissions.length > 0) {
+      for (const permission of this.requiredBotPermissions) {
+        if (!context.getMessage().guild.me.hasPermission(permission)) {
+          // TODO: add error message
+          return;
+        }
+      }
+    }
+    if (this.requiredPermission) {
       try {
-        this.requiredCustomPermission.test(context);
+        this.requiredPermission.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
           // TODO: add error message
