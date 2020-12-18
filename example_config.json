@@ -1,0 +1,10 @@
+{
+  "token": "",
+  "prefix": ["!"],
+  "ownerId": "",
+  "pastebin": {
+    "apikey": "",
+    "username": "",
+    "password": ""
+  }
+}
