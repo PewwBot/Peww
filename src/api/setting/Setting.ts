@@ -1,10 +1,10 @@
-import { SettingValueOrganizer } from './SettingValueOrganizer';
-import { CommandContext } from '../command/context/CommandContext';
-import { SettingMode } from './SettingMode';
-import { SettingTypeOrganizer } from './SettingTypeOrganizer';
 import { PewwBot } from '../../PewwBot';
+import { CommandContext } from '../command/context/CommandContext';
 import { SettingContext } from './context/SettingContext';
 import { SettingChangeStatus } from './SettingChangeStatus';
+import { SettingMode } from './SettingMode';
+import { SettingTypeOrganizer } from './SettingTypeOrganizer';
+import { SettingValueOrganizer } from './SettingValueOrganizer';
 
 export interface Setting<T, V> {
   bot: PewwBot;

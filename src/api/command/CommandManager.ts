@@ -1,11 +1,11 @@
-import { PewwBot } from '../../PewwBot';
-import { CommandSubscription } from './CommandSubscription';
-import { Command } from './Command';
-import { CommandRegisterer } from './CommandRegisterer';
-import { CommandBatchRegisterer } from './CommandBatchRegisterer';
 import * as fs from 'fs';
 import * as path from 'path';
+import { PewwBot } from '../../PewwBot';
+import { Command } from './Command';
+import { CommandBatchRegisterer } from './CommandBatchRegisterer';
 import { CommandError } from './CommandError';
+import { CommandRegisterer } from './CommandRegisterer';
+import { CommandSubscription } from './CommandSubscription';
 
 export class CommandManager {
   private bot: PewwBot;

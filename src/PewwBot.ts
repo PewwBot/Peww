@@ -1,14 +1,14 @@
-import { SchedulerManager } from './api/scheduler/SchedulerManager';
 import * as Discord from 'discord.js';
+import * as path from 'path';
 import { Logger } from 'tslog';
+import { CacheManager } from './api/cache/CacheManager';
+import { ArgumentManager } from './api/command/argument/ArgumentManager';
 import { CommandManager } from './api/command/CommandManager';
+import { LocaleManager } from './api/locale/LocaleManager';
+import { SchedulerManager } from './api/scheduler/SchedulerManager';
+import { SettingManager } from './api/setting/SettingManager';
 import { SubscriptionManager } from './api/subscription/SubscriptionManager';
 import { Config } from './Config';
-import { CacheManager } from './api/cache/CacheManager';
-import * as path from 'path';
-import { LocaleManager } from './api/locale/LocaleManager';
-import { SettingManager } from './api/setting/SettingManager';
-import { ArgumentManager } from './api/command/argument/ArgumentManager';
 
 // tslint:disable-next-line: no-var-requires
 const PastebinAPI = require('pastebin-js');

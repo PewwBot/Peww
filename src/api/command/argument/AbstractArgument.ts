@@ -1,7 +1,7 @@
-import { PewwBot } from '../../../PewwBot';
-import { Argument } from './Argument';
 import { v4 as uuidv4 } from 'uuid';
+import { PewwBot } from '../../../PewwBot';
 import { CommandContext } from '../context/CommandContext';
+import { Argument } from './Argument';
 
 export abstract class AbstractArgument<T> implements Argument<T> {
   bot: PewwBot;

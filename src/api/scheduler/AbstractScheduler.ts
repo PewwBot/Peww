@@ -1,7 +1,8 @@
-import { PewwBot } from '../../PewwBot';
-import { Scheduler } from './Scheduler';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
+import { PewwBot } from '../../PewwBot';
+import { Scheduler } from './Scheduler';
+
 export abstract class AbstractScheduler implements Scheduler {
   bot: PewwBot;
   uniqueId: string = uuidv4();

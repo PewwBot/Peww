@@ -1,9 +1,9 @@
 import * as Discord from 'discord.js';
-import { Command } from './Command';
-import { ImmutableCommandContext } from './context/ImmutableCommandContext';
+import { PewwGuild } from '../../structures/GuildStructure';
 import { AbstractSubscription } from '../subscription/AbstractSubscription';
 import { SubscriptionContext } from '../subscription/context/SubscriptionContext';
-import { PewwGuild } from '../../structures/GuildStructure';
+import { Command } from './Command';
+import { ImmutableCommandContext } from './context/ImmutableCommandContext';
 
 export class CommandSubscription extends AbstractSubscription<'message'> {
   constructor() {

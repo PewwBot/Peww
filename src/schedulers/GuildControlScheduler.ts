@@ -1,7 +1,7 @@
-import { GuildEntity } from './../api/database/entity/GuildEntity';
 import moment from 'moment';
 import { Database } from '../api/database/Database';
 import { AbstractScheduler } from '../api/scheduler/AbstractScheduler';
+import { GuildEntity } from './../api/database/entity/GuildEntity';
 
 export class GuildControlScheduler extends AbstractScheduler {
   constructor() {

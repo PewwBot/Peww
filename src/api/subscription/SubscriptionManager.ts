@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js';
+import * as fs from 'fs';
+import * as path from 'path';
 import { PewwBot } from '../../PewwBot';
 import { Subscription } from './Subscription';
 import { SubscriptionBatchRegisterer } from './SubscriptionBatchRegisterer';
 import { SubscriptionRegisterer } from './SubscriptionRegisterer';
-import * as fs from 'fs';
-import * as path from 'path';
 export class SubscriptionManager {
   private bot: PewwBot;
   private subscriptions: Subscription<any>[] = [];

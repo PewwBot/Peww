@@ -1,12 +1,12 @@
 import * as Discord from 'discord.js';
+import { AbstractCommand } from '../api/command/AbstractCommand';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
-import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
-import { MentionUtil } from '../utils/MentionUtil';
 import { CommandPermissions } from '../api/command/CommandPermission';
-import { AbstractCommand } from '../api/command/AbstractCommand';
 import { CommandContext } from '../api/command/context/CommandContext';
 import { PewwGuild } from '../structures/GuildStructure';
+import { MentionUtil } from '../utils/MentionUtil';
+import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
 
 export class OwnerCommands extends CommandBatchRegisterer {
   get(): Command[] {

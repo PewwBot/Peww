@@ -1,6 +1,5 @@
 import { MessageEmbed, PermissionString } from 'discord.js';
 import { PewwBot } from '../../PewwBot';
-import { Predicate } from '../../utils/Predicate';
 import { CommandCategory } from './CommandCategory';
 import { CommandPermission } from './CommandPermission';
 import { CommandPredicate } from './CommandPredicate';

@@ -1,8 +1,7 @@
-import { PewwBot } from './PewwBot';
-import { Database } from './api/database/Database';
 import * as path from 'path';
+import { Database } from './api/database/Database';
 import { StructureManager } from './api/structure/StructureManager';
-import { PewwGuild } from './structures/GuildStructure';
+import { PewwBot } from './PewwBot';
 
 const structureManager: StructureManager = new StructureManager();
 structureManager.registerPath(path.join(__dirname, 'structures/')).then(() => {

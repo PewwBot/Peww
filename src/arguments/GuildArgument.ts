@@ -1,6 +1,6 @@
+import * as Discord from 'discord.js';
 import { AbstractArgument } from '../api/command/argument/AbstractArgument';
 import { CommandContext } from '../api/command/context/CommandContext';
-import * as Discord from 'discord.js';
 
 export class GuildArgument extends AbstractArgument<Discord.Guild> {
   constructor() {

@@ -1,7 +1,7 @@
-import { AbstractArgument } from '../api/command/argument/AbstractArgument';
-
 import * as Discord from 'discord.js';
+import { AbstractArgument } from '../api/command/argument/AbstractArgument';
 import { CommandContext } from '../api/command/context/CommandContext';
+
 
 export class ChannelArgument extends AbstractArgument<Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel> {
   constructor() {

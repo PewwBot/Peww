@@ -1,13 +1,13 @@
 import * as Discord from 'discord.js';
-import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
-import { SettingMode } from '../api/setting/SettingMode';
+import { CommandContext } from '../api/command/context/CommandContext';
 import { GuildSettings } from '../api/database/entity/GuildSettingEntity';
-import { MentionUtil } from '../utils/MentionUtil';
 import { AbstractSetting } from '../api/setting/AbstractSetting';
 import { SettingContext } from '../api/setting/context/SettingContext';
-import { CommandContext } from '../api/command/context/CommandContext';
 import { EmptyOrganizer } from '../api/setting/organizers/EmptyOrganizer';
+import { SettingChangeStatus } from '../api/setting/SettingChangeStatus';
+import { SettingMode } from '../api/setting/SettingMode';
 import { PewwGuild } from '../structures/GuildStructure';
+import { MentionUtil } from '../utils/MentionUtil';
 
 export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | undefined> {
   constructor() {

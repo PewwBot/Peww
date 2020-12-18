@@ -1,4 +1,5 @@
 import { MessageEmbed } from 'discord.js';
+import { v4 as uuidv4 } from 'uuid';
 import { PewwBot } from '../../PewwBot';
 import { StringUtil } from '../../utils/StringUtil';
 import { CommandContext } from '../command/context/CommandContext';
@@ -9,7 +10,6 @@ import { SettingChangeStatus } from './SettingChangeStatus';
 import { SettingMode } from './SettingMode';
 import { SettingTypeOrganizer } from './SettingTypeOrganizer';
 import { SettingValueOrganizer } from './SettingValueOrganizer';
-import { v4 as uuidv4 } from 'uuid';
 
 export abstract class AbstractSetting<T, V> implements Setting<T, V> {
   bot: PewwBot;

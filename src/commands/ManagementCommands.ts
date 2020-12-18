@@ -1,16 +1,15 @@
 import * as Discord from 'discord.js';
+import * as util from 'util';
+import { AbstractCommand } from '../api/command/AbstractCommand';
+import { AbstractArgument } from '../api/command/argument/AbstractArgument';
 import { Command } from '../api/command/Command';
 import { CommandCategory } from '../api/command/CommandCategory';
+import { CommandPermissions } from '../api/command/CommandPermission';
+import { CommandUsage } from '../api/command/CommandUsage';
+import { CommandContext } from '../api/command/context/CommandContext';
+import { Database } from '../api/database/Database';
 import { CommandBatchRegisterer } from './../api/command/CommandBatchRegisterer';
 
-import * as util from 'util';
-import { CommandContext } from '../api/command/context/CommandContext';
-import { CommandPermissions } from '../api/command/CommandPermission';
-import { AbstractCommand } from '../api/command/AbstractCommand';
-import { Database } from '../api/database/Database';
-import { CommandUsage } from '../api/command/CommandUsage';
-import { CommandError } from '../api/command/CommandError';
-import { AbstractArgument } from '../api/command/argument/AbstractArgument';
 
 export class ManagementCommands extends CommandBatchRegisterer {
   get(): Command[] {

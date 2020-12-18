@@ -1,6 +1,6 @@
 import path from 'path';
 import 'reflect-metadata';
-import { Connection, createConnection, ConnectionOptions } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection } from 'typeorm';
 
 export type Mode = 'test' | 'normal';
 

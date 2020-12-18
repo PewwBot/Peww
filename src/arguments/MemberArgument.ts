@@ -1,6 +1,5 @@
-import { AbstractArgument } from '../api/command/argument/AbstractArgument';
-
 import * as Discord from 'discord.js';
+import { AbstractArgument } from '../api/command/argument/AbstractArgument';
 import { CommandContext } from '../api/command/context/CommandContext';
 
 export class MemberArgument extends AbstractArgument<Discord.GuildMember> {

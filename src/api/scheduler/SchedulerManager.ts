@@ -1,9 +1,9 @@
-import { Scheduler } from './Scheduler';
-import { SchedulerBatchRegisterer } from './SchedulerBatchRegisterer';
-import { SchedulerRegisterer } from './SchedulerRegisterer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { PewwBot } from '../../PewwBot';
+import { Scheduler } from './Scheduler';
+import { SchedulerBatchRegisterer } from './SchedulerBatchRegisterer';
+import { SchedulerRegisterer } from './SchedulerRegisterer';
 
 export class SchedulerManager {
   private bot: PewwBot;

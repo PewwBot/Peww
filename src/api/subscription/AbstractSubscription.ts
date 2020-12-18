@@ -1,11 +1,11 @@
 import * as Discord from 'discord.js';
-import { Subscription } from './Subscription';
-import { PewwBot } from '../../PewwBot';
 import { v4 as uuidv4 } from 'uuid';
-import { SubscriptionContext } from './context/SubscriptionContext';
-import { SubscriptionPredicate } from './SubscriptionPredicate';
+import { PewwBot } from '../../PewwBot';
 import { ImmutableSubscriptionContext } from './context/ImmutableSubscriptionContext';
+import { SubscriptionContext } from './context/SubscriptionContext';
+import { Subscription } from './Subscription';
 import { SubscriptionError } from './SubscriptionError';
+import { SubscriptionPredicate } from './SubscriptionPredicate';
 
 export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents> implements Subscription<K> {
   bot: PewwBot;

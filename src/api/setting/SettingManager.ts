@@ -1,9 +1,9 @@
-import { Setting } from './Setting';
-import { SettingBatchRegisterer } from './SettingBatchRegisterer';
-import { SettingRegisterer } from './SettingRegisterer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { PewwBot } from '../../PewwBot';
+import { Setting } from './Setting';
+import { SettingBatchRegisterer } from './SettingBatchRegisterer';
+import { SettingRegisterer } from './SettingRegisterer';
 
 export class SettingManager {
   private bot: PewwBot;

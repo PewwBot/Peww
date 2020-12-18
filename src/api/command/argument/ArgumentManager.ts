@@ -1,7 +1,7 @@
-import { PewwBot } from '../../../PewwBot';
-import { Argument } from './Argument';
 import * as fs from 'fs';
 import * as path from 'path';
+import { PewwBot } from '../../../PewwBot';
+import { Argument } from './Argument';
 import { ArgumentBatchRegisterer } from './ArgumentBatchRegisterer';
 import { ArgumentRegisterer } from './ArgumentRegisterer';
 

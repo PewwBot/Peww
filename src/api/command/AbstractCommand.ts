@@ -1,16 +1,16 @@
+import { MessageEmbed, PermissionString } from 'discord.js';
+import { v4 as uuidv4 } from 'uuid';
+import { PewwBot } from '../../PewwBot';
+import { Argument } from './argument/Argument';
 import { Command } from './Command';
 import { CommandCategory } from './CommandCategory';
-import { CommandContext } from './context/CommandContext';
-import { PewwBot } from '../../PewwBot';
-
-import { v4 as uuidv4 } from 'uuid';
-import { MessageEmbed, PermissionString } from 'discord.js';
-import { SubCommand } from './SubCommand';
-import { CommandPredicate } from './CommandPredicate';
 import { CommandError } from './CommandError';
 import { CommandPermission, CommandPermissions } from './CommandPermission';
+import { CommandPredicate } from './CommandPredicate';
 import { CommandUsage } from './CommandUsage';
-import { Argument } from './argument/Argument';
+import { CommandContext } from './context/CommandContext';
+import { SubCommand } from './SubCommand';
+
 
 export abstract class AbstractCommand implements Command {
   bot: PewwBot;
