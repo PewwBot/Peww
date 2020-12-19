@@ -5,8 +5,10 @@ import { CommandError } from './CommandError';
 export abstract class CommandUsage {
   command: Command;
   arguments: {
-    argument?: Argument<any>;
-    multiple?: boolean;
+    argument: Argument<any>;
+    multiple: boolean;
+    customName?: string;
+    formatMode: 'normal' | 'array';
     need: boolean;
     queue: number;
   }[] = [];
@@ -16,12 +18,16 @@ export abstract class CommandUsage {
   public with(
     arg: Argument<any>,
     options?: {
-      need: boolean;
+      need?: boolean;
+      customName?: string;
+      formatMode?: 'normal' | 'array';
     }
   ): void {
     this.arguments.push({
       argument: arg,
       multiple: false,
+      customName: options ? (options.customName ? options.customName : undefined) : undefined,
+      formatMode: options ? (options.formatMode ? options.formatMode : 'normal') : 'normal',
       need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
@@ -31,7 +37,9 @@ export abstract class CommandUsage {
   public withName(
     argName: string,
     options?: {
-      need: boolean;
+      need?: boolean;
+      customName?: string;
+      formatMode?: 'normal' | 'array';
     }
   ): void {
     const arg = this.command.bot.getArgumentManager().get(argName);
@@ -39,6 +47,8 @@ export abstract class CommandUsage {
     this.arguments.push({
       argument: arg,
       multiple: false,
+      customName: options ? (options.customName ? options.customName : undefined) : undefined,
+      formatMode: options ? (options.formatMode ? options.formatMode : 'normal') : 'normal',
       need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
@@ -48,7 +58,9 @@ export abstract class CommandUsage {
   public withCustom(
     arg: Function,
     options?: {
-      need: boolean;
+      need?: boolean;
+      customName?: string;
+      formatMode?: 'normal' | 'array';
     }
   ): void {
     const argumentObject: Argument<any> = new (arg as any)();
@@ -58,6 +70,8 @@ export abstract class CommandUsage {
       this.arguments.push({
         argument: argumentObject,
         multiple: false,
+        customName: options ? (options.customName ? options.customName : undefined) : undefined,
+        formatMode: options ? (options.formatMode ? options.formatMode : 'normal') : 'normal',
         need: options ? (options.need === undefined ? true : options.need) : true,
         queue: this.arguments.length + 1,
       });
@@ -70,12 +84,16 @@ export abstract class CommandUsage {
   public withMultiple(
     arg: Argument<any>,
     options?: {
-      need: boolean;
+      need?: boolean;
+      customName?: string;
+      formatMode?: 'normal' | 'array';
     }
   ): void {
     this.arguments.push({
       argument: arg,
       multiple: true,
+      customName: options ? (options.customName ? options.customName : undefined) : undefined,
+      formatMode: options ? (options.formatMode ? options.formatMode : 'normal') : 'normal',
       need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
@@ -85,7 +103,9 @@ export abstract class CommandUsage {
   public withMultipleName(
     argName: string,
     options?: {
-      need: boolean;
+      need?: boolean;
+      customName?: string;
+      formatMode?: 'normal' | 'array';
     }
   ): void {
     const arg = this.command.bot.getArgumentManager().get(argName);
@@ -93,6 +113,8 @@ export abstract class CommandUsage {
     this.arguments.push({
       argument: arg,
       multiple: true,
+      customName: options ? (options.customName ? options.customName : undefined) : undefined,
+      formatMode: options ? (options.formatMode ? options.formatMode : 'normal') : 'normal',
       need: options ? (options.need === undefined ? true : options.need) : true,
       queue: this.arguments.length + 1,
     });
@@ -102,7 +124,9 @@ export abstract class CommandUsage {
   public withMultipleCustom(
     arg: Function,
     options?: {
-      need: boolean;
+      need?: boolean;
+      customName?: string;
+      formatMode?: 'normal' | 'array';
     }
   ): void {
     const argumentObject: Argument<any> = new (arg as any)();
@@ -112,6 +136,8 @@ export abstract class CommandUsage {
       this.arguments.push({
         argument: argumentObject,
         multiple: true,
+        customName: options ? (options.customName ? options.customName : undefined) : undefined,
+        formatMode: options ? (options.formatMode ? options.formatMode : 'normal') : 'normal',
         need: options ? (options.need === undefined ? true : options.need) : true,
         queue: this.arguments.length + 1,
       });
@@ -126,11 +152,17 @@ export abstract class CommandUsage {
     let usageString = '';
     for (const argument of this.arguments) {
       if (!argument.argument.shift) continue;
-      usageString += `${argument.need ? '<' : '['}${
-        argument.multiple
-          ? `...${argument.argument.key}:${argument.argument.name}`
-          : `${argument.argument.key}:${argument.argument.name}`
-      }${argument.need ? '>' : ']'}`;
+      usageString += `${
+        argument.formatMode === 'normal'
+          ? `${argument.need ? '<' : '['}${
+              argument.multiple
+                ? `...${argument.customName ? argument.customName : '_'}:${argument.argument.format.type}`
+                : `${argument.customName ? argument.customName : '_'}:${argument.argument.format.type}`
+            }${argument.need ? '>' : ']'}`
+          : `${argument.need ? '<' : '['}${`${argument.customName ? argument.customName : '_'}`}${
+              argument.need ? '>' : ']'
+            }`
+      }`;
     }
     return usageString;
   }

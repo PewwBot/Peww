@@ -55,7 +55,7 @@ class TestCommand extends AbstractCommand {
               }
             }
           );
-          this.withName('string');
+          this.withName('string', { customName: 'test|test2|test3', formatMode: 'array' });
         }
       },
     });

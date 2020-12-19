@@ -4,10 +4,12 @@ import { CommandContext } from '../context/CommandContext';
 export interface Argument<T> {
   bot: PewwBot;
   name: string;
-  key: string;
   uniqueId: string;
   regex: RegExp;
   shift: boolean;
+  format: {
+    type: string;
+  }
 
   init(): void;
 

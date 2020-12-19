@@ -11,6 +11,9 @@ export class StringArgument extends AbstractArgument<string> {
   init(): void {
     this.setupOptions({
       regex: undefined,
+      format: {
+        type: 'string',
+      },
     });
   }
 

@@ -6,20 +6,22 @@ import { Argument } from './Argument';
 export abstract class AbstractArgument<T> implements Argument<T> {
   bot: PewwBot;
   name: string;
-  key: string;
   uniqueId: string = uuidv4();
   regex: RegExp = undefined;
   shift: boolean = true;
+  format: { type: string };
 
   constructor(args: { name: string }) {
     this.name = args.name;
-    this.key = this.name;
+    this.format = { type: this.name };
   }
 
-  public setupOptions(args?: { regex?: RegExp; shift?: boolean; key?: string }) {
+  public setupOptions(args?: { regex?: RegExp; shift?: boolean; format?: { type?: string } }) {
     if (args.regex) this.regex = args.regex;
     if (args.shift !== undefined) this.shift = args.shift;
-    if (args.key) this.key = args.key;
+    if (args.format) {
+      if (args.format.type) this.format.type = args.format.type;
+    }
   }
 
   abstract init(): void;
