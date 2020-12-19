@@ -53,7 +53,7 @@ export abstract class AbstractSubCommand implements SubCommand {
 
   abstract init(): void;
 
-  call(context: CommandContext): void {
+  async call(context: CommandContext): Promise<void> {
     if (this.predicates.length > 0) {
       for (const predicate of this.predicates) {
         try {
@@ -87,7 +87,7 @@ export abstract class AbstractSubCommand implements SubCommand {
       }
     }
     try {
-      this.test(context);
+      await this.test(context);
     } catch (error) {
       if (error instanceof CommandError) {
         // TODO: add error message
@@ -111,7 +111,7 @@ export abstract class AbstractSubCommand implements SubCommand {
     }
   }
 
-  test(context: CommandContext, args?: any): Promise<void> {
+  async test(context: CommandContext, args?: any): Promise<void> {
     return;
   }
 

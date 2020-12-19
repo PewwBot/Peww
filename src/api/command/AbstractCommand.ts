@@ -161,7 +161,7 @@ export abstract class AbstractCommand implements Command {
     }
     if (this.mode === 'subs') {
       try {
-        this.test(context);
+        await this.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
           // TODO: add error message
@@ -185,7 +185,7 @@ export abstract class AbstractCommand implements Command {
       }
     } else if (this.mode === 'subswithfunc') {
       try {
-        this.test(context);
+        await this.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
           // TODO: add error message
@@ -212,7 +212,7 @@ export abstract class AbstractCommand implements Command {
         const objectArgs = await this.calcArgument(context, rawArgs, usageArgs);
         if (objectArgs.length > 0) {
           try {
-            this.test(context, objectArgs);
+            await this.test(context, objectArgs);
           } catch (error) {
             if (error instanceof CommandError) {
               // TODO: add error message
@@ -233,7 +233,7 @@ export abstract class AbstractCommand implements Command {
       }
     } else {
       try {
-        this.test(context);
+        await this.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
           // TODO: add error message
@@ -299,7 +299,7 @@ export abstract class AbstractCommand implements Command {
     return objectArgs;
   }
 
-  test(context: CommandContext, args?: any): Promise<void> {
+  async test(context: CommandContext, args?: any): Promise<void> {
     return;
   }
 
