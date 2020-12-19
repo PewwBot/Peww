@@ -10,6 +10,7 @@ export interface SubCommand {
   name: string;
   description: string;
   usage: string;
+  examples: string[];
   aliases: string[];
   subs: SubCommand[];
   requiredBotPermissions: PermissionString[];

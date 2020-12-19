@@ -21,6 +21,7 @@ export interface Command {
   category: CommandCategory;
   description: string;
   usage: string;
+  examples: string[];
   customUsage: CommandUsage;
   aliases: string[];
   requiredBotPermissions: PermissionString[];

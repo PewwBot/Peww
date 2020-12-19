@@ -22,6 +22,7 @@ export abstract class AbstractCommand implements Command {
   category: CommandCategory = CommandCategory.OTHER;
   description: string = '';
   usage: string = '';
+  examples: string[] = [];
   customUsage: CommandUsage = undefined;
   aliases: string[] = [];
   requiredBotPermissions: PermissionString[] = [];
@@ -43,6 +44,7 @@ export abstract class AbstractCommand implements Command {
       category?: CommandCategory;
       description?: string;
       usage?: string;
+      examples?: string[];
       customUsage?: Function;
       aliases?: string[];
       requiredBotPermissions?: PermissionString[];
@@ -73,6 +75,7 @@ export abstract class AbstractCommand implements Command {
     if (args.requiredPermission) this.requiredPermission = args.requiredPermission;
     if (args.predicates) this.predicates = args.predicates;
     if (args.usage) this.usage = args.usage;
+    if (args.examples) this.examples = args.examples;
     if (args.customUsage) {
       const usageObject: CommandUsage = new (args.customUsage as any)();
       usageObject.command = this;

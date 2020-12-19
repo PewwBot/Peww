@@ -13,6 +13,7 @@ export abstract class AbstractSubCommand implements SubCommand {
   name: string;
   description: string = '';
   usage: string = '';
+  examples: string[] = [];
   aliases: string[] = [];
   subs: SubCommand[] = [];
   requiredBotPermissions: PermissionString[] = [];
@@ -28,6 +29,7 @@ export abstract class AbstractSubCommand implements SubCommand {
       aliases?: string[];
       description?: string;
       usage?: string;
+      examples?: string[];
       subs?: Function[];
       requiredBotPermissions?: PermissionString[];
       requiredPermission?: CommandPermission;
@@ -37,6 +39,7 @@ export abstract class AbstractSubCommand implements SubCommand {
     if (args.aliases) this.aliases = args.aliases;
     if (args.description) this.description = args.description;
     if (args.usage) this.usage = args.usage;
+    if (args.examples) this.examples = args.examples;
     if (args.subs) {
       for (const subFunction of args.subs) {
         const sub: SubCommand = new (subFunction as any)();
