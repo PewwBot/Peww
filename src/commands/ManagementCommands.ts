@@ -33,7 +33,7 @@ class TestCommand extends AbstractCommand {
       description: 'Test some staff.',
       category: CommandCategory.MANAGEMENT,
       requiredPermission: CommandPermissions.BOT_OWNER,
-      usage: class Usage extends CommandUsage {
+      customUsage: class Usage extends CommandUsage {
         init(): void {
           this.withName('guild');
           this.withCustom(
