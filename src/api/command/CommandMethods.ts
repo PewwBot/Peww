@@ -12,10 +12,10 @@ export class CommandMethods {
   }
 
   public async sendErrorMessage(context: CommandContext, errorType: ErrorType, reason: string): Promise<Message> {
-    const prefix = context.getPrefix();
+    const prefix = context.getOrganizedPrefix();
     const embed = new MessageEmbed()
       .setAuthor(`${context.getMessage().author.tag}`, context.getMessage().author.displayAvatarURL({ dynamic: true }))
-      .setTitle(`<:fail:736449226120233031> Error: \`${context.getCommand().name}\``)
+      .setTitle(`:octagonal_sign: Error: \`${context.getCommand().name}\``)
       .setDescription(`\`\`\`diff\n- ${errorType}\n+ ${reason}\`\`\``)
       .addField('Usage', `\`${prefix}${context.getCommand().usage}\``)
       .setTimestamp()
