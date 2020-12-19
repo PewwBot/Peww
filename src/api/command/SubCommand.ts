@@ -9,6 +9,7 @@ export interface SubCommand {
   uniqueId: string;
   name: string;
   description: string;
+  usage: string;
   aliases: string[];
   subs: SubCommand[];
   requiredBotPermissions: PermissionString[];

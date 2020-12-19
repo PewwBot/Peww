@@ -12,6 +12,7 @@ export abstract class AbstractSubCommand implements SubCommand {
   uniqueId: string = uuidv4();
   name: string;
   description: string = '';
+  usage: string = '';
   aliases: string[] = [];
   subs: SubCommand[] = [];
   requiredBotPermissions: PermissionString[] = [];
@@ -24,16 +25,18 @@ export abstract class AbstractSubCommand implements SubCommand {
 
   public setupOptions(
     args: {
-      description?: string;
       aliases?: string[];
+      description?: string;
+      usage?: string;
       subs?: Function[];
       requiredBotPermissions?: PermissionString[];
       requiredPermission?: CommandPermission;
       predicates?: CommandPredicate[];
     } = {}
   ) {
-    if (args.description) this.description = args.description;
     if (args.aliases) this.aliases = args.aliases;
+    if (args.description) this.description = args.description;
+    if (args.usage) this.usage = args.usage;
     if (args.subs) {
       for (const subFunction of args.subs) {
         const sub: SubCommand = new (subFunction as any)();

@@ -20,7 +20,8 @@ export interface Command {
   runIn: ['text', 'dm'];
   category: CommandCategory;
   description: string;
-  usage: CommandUsage;
+  usage: string;
+  customUsage: CommandUsage;
   aliases: string[];
   requiredBotPermissions: PermissionString[];
   requiredPermission: CommandPermission;

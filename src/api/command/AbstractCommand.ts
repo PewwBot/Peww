@@ -21,7 +21,8 @@ export abstract class AbstractCommand implements Command {
   runIn: ['text', 'dm'] = ['text', 'dm'];
   category: CommandCategory = CommandCategory.OTHER;
   description: string = '';
-  usage: CommandUsage = undefined;
+  usage: string = '';
+  customUsage: CommandUsage = undefined;
   aliases: string[] = [];
   requiredBotPermissions: PermissionString[] = [];
   requiredPermission: CommandPermission = CommandPermissions.USER;
@@ -41,7 +42,8 @@ export abstract class AbstractCommand implements Command {
       runIn?: ['text', 'dm'];
       category?: CommandCategory;
       description?: string;
-      usage?: Function;
+      usage?: string;
+      customUsage?: Function;
       aliases?: string[];
       requiredBotPermissions?: PermissionString[];
       requiredPermission?: CommandPermission;
@@ -70,8 +72,9 @@ export abstract class AbstractCommand implements Command {
     if (args.requiredBotPermissions) this.requiredBotPermissions = args.requiredBotPermissions;
     if (args.requiredPermission) this.requiredPermission = args.requiredPermission;
     if (args.predicates) this.predicates = args.predicates;
-    if (args.usage) {
-      const usageObject: CommandUsage = new (args.usage as any)();
+    if (args.usage) this.usage = args.usage;
+    if (args.customUsage) {
+      const usageObject: CommandUsage = new (args.customUsage as any)();
       usageObject.command = this;
       try {
         usageObject.init();
@@ -85,7 +88,7 @@ export abstract class AbstractCommand implements Command {
             throw new CommandError('Only those with shift can be multiple.');
           }
         }
-        this.usage = usageObject;
+        this.customUsage = usageObject;
       } catch (error) {
         throw error;
       }
@@ -201,7 +204,7 @@ export abstract class AbstractCommand implements Command {
         argument?: Argument<any>;
         multiple?: boolean;
         need?: boolean;
-      }[] = Object.assign([], this.usage.arguments);
+      }[] = Object.assign([], this.customUsage.arguments);
       try {
         const objectArgs = await this.calcArgument(context, rawArgs, usageArgs);
         if (objectArgs.length > 0) {
