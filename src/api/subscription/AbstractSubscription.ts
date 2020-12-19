@@ -51,13 +51,7 @@ export abstract class AbstractSubscription<K extends keyof Discord.ClientEvents>
       for (const predicate of this.predicates) {
         try {
           predicate.apply(context);
-        } catch (error) {
-          if (error instanceof SubscriptionError) {
-            // TODO: add error message
-            console.log(error);
-            return;
-          }
-        }
+        } catch (error) {}
       }
     }
     this.run(context);

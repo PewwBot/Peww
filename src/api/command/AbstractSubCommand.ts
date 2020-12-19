@@ -60,7 +60,7 @@ export abstract class AbstractSubCommand implements SubCommand {
           predicate.apply(context);
         } catch (error) {
           if (error instanceof CommandError) {
-            // TODO: add error message
+            this.command.methods.sendErrorMessage(context, 'Command Failure', error.message);
             console.log(error);
             return;
           }
@@ -69,10 +69,7 @@ export abstract class AbstractSubCommand implements SubCommand {
     }
     if (this.requiredBotPermissions.length > 0) {
       for (const permission of this.requiredBotPermissions) {
-        if (!context.getMessage().guild.me.hasPermission(permission)) {
-          // TODO: add error message
-          return;
-        }
+        if (!context.getMessage().guild.me.hasPermission(permission)) return;
       }
     }
     if (this.requiredPermission) {
@@ -80,7 +77,7 @@ export abstract class AbstractSubCommand implements SubCommand {
         this.requiredPermission.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
-          // TODO: add error message
+          this.command.methods.sendErrorMessage(context, 'Command Failure', error.message);
           console.log(error);
           return;
         }
@@ -90,7 +87,7 @@ export abstract class AbstractSubCommand implements SubCommand {
       await this.test(context);
     } catch (error) {
       if (error instanceof CommandError) {
-        // TODO: add error message
+        this.command.methods.sendErrorMessage(context, 'Command Failure', error.message);
         console.log(error);
         return;
       }

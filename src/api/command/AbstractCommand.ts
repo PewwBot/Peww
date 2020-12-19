@@ -127,7 +127,7 @@ export abstract class AbstractCommand implements Command {
     const currentChannelType: 'text' | 'dm' =
       context.getMessage().channel.type === 'news' ? 'text' : (context.getMessage().channel.type as 'text' | 'dm');
     if (!this.runIn.includes(currentChannelType)) {
-      // TODO: add error message
+      this.methods.sendErrorMessage(context, 'Command Failure', 'You cannot use this command in this room');
       return;
     }
     if (this.predicates.length > 0) {
@@ -136,7 +136,7 @@ export abstract class AbstractCommand implements Command {
           predicate.apply(context);
         } catch (error) {
           if (error instanceof CommandError) {
-            // TODO: add error message
+            this.methods.sendErrorMessage(context, 'Command Failure', error.message);
             console.log(error);
             return;
           }
@@ -145,10 +145,7 @@ export abstract class AbstractCommand implements Command {
     }
     if (this.requiredBotPermissions.length > 0) {
       for (const permission of this.requiredBotPermissions) {
-        if (!context.getMessage().guild.me.hasPermission(permission)) {
-          // TODO: add error message
-          return;
-        }
+        if (!context.getMessage().guild.me.hasPermission(permission)) return;
       }
     }
     if (this.requiredPermission) {
@@ -156,7 +153,7 @@ export abstract class AbstractCommand implements Command {
         this.requiredPermission.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
-          // TODO: add error message
+          this.methods.sendErrorMessage(context, 'Command Failure', error.message);
           console.log(error);
           return;
         }
@@ -167,7 +164,7 @@ export abstract class AbstractCommand implements Command {
         await this.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
-          // TODO: add error message
+          this.methods.sendErrorMessage(context, 'Command Failure', error.message);
           console.log(error);
           return;
         }
@@ -191,7 +188,7 @@ export abstract class AbstractCommand implements Command {
         await this.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
-          // TODO: add error message
+          this.methods.sendErrorMessage(context, 'Command Failure', error.message);
           console.log(error);
           return;
         }
@@ -218,18 +215,18 @@ export abstract class AbstractCommand implements Command {
             await this.test(context, objectArgs);
           } catch (error) {
             if (error instanceof CommandError) {
-              // TODO: add error message
+              this.methods.sendErrorMessage(context, 'Command Failure', error.message);
               console.log(error);
               return;
             }
           }
           this.run(context, objectArgs);
         } else {
-          // TODO: add error message
+          this.methods.sendErrorMessage(context, 'Command Failure', 'You entered the command incorrectly.');
         }
       } catch (error) {
         if (error instanceof CommandError) {
-          // TODO: add error message
+          this.methods.sendErrorMessage(context, 'Command Failure', error.message);
           console.log(error);
           return;
         }
@@ -239,7 +236,7 @@ export abstract class AbstractCommand implements Command {
         await this.test(context);
       } catch (error) {
         if (error instanceof CommandError) {
-          // TODO: add error message
+          this.methods.sendErrorMessage(context, 'Command Failure', error.message);
           console.log(error);
           return;
         }
