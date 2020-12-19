@@ -80,6 +80,15 @@ export abstract class AbstractSubCommand implements SubCommand {
         }
       }
     }
+    try {
+      this.test(context);
+    } catch (error) {
+      if (error instanceof CommandError) {
+        // TODO: add error message
+        console.log(error);
+        return;
+      }
+    }
     if (context.getArgs().length < 1) {
       this.run(context);
     } else {
@@ -94,6 +103,10 @@ export abstract class AbstractSubCommand implements SubCommand {
       }
       if (!finded) this.run(context);
     }
+  }
+
+  test(context: CommandContext, args?: any): Promise<void> {
+    return;
   }
 
   abstract run(context: CommandContext): void;

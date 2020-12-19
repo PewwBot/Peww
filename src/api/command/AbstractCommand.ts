@@ -11,7 +11,6 @@ import { CommandUsage } from './CommandUsage';
 import { CommandContext } from './context/CommandContext';
 import { SubCommand } from './SubCommand';
 
-
 export abstract class AbstractCommand implements Command {
   bot: PewwBot;
   uniqueId: string = uuidv4();
@@ -155,6 +154,15 @@ export abstract class AbstractCommand implements Command {
       }
     }
     if (this.mode === 'subs') {
+      try {
+        this.test(context);
+      } catch (error) {
+        if (error instanceof CommandError) {
+          // TODO: add error message
+          console.log(error);
+          return;
+        }
+      }
       if (context.getArgs().length < 1) {
         this.run(context);
       } else {
@@ -170,6 +178,15 @@ export abstract class AbstractCommand implements Command {
         if (!finded) this.run(context);
       }
     } else if (this.mode === 'subswithfunc') {
+      try {
+        this.test(context);
+      } catch (error) {
+        if (error instanceof CommandError) {
+          // TODO: add error message
+          console.log(error);
+          return;
+        }
+      }
       if (context.getArgs().length < 1) {
         this.run(context);
       } else {
@@ -187,8 +204,18 @@ export abstract class AbstractCommand implements Command {
       }[] = Object.assign([], this.usage.arguments);
       try {
         const objectArgs = await this.calcArgument(context, rawArgs, usageArgs);
-        if (objectArgs.length > 0) this.run(context, objectArgs);
-        else {
+        if (objectArgs.length > 0) {
+          try {
+            this.test(context, objectArgs);
+          } catch (error) {
+            if (error instanceof CommandError) {
+              // TODO: add error message
+              console.log(error);
+              return;
+            }
+          }
+          this.run(context, objectArgs);
+        } else {
           // TODO: add error message
         }
       } catch (error) {
@@ -199,6 +226,15 @@ export abstract class AbstractCommand implements Command {
         }
       }
     } else {
+      try {
+        this.test(context);
+      } catch (error) {
+        if (error instanceof CommandError) {
+          // TODO: add error message
+          console.log(error);
+          return;
+        }
+      }
       this.run(context);
     }
   }
@@ -255,6 +291,10 @@ export abstract class AbstractCommand implements Command {
       if (!added && usageArg.need) return [];
     }
     return objectArgs;
+  }
+
+  test(context: CommandContext, args?: any): Promise<void> {
+    return;
   }
 
   abstract run(context: CommandContext, args?: any): void;

@@ -19,5 +19,7 @@ export interface SubCommand {
 
   call(context: CommandContext): void;
 
+  test(context: CommandContext): Promise<void>;
+
   run(context: CommandContext): void;
 }

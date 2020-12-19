@@ -47,5 +47,7 @@ export interface Command {
    */
   call(context: CommandContext): void;
 
+  test(context: CommandContext, args?: any): Promise<void>;
+
   run(context: CommandContext, args?: any): void;
 }
