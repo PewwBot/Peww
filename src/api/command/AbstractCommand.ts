@@ -5,6 +5,7 @@ import { Argument } from './argument/Argument';
 import { Command } from './Command';
 import { CommandCategory } from './CommandCategory';
 import { CommandError } from './CommandError';
+import { CommandMethods } from './CommandMethods';
 import { CommandPermission, CommandPermissions } from './CommandPermission';
 import { CommandPredicate } from './CommandPredicate';
 import { CommandUsage } from './CommandUsage';
@@ -28,6 +29,7 @@ export abstract class AbstractCommand implements Command {
   requiredBotPermissions: PermissionString[] = ['SEND_MESSAGES', 'EMBED_LINKS'];
   requiredPermission: CommandPermission = CommandPermissions.USER;
   predicates: CommandPredicate[] = [];
+  methods: CommandMethods;
 
   [func: string]: any;
 
@@ -96,6 +98,7 @@ export abstract class AbstractCommand implements Command {
         throw error;
       }
     }
+    this.methods = new CommandMethods(this);
   }
 
   private setupAllSubs(_sub: SubCommand): void {

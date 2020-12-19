@@ -1,6 +1,7 @@
 import { MessageEmbed, PermissionString } from 'discord.js';
 import { PewwBot } from '../../PewwBot';
 import { CommandCategory } from './CommandCategory';
+import { CommandMethods } from './CommandMethods';
 import { CommandPermission } from './CommandPermission';
 import { CommandPredicate } from './CommandPredicate';
 import { CommandUsage } from './CommandUsage';
@@ -27,6 +28,7 @@ export interface Command {
   requiredBotPermissions: PermissionString[];
   requiredPermission: CommandPermission;
   predicates: CommandPredicate[];
+  methods: CommandMethods;
 
   /**
    * works when the command is registered.
