@@ -25,7 +25,7 @@ export abstract class AbstractCommand implements Command {
   examples: string[] = [];
   customUsage: CommandUsage = undefined;
   aliases: string[] = [];
-  requiredBotPermissions: PermissionString[] = [];
+  requiredBotPermissions: PermissionString[] = ['SEND_MESSAGES', 'EMBED_LINKS'];
   requiredPermission: CommandPermission = CommandPermissions.USER;
   predicates: CommandPredicate[] = [];
 
