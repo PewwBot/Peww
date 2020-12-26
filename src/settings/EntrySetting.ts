@@ -51,7 +51,7 @@ export class EntrySetting extends AbstractSetting<
     const guild: PewwGuild = (await context.getBot().guilds.cache.get(context.getType().guild.id)) as PewwGuild;
     if (!guild) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
     await guild.load();
-    let setting = guild.getPData().settings.find((setting) => setting.key === 'entry');
+    let setting = guild.getCustomData().settings.find((setting) => setting.key === 'entry');
     if (context.getMode().getName() === 'GET') {
       return SettingChangeStatus.of<any>(
         !setting || !setting.data ? {} : setting.data,
@@ -85,7 +85,7 @@ export class EntrySetting extends AbstractSetting<
       case 'CHANNEL':
         if (context.getValue().length < 1) {
           (setting.data as any).channelId = context.getType().channel.id;
-          if (putNew) guild.getPData().settings.push(setting);
+          if (putNew) guild.getCustomData().settings.push(setting);
           try {
             await guild.save();
             return SettingChangeStatus.of<any>(
@@ -99,7 +99,7 @@ export class EntrySetting extends AbstractSetting<
             return SettingChangeStatus.of(null, () => 'Ayarı değiştirmek için yazı kanalı etiketlemeniz gerekir!');
           }
           (setting.data as any).channelId = channel.id;
-          if (putNew) guild.getPData().settings.push(setting);
+          if (putNew) guild.getCustomData().settings.push(setting);
           try {
             await guild.save();
             return SettingChangeStatus.of<any>(
@@ -130,7 +130,7 @@ export class EntrySetting extends AbstractSetting<
             (setting.data as any).leave.mode = context.getValue()[0];
             break;
         }
-        if (putNew) guild.getPData().settings.push(setting);
+        if (putNew) guild.getCustomData().settings.push(setting);
         try {
           await guild.save();
           return SettingChangeStatus.of(
@@ -154,7 +154,7 @@ export class EntrySetting extends AbstractSetting<
             (setting.data as any).leave.message = context.getValue().join(' ');
             break;
         }
-        if (putNew) guild.getPData().settings.push(setting);
+        if (putNew) guild.getCustomData().settings.push(setting);
         try {
           await guild.save();
           return SettingChangeStatus.of(
@@ -168,7 +168,7 @@ export class EntrySetting extends AbstractSetting<
         break;
       case 'CLEAR':
         setting.data = { join: { mode: 'off', message: null }, leave: { mode: 'off', message: null } };
-        if (putNew) guild.getPData().settings.push(setting);
+        if (putNew) guild.getCustomData().settings.push(setting);
         try {
           await guild.save();
           return SettingChangeStatus.of([], () => '`Entry` ayarı sıfırlandı!');

@@ -16,7 +16,7 @@ export type PGuildData = {
 export class PewwGuild extends Discord.Guild {
   client: PewwBot;
 
-  private pData: PGuildData = {
+  private customData: PGuildData = {
     premium: false,
     command: {
       customPrefix: [],
@@ -33,16 +33,16 @@ export class PewwGuild extends Discord.Guild {
     const repository = Database.getConnection().getRepository(GuildEntity);
     const guildEntityFromDatabase = await repository.findOne({ guildId: this.id });
     if (guildEntityFromDatabase) {
-      this.pData.premium = guildEntityFromDatabase.premium;
-      this.pData.command.customPrefix = guildEntityFromDatabase.customPrefix;
-      this.pData.command.defaultPrefix = guildEntityFromDatabase.defaultPrefix;
+      this.customData.premium = guildEntityFromDatabase.premium;
+      this.customData.command.customPrefix = guildEntityFromDatabase.customPrefix;
+      this.customData.command.defaultPrefix = guildEntityFromDatabase.defaultPrefix;
     } else if (createWhenNotCreated) {
       const guildEntity = new GuildEntity();
       guildEntity.guildId = this.id;
       guildEntity.ownerId = this.ownerID;
-      guildEntity.premium = this.pData.premium;
-      guildEntity.customPrefix = this.pData.command.customPrefix;
-      guildEntity.defaultPrefix = this.pData.command.defaultPrefix;
+      guildEntity.premium = this.customData.premium;
+      guildEntity.customPrefix = this.customData.command.customPrefix;
+      guildEntity.defaultPrefix = this.customData.command.defaultPrefix;
       await Database.getConnection().getRepository(GuildEntity).save(guildEntity);
     }
     await this.loadSettings();
@@ -53,7 +53,7 @@ export class PewwGuild extends Discord.Guild {
     const settings = await repository.find({ guildId: this.id });
     if (settings) {
       for (const setting of settings) {
-        this.pData.settings.push(setting);
+        this.customData.settings.push(setting);
       }
     }
   }
@@ -68,14 +68,14 @@ export class PewwGuild extends Discord.Guild {
         guildEntity.guildId = this.id;
       }
       guildEntity.ownerId = this.ownerID;
-      guildEntity.premium = this.pData.premium;
-      guildEntity.customPrefix = this.pData.command.customPrefix;
-      guildEntity.defaultPrefix = this.pData.command.defaultPrefix;
+      guildEntity.premium = this.customData.premium;
+      guildEntity.customPrefix = this.customData.command.customPrefix;
+      guildEntity.defaultPrefix = this.customData.command.defaultPrefix;
       await queryRunner.startTransaction();
       let ret = true;
       try {
         await queryRunner.manager.save(guildEntity);
-        if (this.pData.settings.length > 0) await queryRunner.manager.save(this.pData.settings);
+        if (this.customData.settings.length > 0) await queryRunner.manager.save(this.customData.settings);
         await queryRunner.commitTransaction();
       } catch (error) {
         this.client.getLogger().prettyError(error);
@@ -91,7 +91,7 @@ export class PewwGuild extends Discord.Guild {
 
   public isStaff(member: Discord.GuildMember, ownerControl: boolean = false): boolean {
     if (ownerControl && member.guild.ownerID === member.id) return true;
-    const setting = this.pData.settings.find((setting) => setting.key === 'staffRoles');
+    const setting = this.customData.settings.find((setting) => setting.key === 'staffRoles');
     if (setting && setting.data) {
       const staffRoles = (setting.data as any).value as string[];
       if (!staffRoles || staffRoles.length < 1) return false;
@@ -100,8 +100,8 @@ export class PewwGuild extends Discord.Guild {
     return false;
   }
 
-  getPData(): PGuildData {
-    return this.pData;
+  getCustomData(): PGuildData {
+    return this.customData;
   }
 }
 
@@ -117,7 +117,7 @@ declare module 'discord.js' {
 
     isStaff(member: Discord.GuildMember, ownerControl?: boolean): boolean;
 
-    getPData(): PGuildData;
+    getCustomData(): PGuildData;
   }
 }
 

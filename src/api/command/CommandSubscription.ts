@@ -26,13 +26,13 @@ export class CommandSubscription extends AbstractSubscription<'message'> {
     if (!guild) return;
     await guild.load();
     const allPrefix =
-      guild && !guild.getPData().command.defaultPrefix && guild.getPData().command.customPrefix.length > 0
+      guild && !guild.getCustomData().command.defaultPrefix && guild.getCustomData().command.customPrefix.length > 0
         ? []
         : Object.assign([], this.bot.getConfig().getData().prefix);
     /*if ((guild && !guild.defaultPrefix && guild.getCustomPrefix().length > 0) || !guild)*/
     allPrefix.push(`<@!${this.bot.user.id}> `);
-    if (guild && guild.getPData().command.customPrefix.length > 0)
-      allPrefix.push(...guild.getPData().command.customPrefix);
+    if (guild && guild.getCustomData().command.customPrefix.length > 0)
+      allPrefix.push(...guild.getCustomData().command.customPrefix);
     for (const thisPrefix of allPrefix) {
       if (context.getParams()[0].content.startsWith(thisPrefix)) prefix = thisPrefix;
     }

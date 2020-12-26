@@ -38,7 +38,7 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
     const guild: PewwGuild = (await context.getBot().guilds.cache.get(context.getType().id)) as PewwGuild;
     if (!guild) return SettingChangeStatus.of(null, () => 'Sunucu bilgilerine ulaşılamıyor!');
     await guild.load();
-    let setting = guild.getPData().settings.find((setting: { key: string }) => setting.key === 'staffRoles');
+    let setting = guild.getCustomData().settings.find((setting: { key: string }) => setting.key === 'staffRoles');
     if (context.getMode().getName() === 'GET') {
       return SettingChangeStatus.of<any>(
         !setting || !setting.data ? {} : setting.data,
@@ -63,7 +63,7 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
     }
     if (context.getMode().getName() === 'CLEAR') {
       (setting.data as any) = null;
-      if (putNew) guild.getPData().settings.push(setting);
+      if (putNew) guild.getCustomData().settings.push(setting);
       try {
         await guild.save();
         return SettingChangeStatus.of([], () => '`Staff` ayarı sıfırlandı!');
@@ -87,7 +87,7 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
           setting.data = { value: [] };
         }
         ((setting.data as any).value as string[]) = rolesSet;
-        if (putNew) guild.getPData().settings.push(setting);
+        if (putNew) guild.getCustomData().settings.push(setting);
         try {
           await guild.save();
           return SettingChangeStatus.of(
@@ -112,7 +112,7 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
         if (changedDataAdd.length < 1)
           return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
         ((setting.data as any).value as string[]).push(...changedDataAdd);
-        if (putNew) guild.getPData().settings.push(setting);
+        if (putNew) guild.getCustomData().settings.push(setting);
         try {
           await guild.save();
           return SettingChangeStatus.of(
@@ -139,7 +139,7 @@ export class StaffSetting extends AbstractSetting<Discord.Guild, string[] | unde
         ((setting.data as any).value as string[]) = ((setting.data as any).value as string[]).filter(
           (val) => !changedDataRemove.includes(val)
         );
-        if (putNew) guild.getPData().settings.push(setting);
+        if (putNew) guild.getCustomData().settings.push(setting);
         try {
           await guild.save();
           return SettingChangeStatus.of(

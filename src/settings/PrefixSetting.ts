@@ -38,27 +38,27 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
     await guild.load();
     if (context.getMode().getName() === 'GET') {
       return SettingChangeStatus.of(
-        guild.getPData().command.customPrefix,
+        guild.getCustomData().command.customPrefix,
         () =>
           `\`Prefix\` ayarı: ${
-            guild.getPData().command.customPrefix.length < 1
+            guild.getCustomData().command.customPrefix.length < 1
               ? '`Yok`'
               : guild
-                  .getPData()
+                  .getCustomData()
                   .command.customPrefix.map((prefix: any) => `\`${prefix}\``)
                   .join(', ')
-          } (Ana Prefixler: ${guild.getPData().command.defaultPrefix ? '`Aktif`' : '`Devre Dışı`'})`
+          } (Ana Prefixler: ${guild.getCustomData().command.defaultPrefix ? '`Aktif`' : '`Devre Dışı`'})`
       );
     }
     if (context.getMode().getName() === 'DEFAULT_PREFIX') {
       if (context.getValue().length < 1) {
-        guild.getPData().command.defaultPrefix = !guild.getPData().command.defaultPrefix;
+        guild.getCustomData().command.defaultPrefix = !guild.getCustomData().command.defaultPrefix;
         try {
           await guild.save();
           return SettingChangeStatus.of(
             [],
             () =>
-              `\`Default-Prefix\` ayarı ${guild.getPData().command.defaultPrefix ? '`aktif`' : '`devre dışı`'} edildi!`
+              `\`Default-Prefix\` ayarı ${guild.getCustomData().command.defaultPrefix ? '`aktif`' : '`devre dışı`'} edildi!`
           );
         } catch (error) {
           return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
@@ -66,7 +66,7 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
       }
       switch (context.getValue()[0]) {
         case 'true':
-          guild.getPData().command.defaultPrefix = true;
+          guild.getCustomData().command.defaultPrefix = true;
           try {
             await guild.save();
             return SettingChangeStatus.of([], () => '`Default-Prefix` ayarı `aktif` edildi!');
@@ -74,7 +74,7 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
             return SettingChangeStatus.of(null, () => 'Ayar değiştirilirken hata oluştu. Lütfen tekrar deneyin!');
           }
         case 'false':
-          guild.getPData().command.defaultPrefix = false;
+          guild.getCustomData().command.defaultPrefix = false;
           try {
             await guild.save();
             return SettingChangeStatus.of([], () => '`Default-Prefix` ayarı `devre dışı` edildi!');
@@ -88,7 +88,7 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
       );
     }
     if (context.getMode().getName() === 'CLEAR') {
-      guild.getPData().command.customPrefix = [];
+      guild.getCustomData().command.customPrefix = [];
       try {
         await guild.save();
         return SettingChangeStatus.of([], () => '`Prefix` ayarı sıfırlandı!');
@@ -109,12 +109,12 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
       return SettingChangeStatus.of(null, () => "`Prefix` ayarı en fazla 3 karakter'den oluşabilir!");
     switch (context.getMode().getName()) {
       case 'SET':
-        if (!guild.getPData().premium && data.length > 2)
+        if (!guild.getCustomData().premium && data.length > 2)
           return SettingChangeStatus.of(
             null,
             () => "Sunucu `Premium` özelliğine sahip olmadığı için 2 adet'ten fazla özel prefix belirleyemezsin!"
           );
-        guild.getPData().command.customPrefix = data;
+        guild.getCustomData().command.customPrefix = data;
         try {
           await guild.save();
           return SettingChangeStatus.of(
@@ -124,20 +124,20 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
         } catch (error) {}
         break;
       case 'ADD':
-        if (!guild.getPData().premium && data.length > 2)
+        if (!guild.getCustomData().premium && data.length > 2)
           return SettingChangeStatus.of(
             null,
             () => "Sunucu `Premium` özelliğine sahip olmadığı için 2 adet'ten fazla özel prefix belirleyemezsin!"
           );
-        const changedDataAdd = data.filter((val) => !guild.getPData().command.customPrefix.includes(val));
-        if (!guild.getPData().premium && changedDataAdd.length + guild.getPData().command.customPrefix.length > 2)
+        const changedDataAdd = data.filter((val) => !guild.getCustomData().command.customPrefix.includes(val));
+        if (!guild.getCustomData().premium && changedDataAdd.length + guild.getCustomData().command.customPrefix.length > 2)
           return SettingChangeStatus.of(
             null,
             () => "Sunucu `Premium` özelliğine sahip olmadığı için 2 adet'ten fazla özel prefix belirleyemezsin!"
           );
         if (changedDataAdd.length < 1)
           return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
-        guild.getPData().command.customPrefix.push(...changedDataAdd);
+        guild.getCustomData().command.customPrefix.push(...changedDataAdd);
         try {
           await guild.save();
           return SettingChangeStatus.of(
@@ -147,11 +147,11 @@ export class PrefixSetting extends AbstractSetting<Discord.Guild, string[] | und
         } catch (error) {}
         break;
       case 'REMOVE':
-        const changedDataRemove = data.filter((val) => guild.getPData().command.customPrefix.includes(val));
+        const changedDataRemove = data.filter((val) => guild.getCustomData().command.customPrefix.includes(val));
         if (changedDataRemove.length < 1)
           return SettingChangeStatus.of(null, () => 'Belirttiğiniz değere göre ayar değiştirilemedi!');
-        guild.getPData().command.customPrefix = guild
-          .getPData()
+        guild.getCustomData().command.customPrefix = guild
+          .getCustomData()
           .command.customPrefix.filter((val) => !changedDataRemove.includes(val));
         try {
           await guild.save();

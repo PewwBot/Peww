@@ -33,7 +33,7 @@ class GuildMemberAdd extends AbstractSubscription<'guildMemberAdd'> {
     const guild: PewwGuild = (await this.bot.guilds.cache.get(context.getParams()[0].guild.id)) as PewwGuild;
     if (guild) {
       await guild.load();
-      const setting = guild.getPData().settings.find((setting) => setting.key === 'entry');
+      const setting = guild.getCustomData().settings.find((setting) => setting.key === 'entry');
       if (
         !setting ||
         (setting &&
@@ -82,7 +82,7 @@ class GuildMemberRemove extends AbstractSubscription<'guildMemberRemove'> {
     const guild: PewwGuild = (await this.bot.guilds.cache.get(context.getParams()[0].guild.id)) as PewwGuild;
     if (guild) {
       await guild.load();
-      const setting = guild.getPData().settings.find((setting) => setting.key === 'entry');
+      const setting = guild.getCustomData().settings.find((setting) => setting.key === 'entry');
       if (
         !setting ||
         (setting &&
