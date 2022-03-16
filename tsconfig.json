@@ -1,11 +1,22 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types"],
     "module": "commonjs",
-    "target": "es2020",
-    "outDir": "dist",
-    "lib": ["ESNext", "ESNext.Array", "ESNext.AsyncIterable", "ESNext.Intl", "ESNext.Symbol", "DOM"],
+    "target": "es2021",
+    "lib": [
+      "es2021",
+      "ESNext",
+      "ESNext.Array",
+      "ESNext.AsyncIterable",
+      "ESNext.Intl",
+      "ESNext.Symbol",
+      "DOM"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "outDir": "./dist",
     "rootDir": "./src",
+    "allowJs": false,
     "sourceMap": false,
     "removeComments": true,
     "declaration": false,
@@ -17,8 +28,16 @@
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["./dist/*", "./node_modules/*"],
-  "include": ["./src/**/*", "../"]
+  "include": [
+    "./src/"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }
