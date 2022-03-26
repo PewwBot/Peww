@@ -2,18 +2,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2021",
-    "lib": [
-      "es2021",
-      "ESNext",
-      "ESNext.Array",
-      "ESNext.AsyncIterable",
-      "ESNext.Intl",
-      "ESNext.Symbol",
-      "DOM"
-    ],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "lib": ["es2021", "ESNext", "ESNext.Array", "ESNext.AsyncIterable", "ESNext.Intl", "ESNext.Symbol", "DOM"],
+    "typeRoots": ["./node_modules/@types"],
     "outDir": "./dist",
     "rootDir": "./src",
     "allowJs": false,
@@ -33,11 +23,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "./src/"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["./src"],
+  "exclude": ["dist", "node_modules"]
 }
